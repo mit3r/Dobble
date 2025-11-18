@@ -1,35 +1,34 @@
 # Makefile for Dobble project
 
 CXX = g++ # Compiler
-CXXFLAGS = -c -Wall # Compiler flags 
+CXXFLAGS = -Wall # Compiler flags 
 
-SFMLCXXFLAGS = -I/usr/include/SFML
-SFMLLINKERFLAGS = -lsfml-graphics -lsfml-window -lsfml-system # Linker flags
+SERVER_CXXFLAGS = $(CXXFLAGS) # Server compiler flags
+CLIENT_CXXFLAGS = $(CXXFLAGS) -I/usr/include/SFML # Client compiler flags
 
-SERVERSRC = main_server.cpp # Server source file
-CLIENTSRC = main_client.cpp # Client source file
+CLIENT_LINKERFLAGS = -lsfml-graphics -lsfml-window -lsfml-system # Linker flags
 
-SERVEROBJ = $(SERVERSRC:.cpp=.o) # Server object files
-CLIENTOBJ = $(CLIENTSRC:.cpp=.o) # Client object files
+SERVER_SRC = $(shell find src/server -type f -name '*.cpp') # Server source file
+CLIENT_SRC = $(shell find src/client -type f -name '*.cpp') # Client source files
+
+SERVEROBJ = $(SERVER_SRC:.cpp=.o) # Server object files
+CLIENTOBJ = $(CLIENT_SRC:.cpp=.o) # Client object files
 
 SERVEREXEC = dobble_server # Executable name
 CLIENTEXEC = dobble_client # Executable name
 
+# Pattern rule: compile any .cpp to its corresponding .o
+%.o: %.cpp
+	mkdir -p build
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 # Build the server executable
 $(SERVEREXEC): $(SERVEROBJ)
-	$(CXX) -o build/$@ build/$^
-
-# Compile server source files
-$(SERVEROBJ): $(SERVERSRC)
-	$(CXX) $(CXXFLAGS) $< -o build/$@
+	$(CXX) -o build/$@ $^
 
 # Build the client executable
 $(CLIENTEXEC): $(CLIENTOBJ)
-	$(CXX) -o build/$@ build/$^ $(SFMLLINKERFLAGS)
-
-# Compile client source files
-$(CLIENTOBJ): $(CLIENTSRC)
-	$(CXX) $(CXXFLAGS) $(SFMLCXXFLAGS) $< -o build/$@
+	$(CXX) -o build/$@ $^ $(CLIENT_LINKERFLAGS)
 
 # Test script
 TESTSRC = scripts/runner.cpp
@@ -38,7 +37,7 @@ TESTEXEC = ${TESTSRC:.cpp=}
 
 # Compile test source files
 $(TESTOBJ): $(TESTSRC)
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Build the test executable
 $(TESTEXEC): $(TESTOBJ)
@@ -46,8 +45,12 @@ $(TESTEXEC): $(TESTOBJ)
 
 # Build
 all: server client
-server: $(SERVEREXEC) clean
-client: $(CLIENTEXEC) clean
+
+server: $(SERVEREXEC) 
+	make clean
+
+client: $(CLIENTEXEC)
+	make clean
 
 # Test modes
 test1n1: all $(TESTEXEC) clean_test
@@ -61,7 +64,8 @@ config:
 
 # Clean up
 clean:
-	rm -f build/$(SERVEROBJ) build/$(CLIENTOBJ)
+	find src -type f -name '*.o' -delete
+	
 
 clean_test:
 	rm -f $(TESTOBJ)
