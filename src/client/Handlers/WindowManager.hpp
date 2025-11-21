@@ -8,9 +8,13 @@ private:
     const sf::Vector2u defaultSize{1280, 720};
     float scale = 1.0f;
 
+    void handleResizeEvent(const sf::Event& event);
+
 public:
     sf::RenderWindow window;
 
     WindowManager();
-    void handleResize(const sf::Event& event);
+    ~WindowManager();
+
+    void handleEvent(const sf::Event& event);
 };

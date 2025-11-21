@@ -1,30 +1,49 @@
-#include <iostream>
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
+#include "Handlers/LayoutManager.hpp"
+#include "Handlers/PagesManager.hpp"
 #include "Handlers/WindowManager.hpp"
+#include "Objects/Cards.hpp"
+#include "Page/EndPage.hpp"
+#include "Page/GamePage.hpp"
+#include "Page/JoinPage.hpp"
 
-int main(int, char**){
-    
-    
-    WindowManager windowManager;
-    sf::RenderWindow& window = windowManager.window;
+int main(int, char**) {
+  WindowManager windowManager;
+  PagesManager pagesManager;
 
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+  sf::RenderWindow& window = windowManager.window;
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
+  LayoutManager::loadFonts();
 
-            if(event.type == sf::Event::Resized)
-                windowManager.handleResize(event);
-        }
+  pagesManager.add<JoinPage>("join");
+  pagesManager.add<GamePage>("game");
+  pagesManager.add<EndPage>("end");
 
-        window.clear();
-        window.draw(shape);
-        window.display();
+  pagesManager.changeTo("join", window);
+
+  Cards cards("assets/cards.json");
+
+  while (window.isOpen()) {
+    // Drawing
+    pagesManager.render(window);
+
+    // Window related events
+    sf::Event event;
+    while (window.pollEvent(event)) {
+      pagesManager.handleEvent(window, event);
+      windowManager.handleEvent(event);
     }
-}
 
+    std::cout << "Main loop iteration.\n";
+
+    // Network related events
+    // * To be implemented *
+  }
+
+  std::cout << "Exiting application.\n";
+  LayoutManager::cleanup();
+
+  return 0;
+}

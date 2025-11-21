@@ -1,71 +1,102 @@
-# Makefile for Dobble project
+ # Makefile for Dobble project
+ SERVER_EXEC := dobble_server
+ CLIENT_EXEC := dobble_client
 
-CXX = g++ # Compiler
-CXXFLAGS = -Wall # Compiler flags 
+ BUILD_DIR := build
 
-SERVER_CXXFLAGS = $(CXXFLAGS) # Server compiler flags
-CLIENT_CXXFLAGS = $(CXXFLAGS) -I/usr/include/SFML # Client compiler flags
+ .PHONY: all server client config clean
+ SERVER_BUILD_DIR := $(BUILD_DIR)/server
+ CLIENT_BUILD_DIR := $(BUILD_DIR)/client
 
-CLIENT_LINKERFLAGS = -lsfml-graphics -lsfml-window -lsfml-system # Linker flags
+ SERVER_SRC_DIR := src/server
+ CLIENT_SRC_DIR := src/client
 
-SERVER_SRC = $(shell find src/server -type f -name '*.cpp') # Server source file
-CLIENT_SRC = $(shell find src/client -type f -name '*.cpp') # Client source files
+ SERVER_SRC := $(shell find $(SERVER_SRC_DIR) -type f -name '*.cpp')
+ CLIENT_SRC := $(shell find $(CLIENT_SRC_DIR) -type f -name '*.cpp')
 
-SERVEROBJ = $(SERVER_SRC:.cpp=.o) # Server object files
-CLIENTOBJ = $(CLIENT_SRC:.cpp=.o) # Client object files
+ SERVER_OBJ := $(SERVER_SRC:%.cpp=$(SERVER_BUILD_DIR)/%.o)
+ CLIENT_OBJ := $(CLIENT_SRC:%.cpp=$(CLIENT_BUILD_DIR)/%.o)
 
-SERVEREXEC = dobble_server # Executable name
-CLIENTEXEC = dobble_client # Executable name
+ SERVER_DEPS := $(SERVER_OBJ:.o=.d)
+ CLIENT_DEPS := $(CLIENT_OBJ:.o=.d)
 
-# Pattern rule: compile any .cpp to its corresponding .o
-%.o: %.cpp
-	mkdir -p build
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+ INC_DIRS := include
 
-# Build the server executable
-$(SERVEREXEC): $(SERVEROBJ)
-	$(CXX) -o build/$@ $^
+ SERVER_INC_DIRS := $(SERVER_SRC_DIR) $(INC_DIRS)
+ CLIENT_INC_DIRS := $(CLIENT_SRC_DIR) $(INC_DIRS)
 
-# Build the client executable
-$(CLIENTEXEC): $(CLIENTOBJ)
-	$(CXX) -o build/$@ $^ $(CLIENT_LINKERFLAGS)
+#  SERVER_INC_DIRS := $(INC_DIRS) $(shell find $(SERVER_SRC_DIR) -type d)
+#  CLIENT_INC_DIRS := $(INC_DIRS) $(shell find $(CLIENT_SRC_DIR) -type d)
 
-# Test script
-TESTSRC = scripts/runner.cpp
-TESTOBJ = $(TESTSRC:.cpp=.o)
-TESTEXEC = ${TESTSRC:.cpp=}
+ SERVER_INC_FLAGS := $(addprefix -I,$(SERVER_INC_DIRS))
+ CLIENT_INC_FLAGS := $(addprefix -I,$(CLIENT_INC_DIRS))
 
-# Compile test source files
-$(TESTOBJ): $(TESTSRC)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+ CPL := g++
 
-# Build the test executable
-$(TESTEXEC): $(TESTOBJ)
-	$(CXX) -o $@ $^
+ CPPFLAGS := -ggdb -std=c++17 -Wall -MMD -MP
+ SERVER_CPPFLAGS := $(CPPFLAGS) $(SERVER_INC_FLAGS)
+ CLIENT_CPPFLAGS := $(CPPFLAGS) $(CLIENT_INC_FLAGS) -I/usr/include/SFML 
 
-# Build
-all: server client
+ CLIENT_LDFLAGS := -lsfml-graphics -lsfml-window -lsfml-system
 
-server: $(SERVEREXEC) 
-	make clean
+ all: server client
 
-client: $(CLIENTEXEC)
-	make clean
+ server: $(BUILD_DIR)/$(SERVER_EXEC)
 
-# Test modes
-test1n1: all $(TESTEXEC) clean_test
-	./$(TESTEXEC) "Server" "./build/$(SERVEREXEC)" "Client" "./build/$(CLIENTEXEC)"
+ client: $(BUILD_DIR)/$(CLIENT_EXEC)
 
-test1n2: all $(TESTEXEC) clean_test
-	./$(TESTEXEC) "Server1" "./build/$(SERVEREXEC)" "Client1" "./build/$(CLIENTEXEC)" "Client2" "./build/$(CLIENTEXEC)"
+ qserver:
+	g++ -std=c++17 -Wall -Isrc/server -Iinclude $(shell find src/server -name '*.cpp') -o build/dobble_server
 
-config:
+ qclient:
+	g++ -std=c++17 -Wall -Isrc/client -Iinclude $(shell find src/client -name '*.cpp') -o build/dobble_client -lsfml-graphics -lsfml-window -lsfml-system
+
+ $(BUILD_DIR)/$(SERVER_EXEC): $(SERVER_OBJ)
+	$(CPL) $(SERVER_OBJ) -o $@
+
+ $(BUILD_DIR)/$(CLIENT_EXEC): $(CLIENT_OBJ)
+	$(CPL) $(CLIENT_OBJ) -o $@ $(CLIENT_LDFLAGS)
+
+ $(CLIENT_BUILD_DIR)/%.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CPL) $(CLIENT_CPPFLAGS) -c $< -o $@
+
+ $(SERVER_BUILD_DIR)/%.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CPL) $(SERVER_CPPFLAGS) -c $< -o $@
+
+
+
+
+ config:
 	sudo apt-get install libsfml-dev
 
-# Clean up
-clean:
-	find src -type f -name '*.o' -delete
-	
+ clean:
+	rm -rf build/*
 
-clean_test:
-	rm -f $(TESTOBJ)
+ -include $(SERVER_DEPS)
+ -include $(CLIENT_DEPS)
+
+ # # Test script
+ # TESTSRC = scripts/runner.cpp
+ # TESTOBJ = $(TESTSRC:.cpp=.o)
+ # TESTEXEC = ${TESTSRC:.cpp=}
+
+ # # Compile test source files
+ # $(TESTOBJ): $(TESTSRC)
+ # 	$(CPL) $(CPLFLAGS) -c $< -o $@
+
+ # # Build the test executable
+ # $(TESTEXEC): $(TESTOBJ)
+ # 	$(CPL) -o $@ $^
+
+
+ # # Test modes
+ # test1n1: all $(TESTEXEC) clean_test
+ # 	./$(TESTEXEC) "Server" "./build/$(SERVER_EXEC)" "Client" "./build/$(CLIENT_EXEC)"
+
+ # test1n2: all $(TESTEXEC) clean_test
+ # 	./$(TESTEXEC) "Server1" "./build/$(SERVER_EXEC)" "Client1" "./build/$(CLIENT_EXEC)" "Client2" "./build/$(CLIENT_EXEC)"
+
+ # clean_test:
+ # 	rm -f $(TESTOBJ)
