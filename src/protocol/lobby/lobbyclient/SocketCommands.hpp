@@ -61,7 +61,7 @@ struct TurnStruct {
     std::optional<std::list<PlayerGameInfo>> players_imgs;
 };
 
-struct ActualGameStruct {
+struct GameStruct {
     std::string game_id;
     std::string game_name;
     std::string players;
@@ -83,7 +83,7 @@ struct ErrorStruct {
 class LobbyServerMessageCore {
 public:
     std::string command;
-    std::optional<std::string> server_id; 
+    std::optional<std::string> lobby_server_id; 
     std::optional<std::string> client_id;
     std::optional<std::string> game_id;
     std::optional<ErrorStruct> error;
@@ -109,7 +109,7 @@ class ResponseGetLobbyInfoCommand : public LobbyServerMessageCore {
 public:
     struct data {
         std::string page;
-        std::list<ActualGameStruct> actual_games;
+        std::list<GameStruct> actual_games;
         std::optional<std::string> next_page;
     };
     std::optional<data> data_obj;
@@ -128,7 +128,7 @@ public:
 
 class SenderLeaveRoomCommand : public LobbyServerMessageCore {
 public:
-    struct data { std::string message; };
+    struct data { std::string game_id;};
     std::optional<data> data_obj;
 };
 class ResponseLeaveRoomCommand : public LobbyServerMessageCore {
@@ -139,7 +139,7 @@ public:
 
 class SenderSendGameInfoCommand : public LobbyServerMessageCore {
 public:
-    struct data { std::string game_id; TurnStruct actual_turn; };
+    struct data { std::string game_id; };
     std::optional<data> data_obj;
 };
 class ResponseSendGameInfoCommand : public LobbyServerMessageCore {
@@ -162,7 +162,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, client_id, imgs, score, point
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ScoreEntry, client_id, score)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PastTurn, turn_id, winner, winner_id, active)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TurnStruct, turn_id, active, clients_data, clients_id_data, images_on_table, scoreboard, past_turns, winner_id, actual_imgs, players_imgs)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ActualGameStruct, game_id, game_name, players, max_players, nicknames, status)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GameStruct, game_id, game_name, players, max_players, nicknames, status)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShortGameInfo, game_id, name)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ErrorStruct, code, message)
 
@@ -172,22 +172,22 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderGetLobbyInfoCommand::data, page)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseGetLobbyInfoCommand::data, page, actual_games, next_page)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderJoinGameCommand::data, game_id, role)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseJoinGameCommand::data, status, role, game_info)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, message)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseLeaveRoomCommand::data, message)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id, actual_turn)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseSendGameInfoCommand::data, game_id, actual_turn)
 
 #define DEFINE_JSON_WITH_DATA_RENAME(Type) \
     inline void to_json(json& j, const Type& p) { \
         j = json{ {"command", p.command}, {"error", p.error} }; \
-        if(p.server_id) j["server_id"] = p.server_id; \
+        if(p.lobby_server_id) j["lobby_server_id"] = p.lobby_server_id; \
         if(p.client_id) j["client_id"] = p.client_id; \
         if(p.game_id) j["game_id"] = p.game_id; \
         if(p.data_obj) j["data"] = p.data_obj; else j["data"] = nullptr; \
     } \
     inline void from_json(const json& j, Type& p) { \
         j.at("command").get_to(p.command); \
-        if(j.contains("server_id")) j.at("server_id").get_to(p.server_id); \
+        if(j.contains("lobby_server_id")) j.at("lobby_server_id").get_to(p.lobby_server_id); \
         if(j.contains("client_id")) j.at("client_id").get_to(p.client_id); \
         if(j.contains("game_id")) j.at("game_id").get_to(p.game_id); \
         if(j.contains("data") && !j["data"].is_null()) j.at("data").get_to(p.data_obj); \

@@ -10,7 +10,7 @@ private:
     std::map<std::string, CreatorFunc> dictionary;
 
     bool isResponse(const json& j) { //is_server determine its a response command
-        return j.contains("server_id") && !j["server_id"].is_null();
+        return j.contains("lobby_server_id") && !j["lobby_server_id"].is_null();
     }
 
 public:
