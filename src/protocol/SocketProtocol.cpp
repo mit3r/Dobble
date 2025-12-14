@@ -33,9 +33,9 @@ int main() {
     CommandFactory factory;
 
     std::string jsonSender = R"({
-        "command": "ping",
+        "command": "getinfolobby",
         "client_id": "client-123",
-        "data": { "message": "hello" }
+        "data": { "message": "ping" }
     })";
 
  

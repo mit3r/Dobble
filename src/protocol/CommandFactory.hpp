@@ -15,6 +15,12 @@ private:
 
 public:
     CommandFactory() {
+
+
+        dictionary["login"] = [this](const json& j) -> AnyCommand {
+            if (isResponse(j)) return j.get<ResponseLoginCommand>();
+            else               return j.get<SenderLoginCommand>();
+        };
         
         dictionary["ping"] = [this](const json& j) -> AnyCommand {
             if (isResponse(j)) return j.get<ResponsePingCommand>();
