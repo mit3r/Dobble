@@ -12,64 +12,13 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <nlohmann/json.hpp>
-#include "../../protocol/utils/SendAndReceiveUtils.hpp"
-#include "../../protocol/CommandFactory.hpp"
-#include "../../protocol/lobby/lobbyclient/SocketCommands.hpp"
 #include "../BaseServer.hpp"
-#include "ServerCommandVisitor.hpp"
 #include "ServerUtils.hpp"
-using json = nlohmann::json;
+#include "LobbyClientHandler.hpp"
+#include <iostream>
+#include <thread>
 
 ServerState g_server;
-
-void client_handler(int client_sock)
-{
-    // Client* me = new Client{client_sock, "Unknown", false};
-    std::shared_ptr<Client> me = std::make_shared<Client>();
-    me->socket = client_sock;
-    me->logged_in = false;
-
-    {
-        std::lock_guard<std::mutex> lock(g_server.clients_mutex);
-        g_server.clients.push_back(me);
-    }
-    std::cout << "[SERVER] New client connected: " << client_sock << std::endl;
-
-    CommandFactory command_factory;
-
-    while (true)
-    {
-        std::optional<json> msg_opt = receive_json_packet(client_sock);
-
-        if (!msg_opt.has_value())
-        {
-            break;
-        } // hmmmm
-
-        json msg = msg_opt.value();
-        if (msg.contains("command"))
-        {
-            std::string cmd_name = msg["command"];
-            AnyCommand command_variant = command_factory.get(cmd_name, msg);
-
-            ServerCommandVisitor visitor(client_sock, command_factory);
-            std::visit(visitor, command_variant);
-        }
-        else
-        {
-            std::cerr << "[WARNING] Otrzymano JSON bez pola 'command'" << std::endl;
-        }
-    }
-
-    std::cout << "[SERVER] Client disconnected: " << client_sock << std::endl;
-    close(client_sock);
-
-    {
-        std::lock_guard<std::mutex> lock(g_server.clients_mutex);
-        auto it = std::remove(g_server.clients.begin(), g_server.clients.end(), me);
-        g_server.clients.erase(it, g_server.clients.end());
-    }
-}
 
 int main(int argc, char *argv[])
 {
