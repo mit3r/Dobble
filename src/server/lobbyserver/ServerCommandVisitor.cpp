@@ -1,62 +1,85 @@
 #include "ServerCommandVisitor.hpp"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <cstdlib>
 
-extern ServerState g_server;
+std::string gen_random(const int len)
+{
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    std::string tmp_s;
+    tmp_s.reserve(len);
 
-ServerCommandVisitor::ServerCommandVisitor(int sock, CommandFactory& f) 
+    for (int i = 0; i < len; ++i)
+    {
+        tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+
+    return tmp_s;
+}
+
+extern LobbyServerState g_lobby_server;
+
+ServerCommandVisitor::ServerCommandVisitor(int sock, CommandFactory &f)
     : client_sock(sock), factory(f) {}
 
 void ServerCommandVisitor::sendErrorResponse(
-    const std::string& commandName, 
-    const std::string& code, 
-    const std::string& message) 
+    const std::string &commandName,
+    const std::string &code,
+    const std::string &message)
 {
     ErrorResponse e;
     e.command = commandName;
     e.lobby_server_id = "MainServer_v1";
-    
+
     ErrorStruct err;
     err.code = std::stoi(code);
     err.message = message;
     e.error = err;
-    
-    json j = e; 
-    
+
+    json j = e;
+
     send_json_packet(client_sock, j);
 }
 
-void ServerCommandVisitor::operator()(const SenderLoginCommand& cmd) {
-    std::shared_ptr<Client> client = findClientBySocket(g_server, client_sock);
+void ServerCommandVisitor::operator()(const SenderLoginCommand &cmd)
+{
+    std::shared_ptr<Client> client = g_lobby_server.findClientBySocket(client_sock);
 
-    if (!client){
+    if (!client)
+    {
         std::cout << "Brak clienta o socketcie" << client_sock << std::endl;
     }
     std::cout << client->logged_in << std::endl;
-    if (client->logged_in == true) {
+    if (client->logged_in == true)
+    {
         sendErrorResponse(
-            "login", 
-            "400", 
-            "You are already logged!"
-        );
+            "login",
+            "400",
+            "You are already logged!");
         return;
     }
-    
-    if (findClientByNickname(g_server, cmd.data_obj->nickname) != nullptr){
+
+    if (g_lobby_server.findClientByNickname(cmd.data_obj->nickname) != nullptr)
+    {
         sendErrorResponse(
             "login",
             "401",
-            "Nickaname is already taken!"
-        );
+            "Nickaname is already taken!");
         return;
     }
-    
+
     client->nickname = cmd.data_obj->nickname;
-    client->logged_in = 1; 
+    client->logged_in = 1;
 
     ResponseLoginCommand response;
     response.command = "login";
-    response.lobby_server_id = "MainServer_v1"; 
-    response.client_id = cmd.client_id;
-    
+    response.lobby_server_id = "MainServer_v1";
+    response.client_id = gen_random(16);
+
     ResponseLoginCommand::data d;
     d.message = "OK";
     response.data_obj = d;
@@ -64,15 +87,16 @@ void ServerCommandVisitor::operator()(const SenderLoginCommand& cmd) {
     send_json_packet(client_sock, j);
 }
 
-void ServerCommandVisitor::operator()(const SenderPingCommand& cmd) {
-    std::cout << "[CMD] Otrzymano PING. Message: " 
+void ServerCommandVisitor::operator()(const SenderPingCommand &cmd)
+{
+    std::cout << "[CMD] Otrzymano PING. Message: "
               << (cmd.data_obj ? cmd.data_obj->message : "brak") << std::endl;
 
     ResponsePingCommand response;
     response.command = "ping";
-    response.lobby_server_id = "MainServer_v1"; 
+    response.lobby_server_id = "MainServer_v1";
     response.client_id = cmd.client_id;
-    
+
     ResponsePingCommand::data d;
     d.message = "pong";
     response.data_obj = d;
@@ -81,7 +105,8 @@ void ServerCommandVisitor::operator()(const SenderPingCommand& cmd) {
     send_json_packet(client_sock, j);
 }
 
-void ServerCommandVisitor::operator()(const SenderJoinGameCommand& cmd) {
+void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd)
+{
     std::string game_id = cmd.data_obj ? cmd.data_obj->game_id : "unknown";
     std::cout << "[CMD] Klient chce dolaczyc do gry: " << game_id << std::endl;
 
@@ -99,7 +124,8 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand& cmd) {
     send_json_packet(client_sock, j);
 }
 
-void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand& cmd) {
+void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
+{
     std::cout << "[CMD] Pobieranie listy gier..." << std::endl;
     ResponseGetLobbyInfoCommand response;
     response.command = "getinfolobby";
@@ -120,6 +146,72 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand& cmd) {
     send_json_packet(client_sock, j);
 }
 
-void ServerCommandVisitor::operator()(const std::monostate&) {
+void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
+{
+    std::cout << "[CMD] Tworzenie nowego lobby: " << cmd.data_obj->game_name << std::endl;
+
+    std::shared_ptr<GameServer> game = std::make_shared<GameServer>();
+    game->server_id = gen_random(16);
+    game->servername = cmd.data_obj->game_name;
+    game->registered = false;
+    game->socket = -1;
+    g_lobby_server.addGameServer(game);
+
+    int dynamic_port = find_available_port();
+    std::string port_arg = std::to_string(dynamic_port);
+
+    const std::string &lobby_uds_path = g_lobby_server.getUDSPath()
+
+                                            pid_t pid = fork();
+    if (pid == 0)
+    {
+        std::string server_id_arg = game->server_id;
+        std::string port_arg = "2000";
+        execl("./build/game_server",
+              "game_server",
+              game->server_id.c_str(),
+              port_arg.c_str(),
+              lobby_uds_path.c_str(),
+              (char *)NULL);
+        perror("execl");
+        exit(1);
+    }
+    else if (pid > 0)
+    {
+        game->process_pid = pid;  
+        game->port = dynamic_port; 
+
+        std::cout << "[INFO] Uruchomiono game server z PID: " << pid
+                  << ", ID: " << game->server_id
+                  << ", Port: " << dynamic_port
+                  << std::endl;
+
+        ResponseCreateLobbyCommand response;
+        response.command = "create_lobby";
+        response.lobby_server_id = "MainServer_v1";
+        response.client_id = cmd.client_id;
+        response.game_id = game->server_id;
+
+        ResponseCreateLobbyCommand::data d;
+        d.message = "OK";
+        d.ip = "0.0.0.0";
+        d.port = dynamic_port;
+        response.data_obj = d;
+
+        json j = response;
+        send_json_packet(client_sock, j);
+    }
+    else
+    {
+        perror("fork");
+        sendErrorResponse(
+            "create_lobby",
+            "500",
+            "Nie można utworzyć game servera");
+    }
+}
+
+void ServerCommandVisitor::operator()(const std::monostate &)
+{
     std::cerr << "[ERROR] Nie udało się rozpoznać komendy w JSON." << std::endl;
 }

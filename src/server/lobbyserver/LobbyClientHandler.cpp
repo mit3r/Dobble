@@ -12,7 +12,7 @@
 
 using json = nlohmann::json;
 
-extern ServerState g_server;
+extern LobbyServerState g_lobby_server;
 
 void client_handler(int client_sock)
 {
@@ -20,10 +20,7 @@ void client_handler(int client_sock)
     me->socket = client_sock;
     me->logged_in = false;
 
-    {
-        std::lock_guard<std::mutex> lock(g_server.clients_mutex);
-        g_server.clients.push_back(me);
-    }
+    g_lobby_server.addClient(me);
     std::cout << "[SERVER] New client connected: " << client_sock << std::endl;
 
     CommandFactory command_factory;
@@ -55,9 +52,5 @@ void client_handler(int client_sock)
     std::cout << "[SERVER] Client disconnected: " << client_sock << std::endl;
     close(client_sock);
 
-    {
-        std::lock_guard<std::mutex> lock(g_server.clients_mutex);
-        auto it = std::remove(g_server.clients.begin(), g_server.clients.end(), me);
-        g_server.clients.erase(it, g_server.clients.end());
-    }
+    g_lobby_server.removeClient(me);
 }

@@ -18,8 +18,6 @@
 #include <iostream>
 #include <thread>
 
-ServerState g_server;
-
 int main(int argc, char *argv[])
 {
     BsdServer bsd_server(1500, "127.0.0.1");
