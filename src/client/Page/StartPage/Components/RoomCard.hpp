@@ -8,6 +8,8 @@
 #include "Components/Label.hpp"
 #include "Managers/LayoutManager.hpp"
 
+#pragma once
+
 class RoomCard : public sf::RectangleShape, public HasEvents {
   private:
   Label nameText;

@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -28,8 +29,10 @@ class Page {
 
 class PagesManager {
   private:
-  std::unordered_map<std::string, std::unique_ptr<Page>> pages;
-  Page* currentPage;
+      sf::RenderWindow* window;
+
+      std::unordered_map<std::string, std::unique_ptr<Page>> pages;
+      Page* currentPage;
 
   public:
   template <typename T, typename... Args>
@@ -37,14 +40,16 @@ class PagesManager {
     static_assert(std::is_base_of_v<Page, T>, "T must derive from Page");
     pages[name] = std::make_unique<T>(std::forward<Args>(args)...);
 
-    if (!currentPage)
-      currentPage = pages[name].get();
+    if (!currentPage) currentPage = pages[name].get();
   }
 
-  void changeTo(const std::string& name, sf::RenderWindow& window);
+  void bindWindow(sf::RenderWindow* win) { window = win; }
+  void changeTo(const std::string& name);
 
-  void handleEvent(sf::RenderWindow& window, const sf::Event& event);
-  void render(sf::RenderWindow& window);
+  void handleEvent(const sf::Event& event);
+  void render();
 };
+
+extern PagesManager pagesManager;
 
 #endif  // PAGES_MANAGER_HPP

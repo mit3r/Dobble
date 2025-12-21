@@ -7,6 +7,8 @@
 #include "Components/HasEvents.hpp"
 #include "Components/LabelButton.hpp"
 #include "Managers/LayoutManager.hpp"
+#include "Managers/PagesManager.hpp"
+#include "utils/Grid.hpp"
 
 class Navigation : public sf::RectangleShape, public HasEvents {
   private:
@@ -52,6 +54,7 @@ class Navigation : public sf::RectangleShape, public HasEvents {
     });
     nextButton.onMousePressed([this]() {
       std::cout << "Next button pressed" << std::endl;
+      pagesManager.changeTo("lobby");
     });
   }
 

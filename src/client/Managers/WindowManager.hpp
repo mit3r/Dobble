@@ -18,3 +18,5 @@ public:
 
     void handleEvent(const sf::Event& event);
 };
+
+extern WindowManager windowManager;

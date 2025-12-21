@@ -8,12 +8,14 @@
 //
 #include "./Components/Navigation.hpp"
 #include "./Components/RoomCard.hpp"
+#include "./Components/RoomCards.hpp"
+#include "./Components/Title.hpp"
 
 class StartPage : public Page {
   private:
-  Label* title;
-  RoomCard* roomCards[12];
-  Navigation* navigation;
+      Title* title;
+      RoomCards* roomCards;
+      Navigation* navigation;
 
   public:
   void start(sf::RenderWindow& window);
