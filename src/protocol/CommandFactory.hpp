@@ -46,6 +46,12 @@ public:
             if (isResponse(j)) return j.get<ResponseSendGameInfoCommand>();
             else               return j.get<SenderSendGameInfoCommand>();
         };
+
+        dictionary["create_lobby"] = [this](const json& j) -> AnyCommand {
+            if (isResponse(j)) return j.get<ResponseCreateLobbyCommand>();
+            else               return j.get<SenderCreateLobbyCommand>();
+        };
+        
     }
 
     AnyCommand get(const std::string& commandName, const json& j) {

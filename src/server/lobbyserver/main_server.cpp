@@ -12,11 +12,13 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <nlohmann/json.hpp>
-#include "../BaseServer.hpp"
-#include "ServerUtils.hpp"
-#include "LobbyClientHandler.hpp"
+#include <server/BaseServer.hpp>
+#include <server/lobbyserver/LobbyServerState.hpp>
+#include <server/lobbyserver/LobbyClientHandler.hpp>
 #include <iostream>
 #include <thread>
+
+LobbyServerState g_lobby_server;
 
 int main(int argc, char *argv[])
 {

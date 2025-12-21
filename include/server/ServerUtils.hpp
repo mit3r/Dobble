@@ -6,6 +6,7 @@
 #include <vector>
 #include <mutex>
 #include <algorithm>
+#include <sys/types.h>
 
 struct Client {
     int socket;
@@ -19,6 +20,8 @@ struct GameServer {
     std::string server_id;
     std::string servername;
     bool registered;
+    pid_t process_pid;
+    int port;
 };
 
 class ServerStateManager {
@@ -37,19 +40,6 @@ public:
     std::vector<std::shared_ptr<Client>> getClients();
 };
 
-class LobbyServerState : public ServerStateManager {
-private:
-    std::vector<std::shared_ptr<GameServer>> game_servers;
-    std::mutex game_servers_mutex;
-
-public:
-    LobbyServerState();
-    void addGameServer(std::shared_ptr<GameServer> server);
-    void removeGameServer(std::shared_ptr<GameServer> server);
-    std::shared_ptr<GameServer> findGameServerById(const std::string& server_id);
-    size_t getGameServerCount() const;
-};
-
-extern LobbyServerState g_lobby_server;
+int find_available_port();
 
 #endif 

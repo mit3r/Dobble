@@ -2,13 +2,30 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build server",
+      "label": "Build lobby server",
       "type": "shell",
       "command": "make",
-      "args": ["server"],
+      "args": ["lobby_server"],
       "group": {
         "kind": "build",
         "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build game server",
+      "type": "shell",
+      "command": "make",
+      "args": ["game_server"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
       },
       "presentation": {
         "echo": true,
@@ -23,6 +40,23 @@
       "type": "shell",
       "command": "make",
       "args": ["client"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build all",
+      "type": "shell",
+      "command": "make",
+      "args": ["all"],
       "group": {
         "kind": "build",
         "isDefault": false

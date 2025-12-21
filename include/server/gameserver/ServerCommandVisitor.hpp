@@ -8,10 +8,10 @@
 #include <mutex>
 #include <algorithm>
 #include <nlohmann/json.hpp>
-#include "../../protocol/CommandFactory.hpp"
-#include "../../protocol/lobby/lobbyclient/SocketCommands.hpp"
-#include "../../protocol/utils/SendAndReceiveUtils.hpp"
-#include "ServerUtils.hpp"
+#include "../../../src/protocol/CommandFactory.hpp"
+#include "../../../src/protocol/lobby/lobbyclient/SocketCommands.hpp"
+#include "../../../src/protocol/utils/SendAndReceiveUtils.hpp"
+#include <server/ServerUtils.hpp>
 
 using json = nlohmann::json;
 
@@ -28,10 +28,7 @@ private:
         const std::string& message);
 
 public:
-    void operator()(const SenderLoginCommand& cmd);
-    void operator()(const SenderPingCommand& cmd);
-    void operator()(const SenderJoinGameCommand& cmd);
-    void operator()(const SenderGetLobbyInfoCommand& cmd);
+    
     void operator()(const std::monostate&);
     
     template <typename T>

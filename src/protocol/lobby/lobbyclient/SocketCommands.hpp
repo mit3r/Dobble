@@ -138,6 +138,7 @@ public:
     struct data {
         std::string page;
         std::list<GameStruct> actual_games;
+
         std::optional<std::string> next_page;
     };
     std::optional<data> data_obj;
@@ -176,6 +177,27 @@ public:
     std::optional<data> data_obj;
 };
 
+class SenderCreateLobbyCommand: public LobbyServerMessageCore{
+    public:
+    struct data
+    {
+        std::string game_name;
+    };
+    std::optional<data> data_obj;
+};
+
+class ResponseCreateLobbyCommand: public LobbyServerMessageCore{
+    public:
+    struct data
+    {
+        std::string message;
+        std::string ip;
+        std::string port;
+    };
+    
+    std::optional<data> data_obj;
+}; 
+
 using AnyCommand = std::variant<
     std::monostate,
     SenderLoginCommand,ResponseLoginCommand,
@@ -183,7 +205,8 @@ using AnyCommand = std::variant<
     SenderGetLobbyInfoCommand, ResponseGetLobbyInfoCommand,
     SenderJoinGameCommand, ResponseJoinGameCommand,
     SenderLeaveRoomCommand, ResponseLeaveRoomCommand,
-    SenderSendGameInfoCommand, ResponseSendGameInfoCommand
+    SenderSendGameInfoCommand, ResponseSendGameInfoCommand,
+    SenderCreateLobbyCommand,ResponseCreateLobbyCommand
 >;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImageInfo, img_name, rotate, rotation, place, size)
@@ -210,6 +233,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseLeaveRoomCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseSendGameInfoCommand::data, game_id, actual_turn)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderCreateLobbyCommand::data,game_name)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseCreateLobbyCommand::data,message,ip,port)
 
 #define DEFINE_JSON_WITH_DATA_RENAME(Type) \
     inline void to_json(json& j, const Type& p) { \
@@ -237,11 +262,18 @@ DEFINE_JSON_WITH_DATA_RENAME(ResponseLoginCommand)
 
 DEFINE_JSON_WITH_DATA_RENAME(SenderPingCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponsePingCommand)
+
 DEFINE_JSON_WITH_DATA_RENAME(SenderGetLobbyInfoCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseGetLobbyInfoCommand)
+
 DEFINE_JSON_WITH_DATA_RENAME(SenderJoinGameCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseJoinGameCommand)
+
 DEFINE_JSON_WITH_DATA_RENAME(SenderLeaveRoomCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseLeaveRoomCommand)
+
 DEFINE_JSON_WITH_DATA_RENAME(SenderSendGameInfoCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseSendGameInfoCommand)
+
+DEFINE_JSON_WITH_DATA_RENAME(SenderCreateLobbyCommand)
+DEFINE_JSON_WITH_DATA_RENAME(ResponseCreateLobbyCommand)

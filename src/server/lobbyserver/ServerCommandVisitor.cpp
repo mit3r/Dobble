@@ -1,4 +1,4 @@
-#include "ServerCommandVisitor.hpp"
+#include <server/lobbyserver/ServerCommandVisitor.hpp>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -160,9 +160,9 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     int dynamic_port = find_available_port();
     std::string port_arg = std::to_string(dynamic_port);
 
-    const std::string &lobby_uds_path = g_lobby_server.getUDSPath()
+    const std::string &lobby_uds_path = g_lobby_server.getUDSPath();
 
-                                            pid_t pid = fork();
+    pid_t pid = fork();
     if (pid == 0)
     {
         std::string server_id_arg = game->server_id;
@@ -214,4 +214,4 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
 void ServerCommandVisitor::operator()(const std::monostate &)
 {
     std::cerr << "[ERROR] Nie udało się rozpoznać komendy w JSON." << std::endl;
-}
+};

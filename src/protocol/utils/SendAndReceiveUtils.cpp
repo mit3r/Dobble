@@ -25,7 +25,6 @@ bool send_json_packet(int sock, const json& j) {
     uint32_t net_len = htonl(len);
 
     std::vector<char> packet;
-    // Rezerwujemy: 4 bajty Magic + 4 bajty Długość + Payload + 1 bajt \n
     packet.reserve(4 + 4 + len + 1);
 
     packet.insert(packet.end(), std::begin(PREAMBLE), std::end(PREAMBLE));
