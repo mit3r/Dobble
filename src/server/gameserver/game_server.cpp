@@ -1,21 +1,23 @@
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <cstring>
 #include <iostream>
-#include <vector>
+#include <mutex>
+#include <nlohmann/json.hpp>
+#include <optional>
 #include <string>
 #include <thread>
-#include <mutex>
-#include <algorithm>
-#include <optional>
-#include <cstring>
 #include <variant>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <nlohmann/json.hpp>
-#include "../protocol/utils/SendAndReceiveUtils.hpp"
+#include <vector>
+
+#include "../lobbyserver/ServerCommandVisitor.hpp"
 #include "../protocol/CommandFactory.hpp"
 #include "../protocol/lobby/lobbyclient/SocketCommands.hpp"
-#include "ServerCommandVisitor.hpp"
+#include "../protocol/utils/SendAndReceiveUtils.hpp"
 using json = nlohmann::json;
 struct Client
 {

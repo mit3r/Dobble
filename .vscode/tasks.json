@@ -6,7 +6,7 @@
       "type": "shell",
       "command": "cmake -S . -B build",
       "options": {
-        "cwd": "${workspaceFolder}/Dobble"
+        "cwd": "${workspaceFolder}"
       },
       "group": "build",
       "problemMatcher": []
@@ -16,7 +16,7 @@
       "type": "shell",
       "command": "cmake --build build",
       "options": {
-        "cwd": "${workspaceFolder}/Dobble"
+        "cwd": "${workspaceFolder}"
       },
       "group": {
         "kind": "build",
@@ -32,7 +32,7 @@
       "type": "shell",
       "command": "cmake --build build --target dobble_server",
       "options": {
-        "cwd": "${workspaceFolder}/Dobble"
+        "cwd": "${workspaceFolder}"
       },
       "group": "build",
       "problemMatcher": [
@@ -45,7 +45,7 @@
       "type": "shell",
       "command": "cmake --build build --target dobble_client",
       "options": {
-        "cwd": "${workspaceFolder}/Dobble"
+        "cwd": "${workspaceFolder}"
       },
       "group": "build",
       "problemMatcher": [

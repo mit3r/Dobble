@@ -1,9 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "Handlers/PagesManager.hpp"
+#include "Managers/PagesManager.hpp"
 
-class EndPage : public Page {
+class GamePage : public Page {
   private:
   sf::Text titleText;
   sf::RectangleShape joinButton;
