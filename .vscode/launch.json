@@ -1,34 +1,45 @@
 {
+  "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Dobble Server",
+      "name": "Launch Server",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/dobble_server",
-      "args": [
-        "127.0.0.1",
-        "8000"
-      ],
+      "program": "${workspaceFolder}/Dobble/build/dobble_server",
+      "args": [],
       "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/Dobble",
+      "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "preLaunchTask": "Build server"
-    }, 
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Build Server"
+    },
     {
-      "name": "Launch Dobble Client",
+      "name": "Launch Client",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/dobble_client",
-      "args": [
-        "127.0.0.1",
-        "3000"
-      ],
+      "program": "${workspaceFolder}/Dobble/build/dobble_client",
+      "args": [],
       "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/Dobble",
+      "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "preLaunchTask": "Build client"
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Build Client"
     }
   ]
 }
