@@ -27,7 +27,7 @@ void handle_client(int client_sock, StateManager& server_state, VisitorCreator c
 
         if (!msg_opt.has_value())
         {
-            break;
+            break; //???
         }
 
         json msg = msg_opt.value();

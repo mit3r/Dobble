@@ -166,11 +166,14 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     if (pid == 0)
     {
         std::string server_id_arg = game->server_id;
-        std::string port_arg = "2000";
-        execl("./build/game_server",
+        std::string port_arg_str = std::to_string(dynamic_port);
+        // execlp("pwd", "-l", (char *)NULL);
+        
+        
+        execl("./game_server",
               "game_server",
-              game->server_id.c_str(),
-              port_arg.c_str(),
+              server_id_arg.c_str(),
+              port_arg_str.c_str(),
               lobby_uds_path.c_str(),
               (char *)NULL);
         perror("execl");
@@ -195,7 +198,7 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
         ResponseCreateLobbyCommand::data d;
         d.message = "OK";
         d.ip = "0.0.0.0";
-        d.port = dynamic_port;
+        d.port = "1234";
         response.data_obj = d;
 
         json j = response;
