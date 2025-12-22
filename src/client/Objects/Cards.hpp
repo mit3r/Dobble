@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -8,7 +9,11 @@ using json = nlohmann::json;
 
 class Cards {
   private:
-    public:
-  Cards(std::string cardsFilePath);
-  ~Cards();
+      std::unordered_map<unsigned short, std::string> sourcesMap;
+
+  public:
+      Cards(std::string cardsFilePath);
+      std::string getPath(unsigned short id);
+
+      ~Cards();
 };

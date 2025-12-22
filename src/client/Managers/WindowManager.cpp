@@ -1,5 +1,7 @@
 #include "WindowManager.hpp"
 
+WindowManager windowManager;
+
 WindowManager::WindowManager() {
   const auto vm = sf::VideoMode::getDesktopMode();
   this->scale = static_cast<float>(vm.width) / static_cast<float>(defaultSize.x) * .5f;

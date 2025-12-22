@@ -1,4 +1,5 @@
 {
+  "version": "0.2.0",
   "configurations": [
     {
       "name": "Launch Dobble: Game Server",
@@ -26,6 +27,7 @@
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
+      "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "Build: Lobby Server"
@@ -35,12 +37,10 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/dobble_client",
-      "args": [
-        "127.0.0.1",
-        "3000"
-      ],
+      "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
+      "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "Build: Client"

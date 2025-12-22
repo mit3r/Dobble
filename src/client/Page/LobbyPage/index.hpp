@@ -1,16 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "Handlers/PagesManager.hpp"
+#include "Components/Title.hpp"
+#include "Managers/LayoutManager.hpp"
+#include "Managers/PagesManager.hpp"
 
-#pragma once
-
-class EndPage : public Page {
+class LobbyPage : public Page {
   private:
-  sf::Text titleText;
-  sf::RectangleShape joinButton;
+  Title* title;
 
   public:
+  LobbyPage();
+
   void start(sf::RenderWindow& window);
   void end(sf::RenderWindow& window);
 

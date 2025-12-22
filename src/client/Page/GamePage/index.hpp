@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "Handlers/PagesManager.hpp"
+#include "Managers/PagesManager.hpp"
 
 class GamePage : public Page {
   private:

@@ -1,17 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "Handlers/LayoutManager.hpp"
-#include "Handlers/PagesManager.hpp"
+#include "Managers/PagesManager.hpp"
 
-class JoinPage : public Page {
+#pragma once
+
+class EndPage : public Page {
   private:
   sf::Text titleText;
   sf::RectangleShape joinButton;
 
   public:
-  // JoinPage();
-
   void start(sf::RenderWindow& window);
   void end(sf::RenderWindow& window);
 
