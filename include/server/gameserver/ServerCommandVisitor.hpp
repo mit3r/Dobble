@@ -1,17 +1,17 @@
 #ifndef SERVER_COMMAND_VISITOR_HPP
 #define SERVER_COMMAND_VISITOR_HPP
 
-#include <iostream>
-#include <string>
-#include <memory>
-#include <vector>
-#include <mutex>
 #include <algorithm>
+#include <iostream>
+#include <memory>
+#include <mutex>
 #include <nlohmann/json.hpp>
-#include "../../../src/protocol/CommandFactory.hpp"
-#include "../../../src/protocol/lobby/lobbyclient/SocketCommands.hpp"
-#include "../../../src/protocol/utils/SendAndReceiveUtils.hpp"
+#include <protocol/CommandFactory.hpp>
+#include <protocol/lobby/lobbyclient/SocketCommands.hpp>
+#include <protocol/utils/SendAndReceiveUtils.hpp>
 #include <server/ServerUtils.hpp>
+#include <string>
+#include <vector>
 
 using json = nlohmann::json;
 

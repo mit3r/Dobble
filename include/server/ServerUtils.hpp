@@ -1,12 +1,15 @@
-#ifndef SERVER_UTILS_HPP
-#define SERVER_UTILS_HPP
+// #ifndef SERVER_UTILS_HPP
+// #define SERVER_UTILS_HPP
 
+#include <sys/types.h>
+
+#include <algorithm>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <mutex>
-#include <algorithm>
-#include <sys/types.h>
+
+#pragma once
 
 struct Client {
     int socket;
@@ -42,4 +45,4 @@ public:
 
 int find_available_port();
 
-#endif 
+// #endif
