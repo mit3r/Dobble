@@ -1,22 +1,9 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <thread>
-#include <mutex>
-#include <algorithm>
-#include <optional>
-#include <cstring>
-#include <variant>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <nlohmann/json.hpp>
-#include <server/BaseServer.hpp>
-#include <server/lobbyserver/LobbyServerState.hpp>
-#include <server/lobbyserver/LobbyClientHandler.hpp>
-#include <iostream>
-#include <thread>
+
+#include "LobbyClientHandler.hpp"
+#include "LobbyServerState.hpp"
+#include "server/common/BaseServer.hpp"
+#include "server/libraries.hpp"
+#include "server/network.hpp"
 
 LobbyServerState g_lobby_server;
 

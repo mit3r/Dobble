@@ -1,4 +1,4 @@
-#include <server/lobbyserver/LobbyServerState.hpp>
+#include "LobbyServerState.hpp"
 
 LobbyServerState::LobbyServerState() : ServerStateManager() {}
 

@@ -1,8 +1,4 @@
-#include <server/gameserver/ServerCommandVisitor.hpp>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <cstdlib>
+#include "ServerCommandVisitor.hpp"
 
 std::string gen_random(const int len)
 {

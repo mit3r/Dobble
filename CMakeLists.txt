@@ -1,25 +1,45 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
+
+# Global settings
 project(Dobble)
 
+# Compiler
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# Compiler flags
-add_compile_options(-Wall -Wextra -Wpedantic )
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 # Include directories
 include_directories(include)
+include_directories(src)
 
-# --- Server ---
-file(GLOB_RECURSE SERVER_SOURCES "src/server/*.cpp")
-add_executable(dobble_server ${SERVER_SOURCES})
-target_include_directories(dobble_server PRIVATE src/server)
+# Dependencies
+find_package(SFML 2.5 COMPONENTS window graphics network system REQUIRED)
+find_package(Threads REQUIRED)
 
-# --- Client ---
-# Find SFML
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+# Sources
 
+file(GLOB SERVER_COMMON_SOURCES "src/server/common/*.cpp")
+
+# Game Server
+file(GLOB_RECURSE GAMESERVER_SPECIFIC "src/server/gameserver/*.cpp")
+add_executable(dobble_gameserver
+    ${GAMESERVER_SPECIFIC}
+    ${SERVER_COMMON_SOURCES}
+)
+target_link_libraries(dobble_gameserver Threads::Threads)
+
+# Lobby Server
+file(GLOB_RECURSE LOBBYSERVER_SPECIFIC "src/server/lobbyserver/*.cpp")
+add_executable(dobble_lobbyserver
+    ${LOBBYSERVER_SPECIFIC}
+    ${SERVER_COMMON_SOURCES}
+)
+target_link_libraries(dobble_lobbyserver Threads::Threads)
+
+# Client
 file(GLOB_RECURSE CLIENT_SOURCES "src/client/*.cpp")
-add_executable(dobble_client ${CLIENT_SOURCES})
-target_include_directories(dobble_client PRIVATE src/client)
-target_link_libraries(dobble_client sfml-graphics sfml-window sfml-system)
+add_executable(dobble_client
+    ${CLIENT_SOURCES}
+)
+target_include_directories(dobble_client PRIVATE "src/client")
+target_link_libraries(dobble_client sfml-window sfml-graphics sfml-network sfml-system)

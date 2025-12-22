@@ -1,17 +1,12 @@
-#ifndef SERVER_COMMAND_VISITOR_HPP
-#define SERVER_COMMAND_VISITOR_HPP
-
-#include <algorithm>
-#include <iostream>
-#include <memory>
-#include <mutex>
-#include <nlohmann/json.hpp>
 #include <protocol/CommandFactory.hpp>
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
-#include <server/ServerUtils.hpp>
-#include <string>
-#include <vector>
+
+#include "LobbyServerState.hpp"
+#include "server/libraries.hpp"
+#include "server/network.hpp"
+
+#pragma once
 
 using json = nlohmann::json;
 
@@ -28,7 +23,11 @@ private:
         const std::string& message);
 
 public:
-    
+    void operator()(const SenderLoginCommand& cmd);
+    void operator()(const SenderPingCommand& cmd);
+    void operator()(const SenderJoinGameCommand& cmd);
+    void operator()(const SenderGetLobbyInfoCommand& cmd);
+    void operator()(const SenderCreateLobbyCommand& cmd);
     void operator()(const std::monostate&);
     
     template <typename T>
@@ -43,5 +42,3 @@ void ServerCommandVisitor::operator()(const T& cmd) {
          std::cout << "[INFO] Otrzymano nieznany typ wariantu." << std::endl;
     }
 }
-
-#endif 
