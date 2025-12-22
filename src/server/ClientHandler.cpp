@@ -1,11 +1,13 @@
-#include <server/ClientHandler.hpp>
-#include "../protocol/CommandFactory.hpp"
-#include "../protocol/lobby/lobbyclient/SocketCommands.hpp"
-#include "../protocol/utils/SendAndReceiveUtils.hpp"
-#include <iostream>
-#include <optional>
 #include <unistd.h>
+
+#include <iostream>
 #include <nlohmann/json.hpp>
+#include <optional>
+#include <server/ClientHandler.hpp>
+
+#include "protocol/CommandFactory.hpp"
+#include "protocol/lobby/lobbyclient/SocketCommands.hpp"
+#include "protocol/utils/SendAndReceiveUtils.hpp"
 
 using json = nlohmann::json;
 

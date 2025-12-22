@@ -3,6 +3,8 @@
 
 #include "Handlers/PagesManager.hpp"
 
+#pragma once
+
 class EndPage : public Page {
   private:
   sf::Text titleText;

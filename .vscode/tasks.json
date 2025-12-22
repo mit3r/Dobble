@@ -2,72 +2,69 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build lobby server",
+      "label": "CMake: Configure",
       "type": "shell",
-      "command": "make",
-      "args": ["lobby_server"],
+      "command": "cmake -S . -B build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CMake: Build All",
+      "type": "shell",
+      "command": "cmake --build build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": []
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": "CMake: Configure"
     },
     {
-      "label": "Build game server",
+      "label": "Build: Game Server",
       "type": "shell",
-      "command": "make",
-      "args": ["game_server"],
-      "group": {
-        "kind": "build",
-        "isDefault": false
+      "command": "cmake --build build --target dobble_gameserver",
+      "options": {
+        "cwd": "${workspaceFolder}"
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": []
+      "group": "build",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": "CMake: Configure"
     },
     {
-      "label": "Build client",
+      "label": "Build: Lobby Server",
       "type": "shell",
-      "command": "make",
-      "args": ["client"],
-      "group": {
-        "kind": "build",
-        "isDefault": false
+      "command": "cmake --build build --target dobble_lobbyserver",
+      "options": {
+        "cwd": "${workspaceFolder}"
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": []
+      "group": "build",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": "CMake: Configure"
     },
     {
-      "label": "Build all",
+      "label": "Build: Client",
       "type": "shell",
-      "command": "make",
-      "args": ["all"],
-      "group": {
-        "kind": "build",
-        "isDefault": false
+      "command": "cmake --build build --target dobble_client",
+      "options": {
+        "cwd": "${workspaceFolder}"
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": []
+      "group": "build",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": "CMake: Configure"
     }
   ]
 }

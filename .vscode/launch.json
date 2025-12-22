@@ -1,10 +1,10 @@
 {
   "configurations": [
     {
-      "name": "Launch Dobble Server",
+      "name": "Launch Dobble: Game Server",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/dobble_server",
+      "program": "${workspaceFolder}/build/dobble_gameserver",
       "args": [
         "127.0.0.1",
         "8000"
@@ -13,10 +13,25 @@
       "cwd": "${workspaceFolder}",
       "externalConsole": false,
       "MIMode": "gdb",
-      "preLaunchTask": "Build server"
-    }, 
+      "preLaunchTask": "Build: Game Server"
+    },
     {
-      "name": "Launch Dobble Client",
+      "name": "Launch Dobble: Lobby Server",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/dobble_lobbyserver",
+      "args": [
+        "127.0.0.1",
+        "8000"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "Build: Lobby Server"
+    },
+    {
+      "name": "Launch Dobble: Client",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/dobble_client",
@@ -28,7 +43,7 @@
       "cwd": "${workspaceFolder}",
       "externalConsole": false,
       "MIMode": "gdb",
-      "preLaunchTask": "Build client"
+      "preLaunchTask": "Build: Client"
     }
   ]
 }

@@ -1,8 +1,9 @@
-#include <server/gameserver/GameClientHandler.hpp>
-#include <server/ServerUtils.hpp>
-#include <server/gameserver/ServerCommandVisitor.hpp>
 #include <server/ClientHandler.hpp>
-#include "../ClientHandler.cpp"  
+#include <server/ServerUtils.hpp>
+#include <server/gameserver/GameClientHandler.hpp>
+#include <server/gameserver/ServerCommandVisitor.hpp>
+
+#include "server/ClientHandler.cpp"
 
 extern ServerStateManager g_game_server;
 
