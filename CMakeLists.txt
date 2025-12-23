@@ -13,8 +13,18 @@ include_directories(include)
 include_directories(src)
 
 # Dependencies
-find_package(SFML 2.5 COMPONENTS window graphics network system REQUIRED)
 find_package(Threads REQUIRED)
+find_package(SFML 2.5 COMPONENTS window graphics network system QUIET)
+
+if(NOT SFML_FOUND)
+    message(STATUS "SFML not found. Attempting to install dependencies...")
+    execute_process(COMMAND ${CMAKE_SOURCE_DIR}/scripts/install_dependencies.sh
+                    RESULT_VARIABLE INSTALL_RESULT)
+    if(NOT INSTALL_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to install dependencies.")
+    endif()
+    find_package(SFML 2.5 COMPONENTS window graphics network system REQUIRED)
+endif()
 
 # Sources
 

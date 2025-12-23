@@ -1,19 +1,27 @@
 Oto kompletna dokumentacja w jednym pliku Markdown, gotowa do skopiowania (np. do pliku `README.md` lub `API.md`). Wszystkie przykłady zawierają wypełnione dane (UUID, nazwy obrazków, wyniki) zamiast pustych pól.
 
+
+
 ````markdown
 # Dobble - SK2 Documentation
 
 ## Development
 
-- `make config` - install SFML
-- `make [all]` - build and compile client & server
-- `make client` - build and compile client
-- `make server` - build and compile server
+### Prerequisites
+- `cmake -S . -B build` - create build folder
 
-## Testing
 
-- `make test1n1` - run 1 server and 1 client in one console
-- `make test1n2` - run 1 server and 2 clients in one console
+### Building
+
+> From inside project root folder
+- `cmake --build build` - build full project
+- `cmake --build build --target dobble_server` - build only server
+- `cmake --build build --target dobble_client` - build only client
+
+> From inside build folder
+- `make` - build full project
+- `make dobble_server` - build only server
+- `make dobble_client` - build only client
 
 ---
 
