@@ -8,7 +8,8 @@ Oto kompletna dokumentacja w jednym pliku Markdown, gotowa do skopiowania (np. d
 ## Development
 
 ### Prerequisites
-- `cmake -S . -B build` - create build folder
+> From inside project root folder
+- `cmake -B build` - create build folder
 
 
 ### Building

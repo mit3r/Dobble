@@ -3,28 +3,22 @@ cmake_minimum_required(VERSION 3.12)
 # Global settings
 project(Dobble)
 
+
 # Compiler
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Debug)
 add_compile_options(-Wall -Wextra -Wpedantic)
 
 # Include directories
 include_directories(include)
 include_directories(src)
+include_directories(src/client)
 
 # Dependencies
 find_package(Threads REQUIRED)
-find_package(SFML 2.5 COMPONENTS window graphics network system QUIET)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets WebEngineWidgets)
 
-if(NOT SFML_FOUND)
-    message(STATUS "SFML not found. Attempting to install dependencies...")
-    execute_process(COMMAND ${CMAKE_SOURCE_DIR}/scripts/install_dependencies.sh
-                    RESULT_VARIABLE INSTALL_RESULT)
-    if(NOT INSTALL_RESULT EQUAL 0)
-        message(FATAL_ERROR "Failed to install dependencies.")
-    endif()
-    find_package(SFML 2.5 COMPONENTS window graphics network system REQUIRED)
-endif()
 
 # Sources
 
@@ -46,10 +40,19 @@ add_executable(dobble_lobbyserver
 )
 target_link_libraries(dobble_lobbyserver Threads::Threads)
 
+# Web Client
+add_custom_target(build_web_client
+    COMMAND npm run build
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
+    COMMENT "Building Web Client"
+)
+
 # Client
-file(GLOB_RECURSE CLIENT_SOURCES "src/client/*.cpp")
-add_executable(dobble_client
+file(GLOB_RECURSE CLIENT_SOURCES "src/client/*.cpp" "src/client/*.hpp")
+qt_standard_project_setup()
+qt_add_executable(
+    dobble_client
     ${CLIENT_SOURCES}
 )
-target_include_directories(dobble_client PRIVATE "src/client")
-target_link_libraries(dobble_client sfml-window sfml-graphics sfml-network sfml-system)
+add_dependencies(dobble_client build_web_client)
+target_link_libraries(dobble_client PRIVATE Qt6::Core Qt6::Widgets Qt6::WebEngineWidgets)
