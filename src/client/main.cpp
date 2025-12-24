@@ -1,5 +1,9 @@
 #include <QApplication>
+#include <QNetworkProxy>
+#include <QNetworkProxyFactory>
+#include <QWebEngineSettings>
 #include <QWebEngineUrlScheme>
+#include <QWebEngineView>
 
 #include "MainWindow/MainWindow.hpp"
 
@@ -14,6 +18,9 @@ int main(int argc, char* argv[]) {
 
   // Disable GPU acceleration to avoid WSL/Linux rendering issues
   qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --no-sandbox --disable-software-rasterizer --disable-dev-shm-usage");
+
+  QNetworkProxyFactory::setUseSystemConfiguration(false);
+  QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
 
   QApplication app(argc, argv);
 

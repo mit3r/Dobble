@@ -1,8 +1,10 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
+#include <QHostAddress>
 #include <QMainWindow>
 #include <QMimeDatabase>
+#include <QTimer>
 #include <QWebChannel>
 #include <QWebEngineProfile>
 #include <QWebEngineSettings>
@@ -15,9 +17,6 @@
 #include "WebBridge/WebBridge.hpp"
 
 #pragma once
-
-class QWebEngineView;
-class QWebChannel;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

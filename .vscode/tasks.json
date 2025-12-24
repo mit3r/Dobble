@@ -65,6 +65,16 @@
         "$gcc"
       ],
       "dependsOn": "CMake: Configure"
+    },
+    {
+      "label": "Run Web Server",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/web"
+      },
+      "isBackground": true,
+      "problemMatcher": []
     }
   ]
 }
