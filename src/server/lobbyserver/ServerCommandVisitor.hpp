@@ -1,7 +1,9 @@
 #include <protocol/CommandFactory.hpp>
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
-
+#include "server/common/BaseServer.hpp"
+#include <algorithm>
+#include <iterator>
 #include "LobbyServerState.hpp"
 #include "server/libraries.hpp"
 #include "server/network.hpp"

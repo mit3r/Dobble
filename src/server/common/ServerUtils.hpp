@@ -17,12 +17,16 @@ struct Client {
 };
 
 struct GameServer {
+  std::string servername;
+  int max_players;
+  int players;
   int socket;
   std::string server_id;
-  std::string servername;
+  
   bool registered;
-  pid_t process_pid;
   int port;
+  int process_pid;
+  std::string ip; 
 };
 
 class ServerStateManager {

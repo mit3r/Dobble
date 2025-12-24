@@ -1,5 +1,4 @@
 #include "ServerCommandVisitor.hpp"
-
 std::string gen_random(const int len)
 {
     static const char alphanum[] =
@@ -123,18 +122,26 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd)
 void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
 {
     std::cout << "[CMD] Pobieranie listy gier..." << std::endl;
+    std::string page = cmd.data_obj->page;
+    int page_num = std::stoi(page);
+    if (page_num < 1) page_num = 1;
     ResponseGetLobbyInfoCommand response;
     response.command = "getinfolobby";
     response.lobby_server_id = "MainServer_v1";
     ResponseGetLobbyInfoCommand::data d;
-    d.page = "1";
-    GameStruct g1;
-    g1.game_id = "game_1";
-    g1.game_name = "Pokoj #1";
-    g1.players = "2";
-    g1.max_players = "4";
-    g1.status = "WAITING";
-    d.actual_games.push_back(g1);
+    d.page = page;
+    std::vector<std::shared_ptr<GameServer>> actual_games = g_uds_server->getAllGameServers();
+
+    for (int i = page_num - 1; i < page_num + 10 && i < actual_games.size(); ++i)
+    {
+        GameStruct gs;
+        gs.game_id = actual_games[i]->server_id;
+        gs.game_name = actual_games[i]->servername;
+        gs.max_players = std::to_string(actual_games[i]->max_players);
+        gs.players = std::to_string(actual_games[i]->players);
+        gs.status = actual_games[i]->registered ? "ACTIVE" : "INACTIVE";
+        d.actual_games.push_back(gs);
+    }
 
     response.data_obj = d;
 
@@ -151,7 +158,7 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     game->servername = cmd.data_obj->game_name;
     game->registered = false;
     game->socket = -1;
-    g_lobby_server.addGameServer(game);
+    g_uds_server->addGameServer(game);
 
     int dynamic_port = find_available_port();
     std::string port_arg = std::to_string(dynamic_port);
@@ -163,11 +170,9 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     {
         std::string server_id_arg = game->server_id;
         std::string port_arg_str = std::to_string(dynamic_port);
-        // execlp("pwd", "-l", (char *)NULL);
         
-        
-        execl("./game_server",
-              "game_server",
+        execl("./dobble_gameserver",
+              "dobble_gameserver",
               server_id_arg.c_str(),
               port_arg_str.c_str(),
               lobby_uds_path.c_str(),
@@ -194,7 +199,7 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
         ResponseCreateLobbyCommand::data d;
         d.message = "OK";
         d.ip = "0.0.0.0";
-        d.port = "1234";
+        d.port = std::to_string(dynamic_port);
         response.data_obj = d;
 
         json j = response;

@@ -9,8 +9,13 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <vector>
+#include <memory>
+#include <mutex>
 
 #pragma once
+
+struct GameServer;
 
 class BaseServer {
   protected:
@@ -41,6 +46,16 @@ class UdsServer : public BaseServer {
   const char* socket_path;
 
   public:
+  std::vector<std::shared_ptr<GameServer>> game_servers;
+  std::mutex game_servers_mutex;
+
   UdsServer(const char* socket_path = "/tmp/uds_socket");
   int run() override;
+  
+  void addGameServer(std::shared_ptr<GameServer> game);
+  void removeGameServer(const std::string& server_id);
+  std::shared_ptr<GameServer> getGameServer(const std::string& server_id);
+  std::vector<std::shared_ptr<GameServer>> getAllGameServers();
 };
+
+extern UdsServer* g_uds_server;

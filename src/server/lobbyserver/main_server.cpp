@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     BsdServer bsd_server(1500, "127.0.0.1");
     UdsServer uds_server("/tmp/lobby_uds_socket");
     
+    g_uds_server = &uds_server;
+    
     bsd_server.setClientHandler(client_handler);
     uds_server.setClientHandler(client_handler);
     
