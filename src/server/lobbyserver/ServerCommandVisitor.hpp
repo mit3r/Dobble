@@ -1,9 +1,11 @@
-#include <protocol/CommandFactory.hpp>
+#include <protocol/LobbyCommandFactory.hpp>
+#include <protocol/ServersCommandFactory.hpp>
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
 #include "server/common/BaseServer.hpp"
 #include <algorithm>
 #include <iterator>
+#include <variant>
 #include "LobbyServerState.hpp"
 #include "server/libraries.hpp"
 #include "server/network.hpp"
@@ -13,10 +15,12 @@
 using json = nlohmann::json;
 
 struct ServerCommandVisitor {
-    int client_sock;        
-    CommandFactory& factory;
+    int client_sock;
+    std::variant<LobbyCommandFactory, ServersCommandFactory> factory;
     
-    ServerCommandVisitor(int sock, CommandFactory& f);
+    ServerCommandVisitor(int sock, LobbyCommandFactory& f);
+    
+    ServerCommandVisitor(int sock, ServersCommandFactory& f);
 
 private:
     void sendErrorResponse(

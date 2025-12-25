@@ -225,7 +225,7 @@ class ResponseCreateLobbyCommand : public LobbyServerMessageCore {
       std::optional<data> data_obj;
 };
 
-using AnyCommand = std::variant<
+using LobbyClientCommand = std::variant<
     std::monostate,
     SenderLoginCommand, ResponseLoginCommand,
     SenderPingCommand, ResponsePingCommand,
@@ -234,6 +234,7 @@ using AnyCommand = std::variant<
     SenderLeaveRoomCommand, ResponseLeaveRoomCommand,
     SenderSendGameInfoCommand, ResponseSendGameInfoCommand,
     SenderCreateLobbyCommand, ResponseCreateLobbyCommand>;
+
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImageInfo, img_name, rotate, rotation, place, size)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, client_id, imgs, score, points, mistakes, rank)

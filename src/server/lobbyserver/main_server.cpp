@@ -14,8 +14,9 @@ int main(int argc, char *argv[])
     
     g_uds_server = &uds_server;
     
-    bsd_server.setClientHandler(client_handler);
-    uds_server.setClientHandler(client_handler);
+    bsd_server.setClientHandler(tcp_client_handler);
+    
+    uds_server.setClientHandler(uds_client_handler);
     
     std::thread bsd_thread([&bsd_server]() {
         bsd_server.run();

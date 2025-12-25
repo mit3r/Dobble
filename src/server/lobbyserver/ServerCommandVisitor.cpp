@@ -18,7 +18,7 @@ std::string gen_random(const int len)
 
 extern LobbyServerState g_lobby_server;
 
-ServerCommandVisitor::ServerCommandVisitor(int sock, CommandFactory &f)
+ServerCommandVisitor::ServerCommandVisitor(int sock, LobbyCommandFactory &f)
     : client_sock(sock), factory(f) {}
 
 void ServerCommandVisitor::sendErrorResponse(
@@ -132,6 +132,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
     d.page = page;
     std::vector<std::shared_ptr<GameServer>> actual_games = g_uds_server->getAllGameServers();
 
+    
     for (int i = page_num - 1; i < page_num + 10 && i < actual_games.size(); ++i)
     {
         GameStruct gs;
@@ -139,8 +140,9 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
         gs.game_name = actual_games[i]->servername;
         gs.max_players = std::to_string(actual_games[i]->max_players);
         gs.players = std::to_string(actual_games[i]->players);
+        gs.nicknames = {};
         gs.status = actual_games[i]->registered ? "ACTIVE" : "INACTIVE";
-        d.actual_games.push_back(gs);
+        d.actual_games.emplace_back(std::move(gs));
     }
 
     response.data_obj = d;

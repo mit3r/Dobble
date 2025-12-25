@@ -19,7 +19,7 @@ std::string gen_random(const int len)
 
 extern ServerStateManager g_game_server;
 
-ServerCommandVisitor::ServerCommandVisitor(int sock, CommandFactory &f)
+ServerCommandVisitor::ServerCommandVisitor(int sock, LobbyCommandFactory &f)
     : client_sock(sock), factory(f) {}
 
 void ServerCommandVisitor::sendErrorResponse(

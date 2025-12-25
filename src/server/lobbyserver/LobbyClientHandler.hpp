@@ -3,7 +3,10 @@
 #include "server/lobbyserver/LobbyServerState.hpp"
 #include "server/lobbyserver/ServerCommandVisitor.hpp"
 #include "server/network.hpp"
+#include "protocol/LobbyCommandFactory.hpp"
+#include "protocol/ServersCommandFactory.hpp"
 
 #pragma once
 
-void client_handler(int client_sock);
+void tcp_client_handler(int client_sock);
+void uds_client_handler(int client_sock);

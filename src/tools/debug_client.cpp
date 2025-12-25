@@ -172,7 +172,7 @@ std::optional<json> get_predefined_command(int choice) {
             return json::parse(R"({"command": "ping","client_id": "test_client_001","data": {"message": "Are you alive?"}})");
         }
         case 3: { 
-            return json::parse(R"({"command": "getinfolobby","client_id": "test_client_001","data": {"page_number": 1}})");
+            return json::parse(R"({"command": "getinfolobby","client_id": "test_client_001","data": {"page": "1"}})");
         }
         case 4: { 
             std::string game_id;

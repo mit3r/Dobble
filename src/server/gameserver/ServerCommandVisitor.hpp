@@ -1,4 +1,4 @@
-#include <protocol/CommandFactory.hpp>
+#include <protocol/LobbyCommandFactory.hpp>
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
 
@@ -12,9 +12,9 @@ using json = nlohmann::json;
 
 struct ServerCommandVisitor {
   int client_sock;
-  CommandFactory& factory;
+  LobbyCommandFactory& factory;
 
-  ServerCommandVisitor(int sock, CommandFactory& f);
+  ServerCommandVisitor(int sock, LobbyCommandFactory& f);
 
   private:
   void sendErrorResponse(

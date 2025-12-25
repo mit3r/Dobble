@@ -1,6 +1,8 @@
 
 
-#include <protocol/CommandFactory.hpp>
+#include <protocol/LobbyCommandFactory.hpp>
+#include <protocol/ServersCommandFactory.hpp>
+
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
 
@@ -10,7 +12,7 @@
 
 #pragma once
 
-class CommandFactory;
+class LobbyCommandFactory;
 
 using json = nlohmann::json;
 
@@ -22,7 +24,7 @@ void server_handle_client(int client_sock, StateManager& server_state, VisitorCr
 
   server_state.addClient(me);
   std::cout << "[SERVER] New client connected: " << client_sock << std::endl;
-  handle_communiation(client_sock, create_visitor);
+  handle_communication(client_sock, create_visitor);
   std::cout << "[SERVER] Client disconnected: " << client_sock << std::endl;
   close(client_sock);
 
@@ -32,14 +34,13 @@ void server_handle_client(int client_sock, StateManager& server_state, VisitorCr
 template <typename ClientManager, typename VisitorCreator>
 void client_handle_client(int server_sock, ClientManager& client_manager, VisitorCreator create_visitor) {
   std::cout << "[CLIENT] Connected to: " << server_sock << std::endl;
-  handle_communiation(server_sock, create_visitor);
+  handle_communication(server_sock, create_visitor);
   std::cout << "[CLIENT] Client disconnected: " << server_sock << std::endl;
   close(server_sock);
 }
 
 template <typename VisitorCreator>
-void handle_communiation(int sock, VisitorCreator create_visitor) {
-  CommandFactory command_factory;
+void handle_communication(int sock, VisitorCreator create_visitor) {
 
   while (true) {
     std::optional<json> msg_opt = receive_json_packet(sock);
@@ -51,7 +52,7 @@ void handle_communiation(int sock, VisitorCreator create_visitor) {
     json msg = msg_opt.value();
     if (msg.contains("command")) {
       std::string cmd_name = msg["command"];
-      AnyCommand command_variant = command_factory.get(cmd_name, msg);
+      auto command_variant = create_visitor.get(cmd_name, msg);
 
       auto visitor = create_visitor(sock, command_factory);
       std::visit(visitor, command_variant);
