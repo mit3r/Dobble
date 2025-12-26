@@ -1,30 +1,62 @@
-import { useStore } from "zustand";
-import { mainStore } from "../../store";
+import type { LobbyInfo } from "@/types";
+import LobbyCard from "./Components/LobbyCard";
+
+const lobbyInfo: LobbyInfo = {
+  actualGames: [
+    {
+      gameId: "1",
+      gameName: "Fun Game",
+      players: 3,
+      maxPlayers: 6,
+      status: "waiting",
+      nicknames: ["Alice", "Bob", "Charlie"],
+    },
+    {
+      gameId: "2",
+      gameName: "Serious Match",
+      players: 5,
+      maxPlayers: 5,
+      status: "in-game",
+      nicknames: ["Dave", "Eve", "Frank", "Grace", "Heidi"],
+    },
+  ],
+  nextPage: 2,
+  prevPage: null,
+  page: 1,
+};
 
 export default function StartPage() {
-  const setPage = useStore(mainStore, (state) => state.setPage);
+  // const setPage = useStore(mainStore, (state) => state.setPage);
 
   return (
-    <div>
-      <h1>Dobble</h1>
+    <div className="flex flex-col items-center gap-2">
+      <h1 className="text-4xl font-bold mb-4">Dobble</h1>
 
-      <p>
-        Welcome to Dobble, the exciting card game where players test their observation skills and
-        reflexes! The objective of the game is to be the first to spot the matching symbol between
-        two cards. Each card contains a variety of symbols, but only one symbol is common between
-        any two cards.
-      </p>
-
-      <ol>
-        <li>
-          <strong>Room 1</strong>
-
-          <span>1/4</span>
-          <span>waiting</span>
-        </li>
+      <ol className="w-full p-2 grid grid-cols-2 grid-rows-2 gap-2">
+        {lobbyInfo.actualGames.map((game) => (
+          <li key={game.gameId}>
+            <LobbyCard game={game}></LobbyCard>
+          </li>
+        ))}
       </ol>
 
-      <button onClick={() => setPage("room")}>Join Room</button>
+      <div className="flex gap-4 w-full justify-center items-center relative">
+        <button
+          disabled={lobbyInfo.prevPage === null}
+          className="p-2 border-2 disabled:opacity-50 disabled:cursor-not-allowed w-36"
+        >
+          Prev
+        </button>
+
+        <button
+          disabled={lobbyInfo.nextPage === null}
+          className="p-2 border-2 disabled:opacity-50 disabled:cursor-not-allowed w-36"
+        >
+          Next
+        </button>
+
+        <span className="absolute right-0 p-2 px-4">Page {lobbyInfo.page}</span>
+      </div>
     </div>
   );
 }
