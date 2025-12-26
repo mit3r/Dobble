@@ -13,6 +13,11 @@ void BaseClient::disconnect() {
     std::cout << "[Base] Rozłączono." << std::endl;
 }
 
+void BaseClient::setClientHandler(std::function<void(int)> handler) {
+  client_handler_func = handler;
+}
+
+
 bool BaseClient::isConnected() const {
     return connected;
 }
@@ -35,6 +40,8 @@ void UdsClient::connect() {
 
     connected = true;
     std::cout << "[UDS] Połączono z " << socket_path << std::endl;
+    client_handler_func(sock_fd);
+
 }
 
 TcpClient::TcpClient(const std::string& ip, int p) : ip_address(ip), port(p) {}

@@ -13,7 +13,7 @@ include_directories(include)
 include_directories(src)
 
 # Dependencies
-find_package(SFML 2.5 COMPONENTS window graphics network system REQUIRED)
+# find_package(SFML 3.0.2 COMPONENTS network system REQUIRED)
 find_package(Threads REQUIRED)
 
 # Sources

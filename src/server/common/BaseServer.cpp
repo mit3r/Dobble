@@ -149,7 +149,7 @@ void UdsServer::removeGameServer(const std::string& server_id) {
   std::cout << "[UDS] Usunięto game server: " << server_id << std::endl;
 }
 
-std::shared_ptr<GameServer> UdsServer::getGameServer(const std::string& server_id) {
+std::shared_ptr<GameServer> UdsServer::getGameServerById(const std::string& server_id) {
   std::lock_guard<std::mutex> lock(game_servers_mutex);
   for (auto& game : game_servers) {
     if (game->server_id == server_id) {

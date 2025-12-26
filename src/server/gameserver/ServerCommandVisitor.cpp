@@ -19,7 +19,7 @@ std::string gen_random(const int len)
 
 extern ServerStateManager g_game_server;
 
-ServerCommandVisitor::ServerCommandVisitor(int sock, LobbyCommandFactory &f)
+ServerCommandVisitor::ServerCommandVisitor(int sock, ServersCommandFactory &f)
     : client_sock(sock), factory(f) {}
 
 void ServerCommandVisitor::sendErrorResponse(
@@ -46,3 +46,5 @@ void ServerCommandVisitor::operator()(const std::monostate &)
 {
     std::cerr << "[ERROR] Nie udało się rozpoznać komendy w JSON." << std::endl;
 };
+
+

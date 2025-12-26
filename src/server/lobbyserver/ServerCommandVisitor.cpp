@@ -1,4 +1,4 @@
-#include "ServerCommandVisitor.hpp"
+    #include "ServerCommandVisitor.hpp"
 std::string gen_random(const int len)
 {
     static const char alphanum[] =
@@ -19,6 +19,9 @@ std::string gen_random(const int len)
 extern LobbyServerState g_lobby_server;
 
 ServerCommandVisitor::ServerCommandVisitor(int sock, LobbyCommandFactory &f)
+    : client_sock(sock), factory(f) {}
+
+ServerCommandVisitor::ServerCommandVisitor(int sock, ServersCommandFactory &f)
     : client_sock(sock), factory(f) {}
 
 void ServerCommandVisitor::sendErrorResponse(
@@ -216,6 +219,65 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
             "Nie można utworzyć game servera");
     }
 }
+
+void ServerCommandVisitor::operator()(const SenderRegisterGameServerCommand &cmd)
+{
+    std::cout << "[CMD] Game server rejestruje się: ";
+    if (cmd.data_obj) {
+        std::cout << "IP: " << cmd.data_obj->ip 
+                  << ", Port: " << cmd.data_obj->port
+                  << ", Game: " << cmd.data_obj->game_name
+                  << ", Game_id: " << cmd.game_id.value_or("brak") << std::endl;
+    }
+
+
+    if (cmd.game_id.has_value()) {
+        std::string game_id = cmd.game_id.value();
+        auto game = g_uds_server->getGameServerById(game_id);
+        
+        if (game && cmd.data_obj) {
+            game->registered = true;
+            game->socket = client_sock;
+            game->ip = cmd.data_obj->ip;
+            game->port = std::stoi(cmd.data_obj->port);
+            game->max_players = std::stoi(cmd.data_obj->max_players);
+            
+            std::cout << "[UDS] Game server zarejestrowany pomyślnie: " << game_id << std::endl;
+            
+            ResponseRegisterGameServerCommand response;
+            response.command = "register_game_server";
+            response.lobby_server_id = "MainServer_v1";
+            response.game_id = game_id;
+            
+            ResponseRegisterGameServerCommand::data d;
+            d.message = "Registration successful";
+            response.data_obj = d;
+            
+            json j = response;
+            send_json_packet(client_sock, j);
+        } else {
+            std::cerr << "[ERROR] Nie znaleziono game servera o ID: " 
+                      << (cmd.game_id.value_or("brak")) << std::endl;
+            
+            sendErrorResponse(
+                "register_game_server",
+                "404",
+                "Game server not found");
+        }
+    } else {
+        std::cerr << "[ERROR] Brak game_id w komendzie rejestracji" << std::endl;
+    }
+}
+
+
+void ServerCommandVisitor::operator()(const ResponseRegisterGameServerCommand &cmd)
+{
+    std::cout << "[CMD] Otrzymano odpowiedź rejestracji game servera: "
+              << (cmd.data_obj ? cmd.data_obj->message : "brak") << std::endl;
+
+    // Tutaj można dodać logikę obsługi odpowiedzi rejestracji
+}
+
 
 void ServerCommandVisitor::operator()(const std::monostate &)
 {

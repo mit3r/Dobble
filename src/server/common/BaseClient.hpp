@@ -8,6 +8,7 @@
 #include <sys/un.h>     
 #include <arpa/inet.h>
 #include <functional>
+#include <thread>
 #pragma once
 class BaseClient {
 protected:
@@ -22,6 +23,7 @@ public:
     virtual void connect() = 0;
     void disconnect();
     bool isConnected() const;
+    void setClientHandler(std::function<void(int)> handler);
 };
 
 class UdsClient : public BaseClient {

@@ -35,6 +35,13 @@ class ServerStateManager {
   std::mutex clients_mutex;
 
   public:
+  std::string server_id;
+  int port;
+  std::string ip;
+  std::string max_players;
+  std::string name;
+
+
   ServerStateManager();
   virtual ~ServerStateManager();
   virtual void addClient(std::shared_ptr<Client> client);

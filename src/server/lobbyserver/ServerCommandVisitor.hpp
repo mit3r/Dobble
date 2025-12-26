@@ -34,6 +34,9 @@ public:
     void operator()(const SenderJoinGameCommand& cmd);
     void operator()(const SenderGetLobbyInfoCommand& cmd);
     void operator()(const SenderCreateLobbyCommand& cmd);
+    void operator()(const SenderRegisterGameServerCommand& cmd);
+    void operator()(const ResponseRegisterGameServerCommand& cmd);
+    
     void operator()(const std::monostate&);
     
     template <typename T>
@@ -44,6 +47,8 @@ template <typename T>
 void ServerCommandVisitor::operator()(const T& cmd) {
     if constexpr (std::is_base_of_v<LobbyServerMessageCore, T>) {
          std::cout << "[INFO] Otrzymano inna komende: " << cmd.command << std::endl;
+    } else if constexpr (std::is_base_of_v<GameServerMessageCore, T>) {
+            std::cout << "[INFO] Otrzymano inna komende: " << cmd.command << std::endl;
     } else {
          std::cout << "[INFO] Otrzymano nieznany typ wariantu." << std::endl;
     }

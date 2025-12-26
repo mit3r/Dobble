@@ -11,7 +11,7 @@ class ServersCommandFactory {
   using CreatorFunc = std::function<GameServerCommand(const json&)>;
   std::map<std::string, CreatorFunc> dictionary;
 
-  bool isResponse(const json& j) {  // is_server determine its a response command
+  bool isResponse(const json& j) {  
     return j.contains("lobby_server_id") && !j["lobby_server_id"].is_null();
   }
 
@@ -19,9 +19,11 @@ class ServersCommandFactory {
   ServersCommandFactory() {
     dictionary["register_game_server"] = [this](const json& j) -> GameServerCommand {
       if (isResponse(j))
-        return j.get<ResponseRegisterGameServerCommand>();
-      else
         return j.get<SenderRegisterGameServerCommand>();
+
+      else
+        return j.get<ResponseRegisterGameServerCommand>();
+
     };
 
     dictionary["end_game"] = [this](const json& j) -> GameServerCommand {
@@ -32,9 +34,9 @@ class ServersCommandFactory {
     };
     dictionary["ping"] = [this](const json& j) -> GameServerCommand {
       if (isResponse(j))
-        return j.get<ResponsePingCommand>();
+        return j.get<ResponseServersPingCommand>();
       else
-        return j.get<SenderPingCommand>();
+        return j.get<SenderServersPingCommand>();
     };
   }
 
