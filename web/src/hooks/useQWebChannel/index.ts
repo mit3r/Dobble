@@ -153,9 +153,9 @@ export default function useQWebChannel() {
         window.qt.webChannelTransport,
         (channel: QWebChannelInstance<QtChannelObjects>) => {
           // Pobierz obiekt backend z C++
-          const backend = channel.objects.webBridge as QtWebBridge;
+          const bridge = channel.objects.webBridge;
 
-          if (!backend) {
+          if (!bridge) {
             console.error("[QWebChannel] Backend object not found in channel.objects");
             return;
           }
@@ -164,14 +164,14 @@ export default function useQWebChannel() {
 
           // Podłącz się do sygnału zmiany strony
           // C++: void pageChanged(const QString &page);
-          backend.pageChanged.connect((page: Page) => {
+          bridge.pageChanged.connect((page: Page) => {
             console.log(`[QWebChannel] Page changed to: ${page}`);
             mainStore.getState().setPage(page);
           });
 
           // Podłącz się do sygnału ustawienia informacji o lobby
           // C++: void lobbyInfoChanged(const QString &lobbyName, const QVariantList &players, const QString &state);
-          backend.lobbyInfoChanged.connect(
+          bridge.lobbyInfoChanged.connect(
             (lobbyName: string, players: QtPlayer[], state: string) => {
               console.log("[QWebChannel] Lobby info changed:", { lobbyName, players, state });
 
@@ -187,15 +187,15 @@ export default function useQWebChannel() {
 
           // Podłącz się do sygnału wyczyszczenia lobby
           // C++: void lobbyCleared();
-          backend.lobbyCleared.connect(() => {
+          bridge.lobbyCleared.connect(() => {
             console.log("[QWebChannel] Lobby cleared");
             mainStore.getState().clearLobbyInfo();
           });
 
           // Opcjonalnie: sygnał do aktualizacji tylko graczy
           // C++: void playersChanged(const QVariantList &players);
-          if (backend.playersChanged) {
-            backend.playersChanged.connect((players: QtPlayer[]) => {
+          if (bridge.playersChanged) {
+            bridge.playersChanged.connect((players: QtPlayer[]) => {
               console.log("[QWebChannel] Players changed:", players);
               const current = mainStore.getState().lobbyInfo;
               if (current) {
@@ -209,8 +209,8 @@ export default function useQWebChannel() {
 
           // Opcjonalnie: sygnał do aktualizacji stanu lobby
           // C++: void lobbyStateChanged(const QString &state);
-          if (backend.lobbyStateChanged) {
-            backend.lobbyStateChanged.connect((state: string) => {
+          if (bridge.lobbyStateChanged) {
+            bridge.lobbyStateChanged.connect((state: string) => {
               console.log("[QWebChannel] Lobby state changed:", state);
               const current = mainStore.getState().lobbyInfo;
               if (current) {
@@ -223,7 +223,7 @@ export default function useQWebChannel() {
           }
 
           // Udostępnij backend globalnie (opcjonalnie, do wywoływania metod z JS)
-          window.webBridge = backend;
+          window.webBridge = bridge;
 
           console.log("[QWebChannel] All signal handlers connected");
         }
