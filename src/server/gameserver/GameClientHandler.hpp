@@ -3,7 +3,8 @@
 #include "server/gameserver/ServerCommandVisitor.hpp"
 #include "server/libraries.hpp"
 #include "server/network.hpp"
-
+#include "server/gameserver/ServerRegistration.hpp"
 #pragma once
 
-void client_handler(int client_sock);
+// void client_handler(int client_sock);
+void uds_client_handler(int client_sock);

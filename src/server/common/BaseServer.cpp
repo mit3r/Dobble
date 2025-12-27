@@ -1,4 +1,7 @@
 #include "BaseServer.hpp"
+#include "ServerUtils.hpp"
+
+UdsServer* g_uds_server = nullptr;
 
 BaseServer::BaseServer() : server_fd(-1) {}
 
@@ -104,6 +107,18 @@ int UdsServer::run() {
 
     std::cout << "[UDS] Nowe połączenie lokalne!" << std::endl;
 
+    // auto game = std::make_shared<GameServer>();
+    // game->servername = ""; 
+    // game->socket = client_sock;
+    // game->server_id = "";  
+    // game->registered = false;
+    // game->port = 0;  
+    // game->ip = "";  
+    // game->process_pid = getpid();
+    // game->max_players = 4;
+    // game->players = 0;
+    // addGameServer(game);
+
     if (client_handler_func) {
       std::thread t(client_handler_func, client_sock);
       t.detach();
@@ -116,4 +131,35 @@ int UdsServer::run() {
   close(server_fd);
   unlink(socket_path);
   return 0;
+}
+
+void UdsServer::addGameServer(std::shared_ptr<GameServer> game) {
+  std::lock_guard<std::mutex> lock(game_servers_mutex);
+  game_servers.push_back(game);
+  std::cout << "[UDS] Dodano game server do listy (socket: " << game->socket << ")" << std::endl;
+}
+
+void UdsServer::removeGameServer(const std::string& server_id) {
+  std::lock_guard<std::mutex> lock(game_servers_mutex);
+  auto it = std::remove_if(game_servers.begin(), game_servers.end(),
+    [&server_id](const std::shared_ptr<GameServer>& g) {
+      return g->server_id == server_id;
+    });
+  game_servers.erase(it, game_servers.end());
+  std::cout << "[UDS] Usunięto game server: " << server_id << std::endl;
+}
+
+std::shared_ptr<GameServer> UdsServer::getGameServerById(const std::string& server_id) {
+  std::lock_guard<std::mutex> lock(game_servers_mutex);
+  for (auto& game : game_servers) {
+    if (game->server_id == server_id) {
+      return game;
+    }
+  }
+  return nullptr;
+}
+
+std::vector<std::shared_ptr<GameServer>> UdsServer::getAllGameServers() {
+  std::lock_guard<std::mutex> lock(game_servers_mutex);
+  return game_servers;
 }

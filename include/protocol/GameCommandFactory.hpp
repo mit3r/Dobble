@@ -6,7 +6,7 @@
 
 #pragma once
 
-class CommandFactory {
+class LobbyCommandFactory {
   private:
   using CreatorFunc = std::function<AnyCommand(const json&)>;
   std::map<std::string, CreatorFunc> dictionary;
@@ -16,7 +16,7 @@ class CommandFactory {
   }
 
   public:
-  CommandFactory() {
+  LobbyCommandFactory() {
     dictionary["login"] = [this](const json& j) -> AnyCommand {
       if (isResponse(j))
         return j.get<ResponseLoginCommand>();

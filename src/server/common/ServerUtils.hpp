@@ -17,12 +17,16 @@ struct Client {
 };
 
 struct GameServer {
+  std::string servername;
+  int max_players;
+  int players;
   int socket;
   std::string server_id;
-  std::string servername;
+  
   bool registered;
-  pid_t process_pid;
   int port;
+  int process_pid;
+  std::string ip; 
 };
 
 class ServerStateManager {
@@ -31,6 +35,13 @@ class ServerStateManager {
   std::mutex clients_mutex;
 
   public:
+  std::string server_id;
+  int port;
+  std::string ip;
+  std::string max_players;
+  std::string name;
+
+
   ServerStateManager();
   virtual ~ServerStateManager();
   virtual void addClient(std::shared_ptr<Client> client);

@@ -1,12 +1,12 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
 #include <cstring>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
 #pragma once
+using json = nlohmann::json;
 
 const char PREAMBLE[] = {(char)0xCA, (char)0xFE, (char)0xBE, (char)0xBE};
 

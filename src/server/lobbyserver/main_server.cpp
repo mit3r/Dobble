@@ -12,8 +12,11 @@ int main(int argc, char *argv[])
     BsdServer bsd_server(1500, "127.0.0.1");
     UdsServer uds_server("/tmp/lobby_uds_socket");
     
-    bsd_server.setClientHandler(client_handler);
-    uds_server.setClientHandler(client_handler);
+    g_uds_server = &uds_server;
+    
+    bsd_server.setClientHandler(tcp_client_handler);
+    
+    uds_server.setClientHandler(uds_client_handler);
     
     std::thread bsd_thread([&bsd_server]() {
         bsd_server.run();

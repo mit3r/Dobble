@@ -12,12 +12,6 @@ class LobbyServerState : public ServerStateManager {
 
   public:
   LobbyServerState();
-
-  void addGameServer(std::shared_ptr<GameServer> server);
-  void removeGameServer(std::shared_ptr<GameServer> server);
-  std::shared_ptr<GameServer> findGameServerById(const std::string& server_id);
-  size_t getGameServerCount() const;
-
   void setUDSPath(const std::string& path);
   std::string getUDSPath() const;
 };
