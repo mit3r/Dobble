@@ -49,7 +49,7 @@ target_link_libraries(dobble_lobbyserver Threads::Threads)
 # Web Client
 add_custom_target(build_web_client
     COMMAND npm run build
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/ui
     COMMENT "Building Web Client"
 )
 

@@ -13,11 +13,22 @@
 #include <QWebEngineView>
 #include <iostream>
 
-#include "LocalsSchemeHandler.hpp"
-#include "WebBridge/WebBridge.hpp"
+#include "Bridges/BrowserBridge.hpp"
+#include "Bridges/EndBridge.hpp"
+#include "Bridges/GameBridge.hpp"
+#include "Bridges/LobbyBridge.hpp"
+#include "Bridges/MainBridge.hpp"
+#include "Bridges/StartBridge.hpp"
+#include "Controllers/GameServerController.hpp"
+#include "Controllers/LobbyServerController.hpp"
+#include "UIWidget/UIWidget.hpp"
 
 #pragma once
 
+/**
+ * @brief Main application window containing the web view and managing communication
+ *        between the UI and the backend controllers via bridges.
+ */
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -26,7 +37,9 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
 
   private:
-  QWebEngineView* webView;
-  QWebChannel* webChannel;
-  WebBridge* webBridge;
+      UIWidget* ui;  // Manages the web view and UI bridges
+
+      // Controllers - Network communication
+      GameServerController* gameServerController;    // Communicates with game server
+      LobbyServerController* lobbyServerController;  // Communicates with lobby server
 };

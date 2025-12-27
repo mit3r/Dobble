@@ -19,6 +19,9 @@ int main(int argc, char* argv[]) {
   // Disable GPU acceleration to avoid WSL/Linux rendering issues
   qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --no-sandbox --disable-software-rasterizer --disable-dev-shm-usage");
 
+  // Enable debug logging for QWebEngine
+  qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9222");
+
   QNetworkProxyFactory::setUseSystemConfiguration(false);
   QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
 
