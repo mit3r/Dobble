@@ -22,8 +22,6 @@
 #include "Bridges/LobbyBridge.hpp"
 #include "Bridges/MainBridge.hpp"
 #include "Bridges/StartBridge.hpp"
-#include "Controllers/GameServerController.hpp"
-#include "Controllers/LobbyServerController.hpp"
 #include "LocalsSchemeHandler.hpp"
 
 #pragma once

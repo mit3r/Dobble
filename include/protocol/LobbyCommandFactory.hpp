@@ -73,4 +73,14 @@ class LobbyCommandFactory {
     }
     return std::monostate{};
   }
+
+  // KISS version
+  LobbyClientCommand get(const json& j) {
+    if (!j.contains("command")) return std::monostate{};
+
+    std::string commandName = j["command"];
+    if (!dictionary.count(commandName)) return std::monostate{};
+
+    return dictionary[commandName](j);
+  }
 };

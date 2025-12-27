@@ -19,8 +19,8 @@
 #include "Bridges/LobbyBridge.hpp"
 #include "Bridges/MainBridge.hpp"
 #include "Bridges/StartBridge.hpp"
-#include "Controllers/GameServerController.hpp"
-#include "Controllers/LobbyServerController.hpp"
+#include "Controllers/GameServer/GameServerController.hpp"
+#include "Controllers/LobbyServer/LobbyServerController.hpp"
 #include "UIWidget/UIWidget.hpp"
 
 #pragma once
