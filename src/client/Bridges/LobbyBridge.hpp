@@ -13,16 +13,28 @@ class LobbyBridge : public QObject {
   public:
   explicit LobbyBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  signals:  // signals emitted to ui
-  void setLobbyName(
-      const QString& lobbyName);
-  void setPlayerList(
-      const QStringList& playerList);
-  void setLobbyStatus(
-      const GameStatus& status);
+  // App -> Bridge (slots), "has"
+  public slots:
+  void hasLobbyNameChanged(const QString& lobbyName);
+  void hasPlayerListChanged(const QStringList& playerList);
+  void hasLobbyStatusChanged(const GameStatus& status);
+  void hasSetReadyState(bool isReady);
+  void hasQuitLobby();
 
-  public slots:  // slots callable from ui
-  void setReadyState(
-      bool isReady);
-  void quitLobby();
+  // App <- Bridge (signals), "request"
+  signals:
+  void requestSetReadyState(bool isReady);
+
+  // Bridge -> UI (js listeners), "on"
+  signals:
+  void onLobbyNameChanged(const QString& lobbyName);
+  void onPlayerListChanged(const QStringList& playerList);
+  void onLobbyStatusChanged(const GameStatus& status);
+  void onReadyStateChanged(bool isReady);
+  void onLobbyQuit();
+
+  // Bridge <- UI (js methods), "call"
+  private slots:
+  void callSetReadyState(bool isReady);
+  void callQuitLobby();
 };

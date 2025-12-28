@@ -10,11 +10,23 @@ class EndBridge : public QObject {
   public:
   explicit EndBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  signals:  // Signals emmitted to ui
-  void setScoreboard(
+  // App -> Bridge (slots), "has"
+  public slots:
+  void hasScoreboardChanged(
       const QList<QString>& names,
       const QList<int>& scores);
 
-  public slots:  // Slots called from ui
-  void returnToBrowse();
+  // App <- Bridge (signals), "request"
+  signals:
+  void requestReturnToBrowse();
+
+  // Bridge -> UI (js listeners), "on"
+  signals:
+  void onScoreboardChanged(
+      const QList<QString>& names,
+      const QList<int>& scores);
+
+  // Bridge <- UI (js methods), "call"
+  private slots:
+  void callReturnToBrowse();
 };

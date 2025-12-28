@@ -9,10 +9,19 @@ class StartBridge : public QObject {
   public:
   explicit StartBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  signals:  // signals emitted to ui
-  void showErrorMessage(
-      const QString& message);
+  // App -> Bridge (slots), "has"
+  public slots:
+  void hasNicknameVerified();
 
-  public slots:  // slots callable from ui
-  void requestNickname(const QString& nickname);
+  // App <- Bridge (signals), "request"
+  signals:
+  void requestVerifyNickname(const QString& nickname);
+
+  // Bridge -> UI (js listeners), "on"
+  signals:
+  void onNicknameVerified();
+
+  // Bridge <- UI (js methods), "call"
+  public slots:
+  void callVerifyNickname(const QString& nickname);
 };

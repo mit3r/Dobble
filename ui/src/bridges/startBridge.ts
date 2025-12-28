@@ -2,8 +2,8 @@ import type { QtSignal } from "@/types/channel";
 
 export interface StartBridge {
   // signals
-  setNickname: QtSignal<(nickname: string) => void>;
+  onNicknameVerified: QtSignal<() => void>;
 
   // slots
-  requestNickname: (nickname: string) => void;
+  callVerifyNickname: (nickname: string) => void;
 }

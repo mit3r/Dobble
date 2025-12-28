@@ -39,25 +39,25 @@ class BrowserBridge : public QObject {
   public:
   explicit BrowserBridge(QObject* parent = nullptr) : QObject(parent) {}
 
+  // App -> Bridge (slots), "has"
+  public slots:
+  void hasPageChanged(const int& pageNumber, const QList<GameInfo>& gamesList);
+  void hasErrorOccurred(const QString& message);
+
+  // App <- Bridge (signals), "request"
   signals:
-  // signals emitted to ui
-  void setPage(
-      const int& pageNumber,
-      const QList<GameInfo>& gamesList);
+      void requestNavigateToPage(const double& page);
+      void requestJoinGame(const QString& gameId);
+      void requestObserveGame(const QString& gameId);
 
-  void showErrorMessage(
-      const QString& message);
+      // Bridge -> UI (js listeners), "on"
+  signals:
+      void onPageChanged(const int& pageNumber, const QList<GameInfo>& gamesList);
+      void onErrorOccurred(const QString& message);
 
-  // signals emitted from ui
-  void requestNavigateToPage(
-      const double& page);
-  void requestJoinGame(
-      const QString& gameId);
-  void requestObserveGame(
-      const QString& gameId);
-
-  public slots:  // slots callable from ui
-  void navigateToPage(const double& page);
-  void joinGame(const QString& gameId);
-  void observeGame(const QString& gameId);
+      // Bridge <- UI (js methods), "call"
+  private slots:
+      void callNavigateToPage(const double& page);
+      void callJoinGame(const QString& gameId);
+      void callObserveGame(const QString& gameId);
 };

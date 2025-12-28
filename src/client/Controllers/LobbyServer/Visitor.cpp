@@ -1,5 +1,10 @@
 #include "LobbyServerController.hpp"
 
+template <typename T>
+inline void LobbyServerController::operator()(const T& cmd) {
+  Q_UNUSED(cmd);
+}
+
 void LobbyServerController::operator()(const std::monostate&) {
 }
 

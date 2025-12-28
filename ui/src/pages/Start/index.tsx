@@ -21,7 +21,7 @@ export default function StartPage() {
 
       <button
         className="mt-4 p-2 border-2"
-        onClick={() => window.bridges?.start.requestNickname(value)}
+        onClick={() => window.bridges?.start.callVerifyNickname(value)}
       >
         Login
       </button>

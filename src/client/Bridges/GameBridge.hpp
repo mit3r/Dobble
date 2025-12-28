@@ -10,30 +10,31 @@ class GameBridge : public QObject {
   public:
   explicit GameBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  signals:  // signals emitted to ui
+  // App -> Bridge (slots), "has"
+  public slots:
+  void hasPlayerStatusChanged(const QString& nickname, const QString& status);
+  void hasPlayerScoreChanged(const QString& nickname, const int& score);
+  void hasTopCardChanged(const int& cardId);
+  void hasPlayerCardChanged(const QString& nickname, const int& cardId);
+  void hasLastsCardsChanged(const int& count);
+  void hasQuitGame();
 
-  void setPlayerStatus(
-      const QString& nickname,
-      const QString& status);
+  // App <- Bridge (signals), "request"
+  signals:
+  void requestMatch(const int& pick1, const int& pick2);
+  void requestQuitGame();
 
-  void setPlayerScore(
-      const QString& nickname,
-      const int& score);
+  // Bridge -> UI (js listeners), "on"
+  signals:
+  void onPlayerStatusChanged(const QString& nickname, const QString& status);
+  void onPlayerScoreChanged(const QString& nickname, const int& score);
+  void onTopCardChanged(const int& cardId);
+  void onPlayerCardChanged(const QString& nickname, const int& cardId);
+  void onLastsCardsChanged(const int& count);
+  void onGameQuit();
 
-  void setTopCard(
-      const int& cardId);
-
-  void setPlayerCard(
-      const QString& nickname,
-      const int& cardId);
-
-  void setLastsCards(
-      const int& count);
-
-  public slots:  // slots callable from ui
-  void match(
-      const int& pick1,
-      const int& pick2);
-
-  void quitGame();
+  // Bridge <- UI (js methods), "call"
+  private slots:
+  void callMatch(const int& pick1, const int& pick2);
+  void callQuitGame();
 };

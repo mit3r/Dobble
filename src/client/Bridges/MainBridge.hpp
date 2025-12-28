@@ -9,10 +9,19 @@ class MainBridge : public QObject {
   public:
   explicit MainBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  signals:  // Signals emmitted to ui
-  void setPage(const QString& page);
-  void setError(const QString& message);
+  // App -> Bridge (slots), "has"
+  public slots:
+  void hasPageChanged(const QString& page);
 
-  public slots:  // Slots called from ui
-  void close();
+  // App <- Bridge (signals), "request"
+  signals:
+  void requestCloseApp();
+
+  // Bridge -> UI (js listeners), "on"
+  signals:
+  void onPageChanged(const QString& page);
+
+  // Bridge <- UI (js methods), "call"
+  private slots:
+  void callCloseApp();
 };

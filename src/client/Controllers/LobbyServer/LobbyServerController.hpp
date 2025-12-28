@@ -17,6 +17,9 @@ class LobbyServerController : public QObject {
   explicit LobbyServerController(QObject* parent = nullptr);
 
   // Visitor operators for handling commands from variant
+  template <typename T>
+  void operator()(const T& cmd);
+
   void operator()(const std::monostate&);
   void operator()(const ResponseLoginCommand& cmd);
   void operator()(const ResponsePingCommand& cmd);
@@ -54,15 +57,15 @@ class LobbyServerController : public QObject {
 
   public slots:  // Slots: ui -> controller
 
-  void wantNicknameVerification(bool isAvailable);
+      void wantNicknameVerification(const QString& nickname);
 
-  void wantCreateGame(const QString& gameId);
+      void wantCreateGame(const QString& gameName);
 
-  void wantJoinGame(bool success, const QString& reason);
+      void wantJoinGame(const QString& gameId);
 
-  void wantObserveGame(bool success, const QString& reason);
+      void wantObserveGame(const QString& gameId);
 
-  void wantDisconnect();
+      void wantDisconnect();
 
   private:
   QTcpSocket* socket;

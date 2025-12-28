@@ -1,25 +1,30 @@
 #include "LobbyServerController.hpp"
 
-void LobbyServerController::wantNicknameVerification(bool isAvailable) {
-  // TODO: Implement nickname verification logic
-  Q_UNUSED(isAvailable);
+void LobbyServerController::wantNicknameVerification(const QString& nickname) {
+  qDebug() << "LobbyController: Requesting nickname verification for:" << nickname;
+  SenderLoginCommand cmd;
+  cmd.command = "login";
+
+  cmd.data_obj = SenderLoginCommand::data();
+  cmd.data_obj->nickname = nickname.toStdString();
+
+  json j = cmd;
+  send_json_packet(socket->socketDescriptor(), j);
 }
 
-void LobbyServerController::wantCreateGame(const QString& gameId) {
+void LobbyServerController::wantCreateGame(const QString& gameName) {
   // TODO: Implement game created logic
+  Q_UNUSED(gameName);
+}
+
+void LobbyServerController::wantJoinGame(const QString& gameId) {
+  // TODO: Implement game joined logic
   Q_UNUSED(gameId);
 }
 
-void LobbyServerController::wantJoinGame(bool success, const QString& reason) {
-  // TODO: Implement game joined logic
-  Q_UNUSED(success);
-  Q_UNUSED(reason);
-}
-
-void LobbyServerController::wantObserveGame(bool success, const QString& reason) {
+void LobbyServerController::wantObserveGame(const QString& gameId) {
   // TODO: Implement game observed logic
-  Q_UNUSED(success);
-  Q_UNUSED(reason);
+  Q_UNUSED(gameId);
 }
 
 void LobbyServerController::wantDisconnect() {

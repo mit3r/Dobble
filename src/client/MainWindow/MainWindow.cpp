@@ -13,10 +13,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Example: Connect lobby bridge signal to lobby server controller slot
 
-  // TODO: Add wantNicknameVerification slot to LobbyServerController class
-  // connect(
-  //     ui->startBridge, &StartBridge::requestNickname,
-  //     lobbyServerController, &LobbyServerController::wantNicknameVerification);
+  connect(
+      ui->startBridge,
+      &StartBridge::requestVerifyNickname,
+      lobbyServerController,
+      &LobbyServerController::wantNicknameVerification);
 }
 
 MainWindow::~MainWindow() {
