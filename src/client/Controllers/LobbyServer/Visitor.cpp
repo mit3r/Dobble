@@ -10,9 +10,12 @@ void LobbyServerController::operator()(const std::monostate&) {
 
 // Response commands (from server to client)
 void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
-  if (cmd.error.has_value()) return emit hasErrorOccurred(QString::fromStdString(cmd.error->message));
-
-  emit hasVerifiedNickname();
+  if (cmd.error.has_value()) {
+    currentNickname.reset();
+    emit hasLoginFailed(QString::fromStdString(cmd.error->message));
+  } else {
+    emit hasLoginSucceeded(currentNickname.value());
+  }
 }
 
 void LobbyServerController::operator()(const ResponsePingCommand& cmd) {

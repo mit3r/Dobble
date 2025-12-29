@@ -46,6 +46,12 @@ add_executable(dobble_lobbyserver
 )
 target_link_libraries(dobble_lobbyserver Threads::Threads)
 
+# Debug Client (Testing Tool)
+add_executable(debug_client
+    src/tools/debug_client.cpp
+)
+target_link_libraries(debug_client Threads::Threads)
+
 # Web Client
 add_custom_target(build_web_client
     COMMAND npm run build

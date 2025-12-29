@@ -11,13 +11,14 @@ MainWindow::MainWindow(QWidget* parent)
   gameServerController = new GameServerController(this);
   lobbyServerController = new LobbyServerController(this);
 
-  // Example: Connect lobby bridge signal to lobby server controller slot
+  // Login verification flow
+  connect(
+      ui->startBridge, &StartBridge::requestVerifyNickname,
+      lobbyServerController, &LobbyServerController::wantNicknameVerification);
 
   connect(
-      ui->startBridge,
-      &StartBridge::requestVerifyNickname,
-      lobbyServerController,
-      &LobbyServerController::wantNicknameVerification);
+      lobbyServerController, &LobbyServerController::hasLoginSucceeded,
+      ui->startBridge, &StartBridge::hasLoginSucceeded);
 }
 
 MainWindow::~MainWindow() {

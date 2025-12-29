@@ -2,6 +2,8 @@
 
 void LobbyServerController::wantNicknameVerification(const QString& nickname) {
   qDebug() << "LobbyController: Requesting nickname verification for:" << nickname;
+  currentNickname = nickname;  // Store nickname for later use
+
   SenderLoginCommand cmd;
   cmd.command = "login";
 

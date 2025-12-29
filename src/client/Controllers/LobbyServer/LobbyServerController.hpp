@@ -39,17 +39,18 @@ class LobbyServerController : public QObject {
 
   signals:  // Signals: controller -> ui
 
-  void hasVerifiedNickname();
+      void hasLoginSucceeded(const QString& nickname);
+      void hasLoginFailed(const QString& error);
 
-  void hasCreatedGame(const QString& playerName);
+      void hasCreatedGame(const QString& playerName);
 
-  void hasJoinedGame(const QString& gameId);
+      void hasJoinedGame(const QString& gameId);
 
-  void hasObservedGame(const QString& gameId);
+      void hasObservedGame(const QString& gameId);
 
-  void hasDisconnected();
+      void hasDisconnected();
 
-  void hasErrorOccurred(const QString& errorMessage);
+      void hasErrorOccurred(const QString& errorMessage);
 
   private slots:  // Slots for ui events: ui -> server
 
@@ -70,4 +71,5 @@ class LobbyServerController : public QObject {
   private:
   QTcpSocket* socket;
   LobbyCommandFactory commandFactory;
+  std::optional<QString> currentNickname;
 };
