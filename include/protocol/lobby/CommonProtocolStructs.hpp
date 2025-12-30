@@ -28,50 +28,26 @@ struct adl_serializer<std::optional<T>> {
 }
 #endif
 
-struct ImageInfo {
-  std::string img_name;
-  std::optional<std::string> rotate;
-  std::optional<std::string> rotation;
-  std::optional<std::string> place;
-  std::optional<std::string> size;
-};
-
 struct PlayerGameInfo {
-  std::string client_id;
-  std::optional<std::list<ImageInfo>> imgs;
-  std::optional<int> score;
-  std::optional<int> points;
-  std::optional<int> mistakes;
-  std::optional<int> rank;
+  std::string nickname;
+  int cardId;
+  int score;
+  int points;
+  int mistakes;
+  int rank;
 };
 
-struct ScoreEntry {
-  std::string client_id;
-  std::string score;
-};
-
-struct PastTurn {
-  std::string turn_id;
-  std::optional<std::string> winner;
-  std::optional<std::string> winner_id;
-  std::optional<std::string> active;
-};
-
+// State in that moment, when game started
 struct TurnStruct {
   std::string turn_id;
-  std::optional<bool> active;
-  std::optional<std::list<PlayerGameInfo>> clients_data;
-  std::optional<std::list<ImageInfo>> images_on_table;
-  std::optional<std::list<ScoreEntry>> scoreboard;
-  std::optional<std::list<PastTurn>> past_turns;
-  std::optional<std::string> winner_id;
-  std::optional<std::list<PlayerGameInfo>> clients_id_data;
-  std::optional<std::list<std::string>> actual_imgs;
-  std::optional<std::list<PlayerGameInfo>> players_imgs;
+  std::list<PlayerGameInfo> clients_data;
+  int topCardId;
+  int cardsLeft;  // 0 - 57
+
+  std::string status;  // 3  states
 };
 
-
-
+// State in lobby when game didnt start yet
 struct GameStruct {
   std::string game_name;
   std::string players;
