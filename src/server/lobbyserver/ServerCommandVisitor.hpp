@@ -31,7 +31,6 @@ private:
 public:
     void operator()(const SenderLoginCommand& cmd);
     void operator()(const SenderPingCommand& cmd);
-    void operator()(const SenderJoinGameCommand& cmd);
     void operator()(const SenderGetLobbyInfoCommand& cmd);
     void operator()(const SenderCreateLobbyCommand& cmd);
     void operator()(const SenderRegisterGameServerCommand& cmd);

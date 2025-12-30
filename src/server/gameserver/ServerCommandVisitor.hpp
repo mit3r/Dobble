@@ -1,4 +1,5 @@
 #include <protocol/LobbyCommandFactory.hpp>
+#include <protocol/GameCommandFactory.hpp>
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
 #include <protocol/ServersCommandFactory.hpp>
@@ -12,9 +13,10 @@ using json = nlohmann::json;
 
 struct ServerCommandVisitor {
   int client_sock;
-  ServersCommandFactory& factory;
-
+  std::variant<GameCommandFactory, ServersCommandFactory> factory;
   ServerCommandVisitor(int sock, ServersCommandFactory& f);
+  ServerCommandVisitor(int sock, GameCommandFactory& f);
+
 
   private:
   void sendErrorResponse(
@@ -24,6 +26,14 @@ struct ServerCommandVisitor {
 
   public:
   void operator()(const std::monostate&);
+  void operator()(const SenderJoinGameCommand& cmd);
+  void operator()(const ResponseGameClientPingCommand& cmd);
+  void operator()(const SenderGameClientPingCommand& cmd);
+  void operator()(const ResponseJoinGameCommand& cmd);
+  void operator()(const SenderLeaveRoomCommand& cmd);
+  void operator()(const ResponseLeaveRoomCommand& cmd);
+  void operator()(const SenderSendGameInfoCommand& cmd);
+  void operator()(const ResponseSendGameInfoCommand& cmd);  
 
   template <typename T>
   void operator()(const T& cmd);
@@ -32,7 +42,9 @@ struct ServerCommandVisitor {
 template <typename T>
 void ServerCommandVisitor::operator()(const T& cmd) {
   if constexpr (std::is_base_of_v<ServersCommandFactory, T>) {
-    std::cout << "[INFO] Otrzymano inna komende: " << cmd.command << std::endl;
+    std::cout << "[USD] Otrzymano inna komende: " << cmd.command << std::endl;
+  } else if constexpr (std::is_base_of_v<GameCommandFactory, T>) {
+    std::cout << "[BSD] Otrzymano inna komende: " << cmd.command << std::endl;
   } else {
     std::cout << "[INFO] Otrzymano nieznany typ wariantu." << std::endl;
   }

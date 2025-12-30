@@ -2,10 +2,11 @@
 
 #include <protocol/LobbyCommandFactory.hpp>
 #include <protocol/ServersCommandFactory.hpp>
+#include <protocol/GameCommandFactory.hpp>
 
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
-
+#include <protocol/lobby/room/SocketCommands.hpp>
 #include "ServerUtils.hpp"
 #include "server/libraries.hpp"
 #include "server/network.hpp"

@@ -1,4 +1,5 @@
 #include "ServerCommandVisitor.hpp"
+#include "GameStateManager.hpp"
 
 std::string gen_random(const int len)
 {
@@ -17,9 +18,12 @@ std::string gen_random(const int len)
     return tmp_s;
 }
 
-extern ServerStateManager g_game_server;
+extern GameStateManager g_game_server;
 
 ServerCommandVisitor::ServerCommandVisitor(int sock, ServersCommandFactory &f)
+    : client_sock(sock), factory(f) {}
+
+ServerCommandVisitor::ServerCommandVisitor(int sock, GameCommandFactory &f)
     : client_sock(sock), factory(f) {}
 
 void ServerCommandVisitor::sendErrorResponse(
@@ -40,6 +44,35 @@ void ServerCommandVisitor::sendErrorResponse(
 
     send_json_packet(client_sock, j);
 }
+
+
+void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
+    std::optional<std::string> client_id = cmd.client_id;
+    std::cout << "[CMD] Klient chce dolaczyc do gry: " << (cmd.data_obj ? cmd.data_obj->game_id : "brak") << std::endl;
+
+
+    g_game_server.addPlayer(client_id.has_value() ? std::stoi(client_id.value()) : -1,
+                               cmd.data_obj ? cmd.data_obj->game_id : "unknown");
+
+
+
+
+
+
+};
+void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){};
+void ServerCommandVisitor::operator()(const ResponseSendGameInfoCommand &cmd){};
+void ServerCommandVisitor::operator()(const ResponseGameClientPingCommand &cmd){};
+void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){};
+void ServerCommandVisitor::operator()(const ResponseJoinGameCommand &cmd){};
+void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){};
+void ServerCommandVisitor::operator()(const ResponseLeaveRoomCommand &cmd){};
+
+
+
+
+
+
 
 
 void ServerCommandVisitor::operator()(const std::monostate &)

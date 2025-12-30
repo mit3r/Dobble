@@ -4,7 +4,9 @@
 #include "server/libraries.hpp"
 #include "server/network.hpp"
 #include "server/common/BaseClient.hpp"
-ServerStateManager g_game_server;
+#include "GameStateManager.hpp"
+
+GameStateManager g_game_server;
 
 int main(int argc, char* argv[]) {
   if (argc < 4) {
@@ -28,12 +30,12 @@ int main(int argc, char* argv[]) {
   BsdServer bsd_server(port, "127.0.0.1");
   UdsClient uds_client(lobby_uds_path);
 
-  // bsd_server.setClientHandler(client_handler);
+  bsd_server.setClientHandler(tcp_client_handler);
   uds_client.setClientHandler(uds_client_handler);
   
-  // std::thread bsd_thread([&bsd_server]() {
-    // bsd_server.run();
-  // });
+  std::thread bsd_thread([&bsd_server]() {
+    bsd_server.run();
+  });
 
 
   std::thread uds_thread([&uds_client]() {

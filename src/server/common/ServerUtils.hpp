@@ -13,6 +13,7 @@ struct Client {
   int socket;
   std::string nickname;
   std::string client_id;
+  std::string game_id;
   bool logged_in;
 };
 
@@ -41,6 +42,11 @@ class ServerStateManager {
   std::string max_players;
   std::string name;
 
+  struct GameInfo {
+    std::string game_name;
+    std::string max_players;
+    std::string players;
+  };
 
   ServerStateManager();
   virtual ~ServerStateManager();

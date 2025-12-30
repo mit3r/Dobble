@@ -4,10 +4,11 @@
 #include <protocol/utils/SendAndReceiveUtils.hpp>
 #include "server/libraries.hpp"
 #include "server/network.hpp"
+#include "GameStateManager.hpp"
 
 using json = nlohmann::json;
 
-extern ServerStateManager g_game_server;
+extern GameStateManager g_game_server;
 
 template <typename StateManager>
 void registerServer(StateManager& server_state, int client_sock) {

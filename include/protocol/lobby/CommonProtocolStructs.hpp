@@ -70,8 +70,9 @@ struct TurnStruct {
   std::optional<std::list<PlayerGameInfo>> players_imgs;
 };
 
+
+
 struct GameStruct {
-  std::string game_id;
   std::string game_name;
   std::string players;
   std::string max_players;

@@ -2,72 +2,52 @@
 #include <map>
 #include <string>
 
-#include "./lobby/lobbyclient/SocketCommands.hpp"
+#include "protocol/lobby/room/SocketCommands.hpp"
 
 #pragma once
 
-class LobbyCommandFactory {
+class GameCommandFactory {
   private:
-  using CreatorFunc = std::function<AnyCommand(const json&)>;
+  using CreatorFunc = std::function<GameClientCommand(const json&)>;
   std::map<std::string, CreatorFunc> dictionary;
 
   bool isResponse(const json& j) {  // is_server determine its a response command
-    return j.contains("lobby_server_id") && !j["lobby_server_id"].is_null();
+    return j.contains("game_server_id") && !j["game_server_id"].is_null();
   }
 
   public:
-  LobbyCommandFactory() {
-    dictionary["login"] = [this](const json& j) -> AnyCommand {
+  GameCommandFactory() {
+    dictionary["ping"] = [this](const json& j) -> GameClientCommand {
       if (isResponse(j))
-        return j.get<ResponseLoginCommand>();
+        return j.get<ResponseGameClientPingCommand>();
       else
-        return j.get<SenderLoginCommand>();
+        return j.get<SenderGameClientPingCommand>();
     };
 
-    dictionary["ping"] = [this](const json& j) -> AnyCommand {
-      if (isResponse(j))
-        return j.get<ResponsePingCommand>();
-      else
-        return j.get<SenderPingCommand>();
-    };
-
-    dictionary["join_game"] = [this](const json& j) -> AnyCommand {
+    dictionary["join_game"] = [this](const json& j) -> GameClientCommand {
       if (isResponse(j))
         return j.get<ResponseJoinGameCommand>();
       else
         return j.get<SenderJoinGameCommand>();
     };
 
-    dictionary["getinfolobby"] = [this](const json& j) -> AnyCommand {
-      if (isResponse(j))
-        return j.get<ResponseGetLobbyInfoCommand>();
-      else
-        return j.get<SenderGetLobbyInfoCommand>();
-    };
-
-    dictionary["leaveroom"] = [this](const json& j) -> AnyCommand {
+    dictionary["leave_room"] = [this](const json& j) -> GameClientCommand {
       if (isResponse(j))
         return j.get<ResponseLeaveRoomCommand>();
       else
         return j.get<SenderLeaveRoomCommand>();
     };
 
-    dictionary["sendgame_info"] = [this](const json& j) -> AnyCommand {
+    dictionary["send_game_info"] = [this](const json& j) -> GameClientCommand {
       if (isResponse(j))
         return j.get<ResponseSendGameInfoCommand>();
       else
         return j.get<SenderSendGameInfoCommand>();
     };
 
-    dictionary["create_lobby"] = [this](const json& j) -> AnyCommand {
-      if (isResponse(j))
-        return j.get<ResponseCreateLobbyCommand>();
-      else
-        return j.get<SenderCreateLobbyCommand>();
-    };
   }
 
-  AnyCommand get(const std::string& commandName, const json& j) {
+  GameClientCommand get(const std::string& commandName, const json& j) {
     if (dictionary.count(commandName)) {
       return dictionary[commandName](j);
     }

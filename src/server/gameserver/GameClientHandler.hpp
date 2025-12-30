@@ -6,5 +6,5 @@
 #include "server/gameserver/ServerRegistration.hpp"
 #pragma once
 
-// void client_handler(int client_sock);
+void tcp_client_handler(int client_sock);
 void uds_client_handler(int client_sock);
