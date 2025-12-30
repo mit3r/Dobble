@@ -36,6 +36,13 @@ add_executable(dobble_lobbyserver
 )
 target_link_libraries(dobble_lobbyserver Threads::Threads)
 
+# Tools - Game Test Client
+add_executable(game_test_client
+    src/tools/game_test_client.cpp
+    ${SERVER_COMMON_SOURCES}
+)
+target_link_libraries(game_test_client Threads::Threads)
+
 # Client
 file(GLOB_RECURSE CLIENT_SOURCES "src/client/*.cpp")
 add_executable(dobble_client

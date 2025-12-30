@@ -101,28 +101,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderRegisterGameServerCommand::data, ip, po
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseRegisterGameServerCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderServersPingCommand::data, player_number, status, turn)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseServersPingCommand::data, message)
-
-
-// #define DEFINE_JSON_WITH_DATA_RENAME(Type)                                                \
-//   inline void to_json(json& j, const Type& p) {                                         \
-//     j = json{{"command", p.command}, {"error", p.error}};                                 \
-//     if (p.lobby_server_id) j["lobby_server_id"] = p.lobby_server_id;                      \
-//     if (p.client_id) j["client_id"] = p.client_id;                                        \
-//     if (p.game_id) j["game_id"] = p.game_id;                                              \
-//     if (p.data_obj)                                                                       \
-//       j["data"] = p.data_obj;                                                             \
-//     else                                                                                  \
-//       j["data"] = nullptr;                                                                \
-//   }                                                                                       \
-//   inline void from_json(const json& j, Type& p) {                                         \
-//     j.at("command").get_to(p.command);                                                    \
-//     if (j.contains("lobby_server_id")) j.at("lobby_server_id").get_to(p.lobby_server_id); \
-//     if (j.contains("game_id")) j.at("game_id").get_to(p.game_id);                         \
-//     if (j.contains("data") && !j["data"].is_null()) j.at("data").get_to(p.data_obj);      \
-//     if (j.contains("error") && !j["error"].is_null()) j.at("error").get_to(p.error);      \
-//   }
-
-
 DEFINE_JSON_WITH_DATA_RENAME(GameServerErrorResponse)
 DEFINE_JSON_WITH_DATA_RENAME(SenderRegisterGameServerCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseRegisterGameServerCommand)

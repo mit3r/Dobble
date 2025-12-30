@@ -33,7 +33,11 @@ struct ServerCommandVisitor {
   void operator()(const SenderLeaveRoomCommand& cmd);
   void operator()(const ResponseLeaveRoomCommand& cmd);
   void operator()(const SenderSendGameInfoCommand& cmd);
-  void operator()(const ResponseSendGameInfoCommand& cmd);  
+  void operator()(const ResponseSendGameInfoCommand& cmd);
+  void operator()(const SenderStartGameCommand& cmd);
+  void operator()(const ResponseStartGameCommand& cmd);
+  void operator()(const SenderMatchSymbolCommand& cmd);
+  void operator()(const ResponseMatchSymbolCommand& cmd);
 
   template <typename T>
   void operator()(const T& cmd);

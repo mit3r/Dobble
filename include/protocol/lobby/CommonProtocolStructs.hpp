@@ -1,6 +1,8 @@
 #pragma once
 
 #include <list>
+#include <vector>
+#include <map>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
@@ -37,18 +39,21 @@ struct PlayerGameInfo {
   int rank;
 };
 
-// State in that moment, when game started
 struct TurnStruct {
   std::string turn_id;
+  bool active;
   std::list<PlayerGameInfo> clients_data;
+  std::vector<int> images_on_table;
+  std::vector<int> past_turns;
+  std::string winner_id;
+  std::vector<int> actual_imgs;
   int topCardId;
   int cardsLeft;  // 0 - 57
-
   std::string status;  // 3  states
 };
 
-// State in lobby when game didnt start yet
 struct GameStruct {
+  std::string game_id;
   std::string game_name;
   std::string players;
   std::string max_players;
@@ -66,11 +71,8 @@ struct ErrorStruct {
   std::string message;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImageInfo, img_name, rotate, rotation, place, size)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, client_id, imgs, score, points, mistakes, rank)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ScoreEntry, client_id, score)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PastTurn, turn_id, winner, winner_id, active)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TurnStruct, turn_id, active, clients_data, clients_id_data, images_on_table, scoreboard, past_turns, winner_id, actual_imgs, players_imgs)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, nickname, cardId, score, points, mistakes, rank)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TurnStruct, turn_id, active, clients_data, images_on_table, past_turns, winner_id, actual_imgs, topCardId, cardsLeft, status)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GameStruct, game_id, game_name, players, max_players, nicknames, status)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShortGameInfo, game_id, name)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ErrorStruct, code, message)

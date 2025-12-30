@@ -45,6 +45,20 @@ class GameCommandFactory {
         return j.get<SenderSendGameInfoCommand>();
     };
 
+    dictionary["start_game"] = [this](const json& j) -> GameClientCommand {
+      if (isResponse(j))
+        return j.get<ResponseStartGameCommand>();
+      else
+        return j.get<SenderStartGameCommand>();
+    };
+
+    dictionary["match_symbol"] = [this](const json& j) -> GameClientCommand {
+      if (isResponse(j))
+        return j.get<ResponseMatchSymbolCommand>();
+      else
+        return j.get<SenderMatchSymbolCommand>();
+    };
+
   }
 
   GameClientCommand get(const std::string& commandName, const json& j) {

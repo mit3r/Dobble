@@ -56,6 +56,7 @@ class SenderGameClientPingCommand : public GameClientMessageCore {
 
 class SenderJoinGameCommand : public GameClientMessageCore {
   public:
+      std::string client_nickname;
       struct data {
         std::string game_id;
         std::string role;
@@ -93,6 +94,7 @@ class SenderSendGameInfoCommand : public GameClientMessageCore {
   public:
       struct data {
         std::string game_id;
+        std::string nickname;
       };
       std::optional<data> data_obj;
 };
@@ -102,6 +104,45 @@ class ResponseSendGameInfoCommand : public GameClientMessageCore {
       struct data {
         std::string game_id;
         TurnStruct actual_turn;
+      };
+      std::optional<data> data_obj;
+};
+
+class SenderMatchSymbolCommand : public GameClientMessageCore {
+  public:
+      struct data {
+        std::string game_id;
+        int turn_id;
+        int symbol_id;
+      };
+      std::optional<data> data_obj;
+};
+
+class ResponseMatchSymbolCommand : public GameClientMessageCore {
+  public:
+      struct data {
+        bool success;
+        std::string message;  // "CORRECT", "INCORRECT", "TOO_LATE"
+        int points_awarded;
+        int new_score;
+      };
+      std::optional<data> data_obj;
+};
+
+class SenderStartGameCommand : public GameClientMessageCore {
+  public:
+      struct data {
+        std::string game_id;
+      };
+      std::optional<data> data_obj;
+};
+
+class ResponseStartGameCommand : public GameClientMessageCore {
+  public:
+      struct data {
+        bool success;
+        std::string message;
+        std::string status;  // "GAME_ACTIVE" or error
       };
       std::optional<data> data_obj;
 };
@@ -117,7 +158,11 @@ using GameClientCommand = std::variant<
     SenderLeaveRoomCommand,
     ResponseLeaveRoomCommand,
     SenderSendGameInfoCommand,
-    ResponseSendGameInfoCommand
+    ResponseSendGameInfoCommand,
+    SenderStartGameCommand,
+    ResponseStartGameCommand,
+    SenderMatchSymbolCommand,
+    ResponseMatchSymbolCommand
 >;
 
 
@@ -133,6 +178,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseLeaveRoomCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseSendGameInfoCommand::data, game_id, actual_turn)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderStartGameCommand::data, game_id)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseStartGameCommand::data, success, message, status)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderMatchSymbolCommand::data, game_id, turn_id, symbol_id)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseMatchSymbolCommand::data, success, message, points_awarded, new_score)
 
 #define DEFINE_JSON_WITH_DATA_RENAME(Type)                                                \
   inline void to_json(json& j, const Type& p) {                                           \
@@ -156,9 +205,34 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseSendGameInfoCommand::data, game_id, a
 
 DEFINE_JSON_WITH_DATA_RENAME(ResponseGameClientPingCommand)
 DEFINE_JSON_WITH_DATA_RENAME(SenderGameClientPingCommand)
-DEFINE_JSON_WITH_DATA_RENAME(SenderJoinGameCommand)
+
+inline void to_json(json& j, const SenderJoinGameCommand& p) {
+  j = json{{"command", p.command}, {"error", p.error}};
+  if (p.lobby_server_id) j["lobby_server_id"] = p.lobby_server_id;
+  if (p.client_id) j["client_id"] = p.client_id;
+  if (p.game_id) j["game_id"] = p.game_id;
+  j["client_nickname"] = p.client_nickname;
+  if (p.data_obj)
+    j["data"] = p.data_obj;
+  else
+    j["data"] = nullptr;
+}
+inline void from_json(const json& j, SenderJoinGameCommand& p) {
+  j.at("command").get_to(p.command);
+  if (j.contains("lobby_server_id")) j.at("lobby_server_id").get_to(p.lobby_server_id);
+  if (j.contains("client_id")) j.at("client_id").get_to(p.client_id);
+  if (j.contains("game_id")) j.at("game_id").get_to(p.game_id);
+  if (j.contains("client_nickname")) j.at("client_nickname").get_to(p.client_nickname);
+  if (j.contains("data") && !j["data"].is_null()) j.at("data").get_to(p.data_obj);
+  if (j.contains("error") && !j["error"].is_null()) j.at("error").get_to(p.error);
+}
+
 DEFINE_JSON_WITH_DATA_RENAME(ResponseJoinGameCommand)
 DEFINE_JSON_WITH_DATA_RENAME(SenderLeaveRoomCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseLeaveRoomCommand)
 DEFINE_JSON_WITH_DATA_RENAME(SenderSendGameInfoCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseSendGameInfoCommand)
+DEFINE_JSON_WITH_DATA_RENAME(SenderStartGameCommand)
+DEFINE_JSON_WITH_DATA_RENAME(ResponseStartGameCommand)
+DEFINE_JSON_WITH_DATA_RENAME(SenderMatchSymbolCommand)
+DEFINE_JSON_WITH_DATA_RENAME(ResponseMatchSymbolCommand)
