@@ -28,7 +28,7 @@ class LobbyBridge : public QObject {
   // Bridge -> UI (js listeners), "on"
   signals:
   void onLobbyNameChanged(const QString& lobbyName);
-  void onPlayerListChanged(const QStringList& playerList);
+  void onPlayersListChanged(const QStringList& playerList);
   void onLobbyStatusChanged(const GameStatus& status);
   void onReadyStateChanged(bool isReady);
   void onLobbyQuit();

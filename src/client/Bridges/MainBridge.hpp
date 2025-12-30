@@ -11,17 +11,17 @@ class MainBridge : public QObject {
 
   // App -> Bridge (slots), "has"
   public slots:
-  void hasPageChanged(const QString& page);
+      void hasNavigated(const QString& page);
 
-  // App <- Bridge (signals), "request"
+      // App <- Bridge (signals), "request"
   signals:
   void requestCloseApp();
 
   // Bridge -> UI (js listeners), "on"
   signals:
-  void onPageChanged(const QString& page);
+      void onNavigated(const QString& page);
 
-  // Bridge <- UI (js methods), "call"
+      // Bridge <- UI (js methods), "call"
   private slots:
   void callCloseApp();
 };

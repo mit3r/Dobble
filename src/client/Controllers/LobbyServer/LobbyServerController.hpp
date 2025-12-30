@@ -72,4 +72,5 @@ class LobbyServerController : public QObject {
   QTcpSocket* socket;
   LobbyCommandFactory commandFactory;
   std::optional<QString> currentNickname;
+  QByteArray receiveBuffer;  // Buffer for incoming data
 };

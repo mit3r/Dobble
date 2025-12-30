@@ -19,6 +19,14 @@ MainWindow::MainWindow(QWidget* parent)
   connect(
       lobbyServerController, &LobbyServerController::hasLoginSucceeded,
       ui->startBridge, &StartBridge::hasLoginSucceeded);
+
+  connect(
+      lobbyServerController, &LobbyServerController::hasLoginSucceeded,
+      [this](const QString&) { emit ui->mainBridge->onNavigated("browser"); });
+
+  connect(
+      lobbyServerController, &LobbyServerController::hasLoginFailed,
+      ui->startBridge, &StartBridge::hasLoginFailed);
 }
 
 MainWindow::~MainWindow() {

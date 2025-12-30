@@ -4,9 +4,8 @@ import BrowserPage from "./pages/Browser";
 import { mainStore } from "./store";
 import GamePage from "./pages/Game";
 import EndPage from "./pages/End";
-import StartPage from "./pages/Start";
+import StartPage from "./pages/Login";
 import { useMemo } from "react";
-import "@/bridges"; // Inicjalizacja API
 
 function App() {
   const view = useStore(mainStore, (state) => state.views.view);
@@ -31,8 +30,8 @@ function App() {
   }, [view]);
 
   return (
-    <div className="App">
-      <div className="flex p-1 gap-2 border-b-2 mb-2 ">
+    <div className="flex flex-col h-screen select-none">
+      <div className="flex p-1 gap-2 border-2 ">
         <h2>DevTools</h2>
 
         <button className="p-1 border-2" onClick={() => setView("start")}>
@@ -52,7 +51,7 @@ function App() {
         </button>
       </div>
 
-      {Page}
+      <div className=" flex-1 p-4">{Page}</div>
     </div>
   );
 }

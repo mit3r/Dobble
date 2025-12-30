@@ -1,8 +1,8 @@
 #include "MainBridge.hpp"
 
-void MainBridge::hasPageChanged(const QString& page) {
+void MainBridge::hasNavigated(const QString& page) {
   qDebug() << "MainBridge: hasPageChanged called with page:" << page;
-  emit onPageChanged(page);
+  emit onNavigated(page);
 }
 
 void MainBridge::callCloseApp() {

@@ -1,3 +1,4 @@
+#include "LobbyControllerUtils.hpp"
 #include "LobbyServerController.hpp"
 
 LobbyServerController::LobbyServerController(QObject* parent) {
@@ -13,20 +14,28 @@ LobbyServerController::LobbyServerController(QObject* parent) {
 }
 
 void LobbyServerController::whenReadReady() {
-  auto packetOpt = receive_json_packet(socket->socketDescriptor());
-  if (!packetOpt.has_value()) {
-    std::cerr << "[CLIENT ERROR] Failed to receive packet from lobby server." << std::endl;
-    return;
+  // Append all available data to buffer
+  receiveBuffer.append(socket->readAll());
+
+  // Try to extract and process complete packets from buffer
+  while (true) {
+    auto packetOpt = try_extract_packet(receiveBuffer);
+
+    if (!packetOpt.has_value()) {
+      // No complete packet available yet
+      break;
+    }
+
+    json packet = packetOpt.value();
+
+    if (!packet.contains("command")) {
+      std::cerr << "[CLIENT ERROR] Received packet without command field." << std::endl;
+      continue;
+    }
+
+    std::cout << "[CLIENT] Received command: " << packet["command"] << std::endl;
+
+    // Visit the command variant to handle it
+    std::visit(*this, this->commandFactory.get(packet));
   }
-
-  json packet = packetOpt.value();
-  if (!packet.contains("command")) {
-    std::cerr << "[CLIENT ERROR] Received packet without command field." << std::endl;
-    return;
-  }
-
-  std::cout << "[CLIENT] Received command: " << packet["command"] << std::endl;
-
-  // Visit the command variant to handle it
-  std::visit(*this, this->commandFactory.get(packet));
 }

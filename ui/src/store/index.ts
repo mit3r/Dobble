@@ -1,14 +1,14 @@
 import { createStore } from "zustand";
 import { createLobbySlice, type LobbySlice } from "./lobbySlice";
-import { createViewsSlice, type ViewsSlice } from "./viewsSlice";
-import { createStartSlice, type StartSlice } from "./startSlice";
+import { createViewsSlice, type MainSlice } from "./mainSlice";
+import { createLoginSlice, type LoginSlice } from "./loginSlice";
 import { createBrowserSlice, type BrowserSlice } from "./browserSlice";
 import { createGameSlice, type GameSlice } from "./gameSlice";
 import { createEndSlice, type EndSlice } from "./endSlice";
 
 export type MainStore = {
-  views: ViewsSlice;
-  start: StartSlice;
+  views: MainSlice;
+  login: LoginSlice;
   browser: BrowserSlice;
   lobby: LobbySlice;
   game: GameSlice;
@@ -17,7 +17,7 @@ export type MainStore = {
 
 export const mainStore = createStore<MainStore>()((...args) => ({
   views: createViewsSlice(...args),
-  start: createStartSlice(...args),
+  login: createLoginSlice(...args),
   browser: createBrowserSlice(...args),
   lobby: createLobbySlice(...args),
   game: createGameSlice(...args),

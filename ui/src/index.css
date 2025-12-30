@@ -1,2 +1,7 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+#root {
+  height: 100svh;
+}
+
 

@@ -17,7 +17,7 @@ void LobbyBridge::hasLobbyNameChanged(const QString& lobbyName) {
 
 void LobbyBridge::hasPlayerListChanged(const QStringList& playerList) {
   qDebug() << "LobbyBridge: hasPlayerListChanged received with playerList =" << playerList;
-  emit onPlayerListChanged(playerList);
+  emit onPlayersListChanged(playerList);
 }
 
 void LobbyBridge::hasLobbyStatusChanged(const GameStatus& status) {
