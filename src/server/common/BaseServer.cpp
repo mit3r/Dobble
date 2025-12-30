@@ -57,6 +57,7 @@ int BsdServer::run() {
       continue;
     }
 
+    
     if (client_handler_func) {
       std::thread t(client_handler_func, client_sock);
       t.detach();
@@ -106,18 +107,6 @@ int UdsServer::run() {
     }
 
     std::cout << "[UDS] Nowe połączenie lokalne!" << std::endl;
-
-    // auto game = std::make_shared<GameServer>();
-    // game->servername = ""; 
-    // game->socket = client_sock;
-    // game->server_id = "";  
-    // game->registered = false;
-    // game->port = 0;  
-    // game->ip = "";  
-    // game->process_pid = getpid();
-    // game->max_players = 4;
-    // game->players = 0;
-    // addGameServer(game);
 
     if (client_handler_func) {
       std::thread t(client_handler_func, client_sock);

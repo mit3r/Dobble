@@ -2,10 +2,11 @@
 
 #include <protocol/LobbyCommandFactory.hpp>
 #include <protocol/ServersCommandFactory.hpp>
+#include <protocol/GameCommandFactory.hpp>
 
 #include <protocol/lobby/lobbyclient/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
-
+#include <protocol/lobby/room/SocketCommands.hpp>
 #include "ServerUtils.hpp"
 #include "server/libraries.hpp"
 #include "server/network.hpp"
@@ -13,8 +14,6 @@
 #pragma once
 
 class LobbyCommandFactory;
-
-using json = nlohmann::json;
 
 template <typename StateManager, typename VisitorCreator, typename CommandFactory>
 void server_handle_client(int client_sock, StateManager& server_state, VisitorCreator create_visitor, CommandFactory& command_factory) {

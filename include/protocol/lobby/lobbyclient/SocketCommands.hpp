@@ -5,8 +5,7 @@
 #include <string>
 #include <variant>
 #include <protocol/lobby/CommonProtocolStructs.hpp>
-
-using json = nlohmann::json;
+#include <protocol/json.hpp>
 
 class LobbyServerMessageCore {
   public:
@@ -76,55 +75,6 @@ class ResponseGetLobbyInfoCommand : public LobbyServerMessageCore {
   std::optional<data> data_obj;
 };
 
-class SenderJoinGameCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string game_id;
-        std::string role;
-      };
-      std::optional<data> data_obj;
-};
-class ResponseJoinGameCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string status;
-        std::string role;
-        ShortGameInfo game_info;
-      };
-      std::optional<data> data_obj;
-};
-
-class SenderLeaveRoomCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string game_id;
-      };
-      std::optional<data> data_obj;
-};
-class ResponseLeaveRoomCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string message;
-      };
-      std::optional<data> data_obj;
-};
-
-class SenderSendGameInfoCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string game_id;
-      };
-      std::optional<data> data_obj;
-};
-class ResponseSendGameInfoCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string game_id;
-        TurnStruct actual_turn;
-      };
-      std::optional<data> data_obj;
-};
-
 class SenderCreateLobbyCommand : public LobbyServerMessageCore {
   public:
       struct data {
@@ -149,9 +99,6 @@ using LobbyClientCommand = std::variant<
     SenderLoginCommand, ResponseLoginCommand,
     SenderPingCommand, ResponsePingCommand,
     SenderGetLobbyInfoCommand, ResponseGetLobbyInfoCommand,
-    SenderJoinGameCommand, ResponseJoinGameCommand,
-    SenderLeaveRoomCommand, ResponseLeaveRoomCommand,
-    SenderSendGameInfoCommand, ResponseSendGameInfoCommand,
     SenderCreateLobbyCommand, ResponseCreateLobbyCommand>;
 
 // Serializacja JSON dla klas specyficznych dla lobby client
@@ -163,12 +110,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderPingCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponsePingCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderGetLobbyInfoCommand::data, page)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseGetLobbyInfoCommand::data, page, actual_games, next_page)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderJoinGameCommand::data, game_id, role)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseJoinGameCommand::data, status, role, game_info)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, game_id)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseLeaveRoomCommand::data, message)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseSendGameInfoCommand::data, game_id, actual_turn)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderCreateLobbyCommand::data, game_name)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseCreateLobbyCommand::data, message, ip, port)
 
@@ -202,15 +143,6 @@ DEFINE_JSON_WITH_DATA_RENAME(ResponsePingCommand)
 
 DEFINE_JSON_WITH_DATA_RENAME(SenderGetLobbyInfoCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseGetLobbyInfoCommand)
-
-DEFINE_JSON_WITH_DATA_RENAME(SenderJoinGameCommand)
-DEFINE_JSON_WITH_DATA_RENAME(ResponseJoinGameCommand)
-
-DEFINE_JSON_WITH_DATA_RENAME(SenderLeaveRoomCommand)
-DEFINE_JSON_WITH_DATA_RENAME(ResponseLeaveRoomCommand)
-
-DEFINE_JSON_WITH_DATA_RENAME(SenderSendGameInfoCommand)
-DEFINE_JSON_WITH_DATA_RENAME(ResponseSendGameInfoCommand)
 
 DEFINE_JSON_WITH_DATA_RENAME(SenderCreateLobbyCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseCreateLobbyCommand)

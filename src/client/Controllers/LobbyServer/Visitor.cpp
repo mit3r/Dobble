@@ -19,52 +19,10 @@ void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
   }
 }
 
-void LobbyServerController::operator()(const ResponsePingCommand& cmd) {
-}
+void LobbyServerController::operator()(const ResponsePingCommand&) {}
 
-void LobbyServerController::operator()(const ResponseJoinGameCommand& cmd) {
-}
+void LobbyServerController::operator()(const ResponseGetLobbyInfoCommand&) {}
 
-void LobbyServerController::operator()(const ResponseGetLobbyInfoCommand& cmd) {
-}
+void LobbyServerController::operator()(const ResponseCreateLobbyCommand&) {}
 
-void LobbyServerController::operator()(const ResponseCreateLobbyCommand& cmd) {
-}
-
-void LobbyServerController::operator()(const ResponseRegisterGameServerCommand& cmd) {
-}
-
-void LobbyServerController::operator()(const ResponseLeaveRoomCommand& cmd) {
-}
-
-void LobbyServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
-}
-
-// Sender commands (these shouldn't normally be received, but variant requires them)
-void LobbyServerController::operator()(const SenderLoginCommand& cmd) {
-  Q_UNUSED(cmd);
-}
-
-void LobbyServerController::operator()(const SenderPingCommand& cmd) {
-  Q_UNUSED(cmd);
-}
-
-void LobbyServerController::operator()(const SenderJoinGameCommand& cmd) {
-  Q_UNUSED(cmd);
-}
-
-void LobbyServerController::operator()(const SenderGetLobbyInfoCommand& cmd) {
-  Q_UNUSED(cmd);
-}
-
-void LobbyServerController::operator()(const SenderCreateLobbyCommand& cmd) {
-  Q_UNUSED(cmd);
-}
-
-void LobbyServerController::operator()(const SenderLeaveRoomCommand& cmd) {
-  Q_UNUSED(cmd);
-}
-
-void LobbyServerController::operator()(const SenderSendGameInfoCommand& cmd) {
-  Q_UNUSED(cmd);
-}
+void LobbyServerController::operator()(const ResponseRegisterGameServerCommand&) {}

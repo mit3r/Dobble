@@ -9,9 +9,7 @@
 #include <optional>
 #include <thread>
 #include <mutex>
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
+#include <protocol/json.hpp>
 
 // --- STAŁE PROTOKOŁU ---
 const unsigned char PREAMBLE[] = {0xCA, 0xFE, 0xBE, 0xBE};

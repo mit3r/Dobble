@@ -103,25 +103,6 @@ void ServerCommandVisitor::operator()(const SenderPingCommand &cmd)
     send_json_packet(client_sock, j);
 }
 
-void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd)
-{
-    std::string game_id = cmd.data_obj ? cmd.data_obj->game_id : "unknown";
-    std::cout << "[CMD] Klient chce dolaczyc do gry: " << game_id << std::endl;
-
-    ResponseJoinGameCommand response;
-    response.command = "join_game";
-    response.lobby_server_id = "MainServer_v1";
-    response.client_id = cmd.client_id;
-    ResponseJoinGameCommand::data d;
-    d.status = "OK";
-    d.role = "PLAYER";
-    d.game_info.game_id = game_id;
-    d.game_info.name = "Super Gra";
-    response.data_obj = d;
-    json j = response;
-    send_json_packet(client_sock, j);
-}
-
 void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
 {
     std::cout << "[CMD] Pobieranie listy gier..." << std::endl;
@@ -136,7 +117,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
     std::vector<std::shared_ptr<GameServer>> actual_games = g_uds_server->getAllGameServers();
 
     
-    for (int i = page_num - 1; i < page_num + 10 && i < actual_games.size(); ++i)
+    for (size_t i = page_num - 1; i < static_cast<size_t>(page_num + 10) && i < actual_games.size(); ++i)
     {
         GameStruct gs;
         gs.game_id = actual_games[i]->server_id;
@@ -275,7 +256,6 @@ void ServerCommandVisitor::operator()(const ResponseRegisterGameServerCommand &c
     std::cout << "[CMD] Otrzymano odpowiedź rejestracji game servera: "
               << (cmd.data_obj ? cmd.data_obj->message : "brak") << std::endl;
 
-    // Tutaj można dodać logikę obsługi odpowiedzi rejestracji
 }
 
 

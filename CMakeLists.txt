@@ -30,7 +30,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOUIC OFF)
 
-
 # Sources
 
 file(GLOB SERVER_COMMON_SOURCES "src/server/common/*.cpp")
@@ -51,18 +50,19 @@ add_executable(dobble_lobbyserver
 )
 target_link_libraries(dobble_lobbyserver Threads::Threads)
 
-# Debug Client (Testing Tool)
-add_executable(debug_client
-    src/tools/debug_client.cpp
-)
-target_link_libraries(debug_client Threads::Threads)
-
 # Web Client
 add_custom_target(build_web_client
     COMMAND npm run build
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/ui
     COMMENT "Building Web Client"
 )
+
+# Tools - Game Test Client
+add_executable(game_test_client
+    src/tools/game_test_client.cpp
+    ${SERVER_COMMON_SOURCES}
+)
+target_link_libraries(game_test_client Threads::Threads)
 
 # Client
 file(GLOB_RECURSE CLIENT_SOURCES "src/client/*.cpp" "src/client/*.hpp")
@@ -71,6 +71,7 @@ qt_add_executable(
     dobble_client
     ${CLIENT_SOURCES}
 )
+
 # Better include paths for Qt autogen files
 target_include_directories(dobble_client PRIVATE 
     ${CMAKE_SOURCE_DIR}/src/client

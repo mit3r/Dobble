@@ -45,35 +45,3 @@ enum class GameStatus {
   InGame = 1,
   Finished = 2,
 };
-
-// Browser screen
-struct ShortGameInfo {
-  std::string gameId;
-  std::string gameName;
-  int playerCount;
-  int maxPlayers;
-  GameStatus status; // Waiting, InGame, Finished
-};
-
-// Game & Lobby screen
-struct PlayerGameInfo {
-  std::string nickname;
-  int cardId; // id [0..56]
-  int score;
-  int goodMatches;
-  int badMatches;
-};
-
-// Game & Lobby screen
-struct GameInfo {
-  std::string gameId;
-  std::string gameName;
-
-  std::list<PlayerGameInfo> players;
-
-  GameStatus status; // Waiting, InGame, Finished
-
-  // Turn related
-  int topCardId;  // id [0..56]
-  int lastsCards; // number of cards left in deck
-};

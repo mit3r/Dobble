@@ -1,13 +1,15 @@
 #include "./GameClientHandler.hpp"
+#include "GameStateManager.hpp"
 
-extern ServerStateManager g_game_server;
+extern GameStateManager g_game_server;
 
-// void client_handler(int client_sock) {
-//   LobbyCommandFactory factory;
-//   server_handle_client(client_sock, g_game_server, [](int sock, LobbyCommandFactory& factory) {
-//     return ServerCommandVisitor(sock, factory);
-//   }, factory);
-// }
+void tcp_client_handler(int client_sock) 
+{
+  GameCommandFactory factory;
+  server_handle_client(client_sock, g_game_server, [](int sock, GameCommandFactory& factory) {
+    return ServerCommandVisitor(sock, factory);
+  }, factory);
+}
 
 void uds_client_handler(int client_sock) {
   ServersCommandFactory factory;

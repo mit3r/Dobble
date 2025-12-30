@@ -1,12 +1,12 @@
 
 #include <QByteArray>
 #include <QTcpSocket>
-#include <nlohmann/json.hpp>
+#include <protocol/json.hpp>
 #include <optional>
+#include <protocol/utils/SendAndReceiveUtils.hpp>
 
 #pragma once
 
-using json = nlohmann::json;
 /**
  * @brief Attempts to extract one complete JSON packet from the buffer.
  *

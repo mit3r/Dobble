@@ -4,7 +4,11 @@
 #include "server/libraries.hpp"
 #include "server/network.hpp"
 #include "server/common/BaseClient.hpp"
-ServerStateManager g_game_server;
+#include "GameStateManager.hpp"
+#include "GameLogic.hpp"
+
+GameStateManager g_game_server;
+GameLogic* g_game_logic = nullptr;  // Globalny pointer do logiki gry
 
 int main(int argc, char* argv[]) {
   if (argc < 4) {
@@ -20,6 +24,10 @@ int main(int argc, char* argv[]) {
   g_game_server.ip = "0.0.0.0";
   g_game_server.max_players = "4";
   g_game_server.name = "Dobble Game Server";
+  
+  g_game_logic = new GameLogic(g_game_server);
+  g_game_server.setMaxPlayers(2); 
+  
 
   std::cout << "[GameServer] Starting with ID: " << server_id
             << ", Port: " << port
@@ -28,12 +36,12 @@ int main(int argc, char* argv[]) {
   BsdServer bsd_server(port, "127.0.0.1");
   UdsClient uds_client(lobby_uds_path);
 
-  // bsd_server.setClientHandler(client_handler);
+  bsd_server.setClientHandler(tcp_client_handler);
   uds_client.setClientHandler(uds_client_handler);
   
-  // std::thread bsd_thread([&bsd_server]() {
-    // bsd_server.run();
-  // });
+  std::thread bsd_thread([&bsd_server]() {
+    bsd_server.run();
+  });
 
 
   std::thread uds_thread([&uds_client]() {
@@ -42,8 +50,11 @@ int main(int argc, char* argv[]) {
 
   
 
-  // bsd_thread.join();
+  bsd_thread.join();
   uds_thread.join();
+  
+  // Cleanup
+  delete g_game_logic;
 
   return 0;
 }

@@ -12,8 +12,6 @@
 
 #pragma once
 
-using json = nlohmann::json;
-
 struct ServerCommandVisitor {
     int client_sock;
     std::variant<LobbyCommandFactory, ServersCommandFactory> factory;
@@ -31,7 +29,6 @@ private:
 public:
     void operator()(const SenderLoginCommand& cmd);
     void operator()(const SenderPingCommand& cmd);
-    void operator()(const SenderJoinGameCommand& cmd);
     void operator()(const SenderGetLobbyInfoCommand& cmd);
     void operator()(const SenderCreateLobbyCommand& cmd);
     void operator()(const SenderRegisterGameServerCommand& cmd);

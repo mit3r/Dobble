@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QString>
 
+#include <protocol/lobby/CommonProtocolStructs.hpp>
+
 #include "type/dobble.hpp"
 
 #pragma once
@@ -18,7 +20,7 @@ signals:
   void requestQuitGame();
 
   // Bridge -> UI (js listeners), "on"
-  void onGameInfoChanged(const GameInfo& gameInfo);
+  void onGameInfoChanged(const GameStruct& gameInfo);
   void onMatchResult(const bool& isMatch);
   void onGameQuit();
 

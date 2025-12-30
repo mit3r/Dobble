@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <cstring>
 #include <mutex>
-#include <nlohmann/json.hpp>
+#include <protocol/json.hpp>
 #include <optional>
 #include <string>
 #include <thread>

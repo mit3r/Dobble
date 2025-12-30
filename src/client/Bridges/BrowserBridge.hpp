@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QVariantList>
 #include <type/dobble.hpp>
+#include <protocol/lobby/CommonProtocolStructs.hpp>
 
 #pragma once
 

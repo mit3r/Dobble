@@ -25,12 +25,14 @@ class LobbyServerController : public QObject {
   void operator()(const std::monostate&);
   void operator()(const ResponseLoginCommand& cmd);
   void operator()(const ResponsePingCommand& cmd);
-  void operator()(const ResponseJoinGameCommand& cmd);
   void operator()(const ResponseGetLobbyInfoCommand& cmd);
   void operator()(const ResponseCreateLobbyCommand& cmd);
   void operator()(const ResponseRegisterGameServerCommand& cmd);
-  void operator()(const ResponseLeaveRoomCommand& cmd);
-  void operator()(const ResponseSendGameInfoCommand& cmd);
+  inline void operator()(const SenderLoginCommand&) {};
+  inline void operator()(const SenderPingCommand&) {};
+  inline void operator()(const SenderGetLobbyInfoCommand&) {};
+  inline void operator()(const SenderCreateLobbyCommand&) {};
+  inline void operator()(const SenderRegisterGameServerCommand&) {};
 
 signals: // Signals: controller -> ui
 

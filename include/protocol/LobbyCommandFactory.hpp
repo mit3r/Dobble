@@ -31,34 +31,13 @@ class LobbyCommandFactory {
         return j.get<SenderPingCommand>();
     };
 
-    dictionary["join_game"] = [this](const json& j) -> LobbyClientCommand {
-      if (isResponse(j))
-        return j.get<ResponseJoinGameCommand>();
-      else
-        return j.get<SenderJoinGameCommand>();
-    };
-
     dictionary["getinfolobby"] = [this](const json& j) -> LobbyClientCommand {
       if (isResponse(j))
         return j.get<ResponseGetLobbyInfoCommand>();
       else
         return j.get<SenderGetLobbyInfoCommand>();
     };
-
-    dictionary["leaveroom"] = [this](const json& j) -> LobbyClientCommand {
-      if (isResponse(j))
-        return j.get<ResponseLeaveRoomCommand>();
-      else
-        return j.get<SenderLeaveRoomCommand>();
-    };
-
-    dictionary["sendgame_info"] = [this](const json& j) -> LobbyClientCommand {
-      if (isResponse(j))
-        return j.get<ResponseSendGameInfoCommand>();
-      else
-        return j.get<SenderSendGameInfoCommand>();
-    };
-
+    
     dictionary["create_lobby"] = [this](const json& j) -> LobbyClientCommand {
       if (isResponse(j))
         return j.get<ResponseCreateLobbyCommand>();
