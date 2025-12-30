@@ -3,18 +3,21 @@
     {
       "name": "Linux",
       "includePath": [
-        "${workspaceFolder}/**",
-        "${workspaceFolder}/include",
-        "${workspaceFolder}/src/client/*",
-        "${workspaceFolder}/src/server",
-        "${workspaceFolder}/src/server/common",
+        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/src/**",
         "/usr/include/x86_64-linux-gnu/qt6/**"
       ],
       "defines": [],
       "compilerPath": "/usr/bin/g++",
       "cStandard": "c17",
       "cppStandard": "c++17",
-      "intelliSenseMode": "linux-gcc-x64"
+      "intelliSenseMode": "linux-gcc-x64",
+      "browse": {
+        "path": [
+          "${workspaceFolder}/include/**",
+          "${workspaceFolder}/src/**"
+        ]
+      }
     }
   ],
   "version": 4

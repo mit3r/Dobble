@@ -1,3 +1,27 @@
 {
-    "cmake.buildDirectory": "${workspaceFolder}/build"
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "files.exclude": {
+        "build/": true,
+        "dist/": true,
+        "temp/": true,
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/dobble_client_autogen": true
+    },
+    "search.exclude": {
+        "build/": true,
+        "dist/": true,
+        "temp/": true,
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/dobble_client_autogen": true
+    },
+    "C_Cpp.files.exclude": {
+        "build/": true,
+        "dist/": true,
+        "temp/": true,
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/dobble_client_autogen": true
+    }
 }
