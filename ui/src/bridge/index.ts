@@ -10,7 +10,7 @@ import "@/bridge/initialize";
 
 export interface ChannelObjects {
   main: MainBridge;
-  start: LoginBridge;
+  login: LoginBridge;
   browser: BrowserBridge;
   lobby: LobbyBridge;
   game: GameBridge;

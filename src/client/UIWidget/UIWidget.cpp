@@ -21,14 +21,14 @@ UIWidget::UIWidget(QWidget* parent) : QWidget(parent) {
   webChannel = new QWebChannel(this);
 
   this->mainBridge = new MainBridge(this);
-  this->startBridge = new StartBridge(this);
+  this->loginBridge = new LoginBridge(this);
   this->lobbyBridge = new LobbyBridge(this);
   this->browserBridge = new BrowserBridge(this);
   this->gameBridge = new GameBridge(this);
   this->endBridge = new EndBridge(this);
 
   webChannel->registerObject(QStringLiteral("main"), mainBridge);
-  webChannel->registerObject(QStringLiteral("start"), startBridge);
+  webChannel->registerObject(QStringLiteral("login"), loginBridge);
   webChannel->registerObject(QStringLiteral("browser"), browserBridge);
   webChannel->registerObject(QStringLiteral("lobby"), lobbyBridge);
   webChannel->registerObject(QStringLiteral("game"), gameBridge);

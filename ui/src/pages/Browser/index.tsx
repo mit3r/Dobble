@@ -49,7 +49,7 @@ export default function BrowserPage() {
           Next
         </button>
 
-        {pageNumber && <span className="absolute right-0 p-2 px-4">Page {lobbyInfo.page}</span>}
+        {pageNumber && <span className="absolute right-0 p-2 px-4">Page {pageNumber}</span>}
       </div>
     </div>
   );

@@ -1,11 +1,12 @@
-import { useStore } from "zustand";
-import LobbyPage from "./pages/Lobby";
-import BrowserPage from "./pages/Browser";
-import { mainStore } from "./store";
-import GamePage from "./pages/Game";
-import EndPage from "./pages/End";
-import StartPage from "./pages/Login";
 import { useMemo } from "react";
+import { useStore } from "zustand";
+import BrowserPage from "./pages/Browser";
+import EndPage from "./pages/End";
+import GamePage from "./pages/Game";
+import LobbyPage from "./pages/Lobby";
+import LoginPage from "./pages/Login";
+import { mainStore } from "./store";
+import { View } from "./types/dobble";
 
 function App() {
   const view = useStore(mainStore, (state) => state.views.view);
@@ -13,15 +14,15 @@ function App() {
 
   const Page = useMemo(() => {
     switch (view) {
-      case "start":
-        return <StartPage />;
-      case "browser":
+      case View.Login:
+        return <LoginPage />;
+      case View.Browser:
         return <BrowserPage />;
-      case "room":
+      case View.Room:
         return <LobbyPage />;
-      case "game":
+      case View.Game:
         return <GamePage />;
-      case "end":
+      case View.End:
         return <EndPage />;
 
       default:
@@ -34,19 +35,19 @@ function App() {
       <div className="flex p-1 gap-2 border-2 ">
         <h2>DevTools</h2>
 
-        <button className="p-1 border-2" onClick={() => setView("start")}>
+        <button className="p-1 border-2" onClick={() => setView(View.Login)}>
           Go to Start
         </button>
-        <button className="p-1 border-2" onClick={() => setView("browser")}>
+        <button className="p-1 border-2" onClick={() => setView(View.Browser)}>
           Go to Browser
         </button>
-        <button className="p-1 border-2" onClick={() => setView("room")}>
+        <button className="p-1 border-2" onClick={() => setView(View.Room)}>
           Go to Lobby
         </button>
-        <button className="p-1 border-2" onClick={() => setView("game")}>
+        <button className="p-1 border-2" onClick={() => setView(View.Game)}>
           Go to Game
         </button>
-        <button className="p-1 border-2" onClick={() => setView("end")}>
+        <button className="p-1 border-2" onClick={() => setView(View.End)}>
           Go to End
         </button>
       </div>

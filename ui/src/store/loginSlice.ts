@@ -29,20 +29,20 @@ export const createLoginSlice: StateCreator<MainStore, [], [], LoginSlice> = () 
     mainStore.setState((state) => ({
       login: { ...state.login, inVerification: true, error: null },
     }));
-    window.bridges!.start.callVerifyNickname(nickname);
+    window.bridges!.login.callVerifyNickname(nickname);
   },
 });
 
 // Listen to nickname verification success from C++ - wait for initialization
 qwebchannelInitializer.onReady(() => {
-  window.bridges!.start.onLoginSucceeded.connect((nickname: string) => {
+  window.bridges!.login.onLoginSucceeded.connect((nickname: string) => {
     console.log("Nickname verified signal received in UI:", nickname);
     mainStore.setState((state) => ({
       login: { ...state.login, nickname: nickname, error: null, inVerification: false },
     }));
   });
 
-  window.bridges!.start.onLoginFailed.connect((error: string) => {
+  window.bridges!.login.onLoginFailed.connect((error: string) => {
     console.log("Nickname verification failed signal received in UI:", error);
     mainStore.setState((state) => ({
       login: { ...state.login, nickname: null, error: error, inVerification: false },

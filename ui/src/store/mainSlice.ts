@@ -3,8 +3,7 @@ import { mainStore, type MainStore } from ".";
 import { produce } from "immer";
 import type { QtSignal } from "@/bridge/channel";
 import { qwebchannelInitializer } from "@/bridge/initialize";
-
-export type View = "start" | "browser" | "room" | "game" | "end";
+import { View } from "@/types/dobble";
 
 export interface MainBridge {
   // signals to listen to
@@ -21,7 +20,7 @@ export interface MainSlice {
 }
 
 export const createViewsSlice: StateCreator<MainStore, [], [], MainSlice> = (set) => ({
-  view: "start",
+  view: View.Login,
   setView: (view: View) =>
     set(
       produce((state: MainStore) => {

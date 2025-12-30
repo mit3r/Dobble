@@ -13,12 +13,12 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Login verification flow
   connect(
-      ui->startBridge, &StartBridge::requestVerifyNickname,
+      ui->loginBridge, &LoginBridge::requestVerifyNickname,
       lobbyServerController, &LobbyServerController::wantNicknameVerification);
 
   connect(
       lobbyServerController, &LobbyServerController::hasLoginSucceeded,
-      ui->startBridge, &StartBridge::hasLoginSucceeded);
+      ui->loginBridge, &LoginBridge::hasLoginSucceeded);
 
   connect(
       lobbyServerController, &LobbyServerController::hasLoginSucceeded,
@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(
       lobbyServerController, &LobbyServerController::hasLoginFailed,
-      ui->startBridge, &StartBridge::hasLoginFailed);
+      ui->loginBridge, &LoginBridge::hasLoginFailed);
 }
 
 MainWindow::~MainWindow() {

@@ -25,6 +25,11 @@ include_directories(src/client)
 find_package(Threads REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets WebEngineWidgets)
 
+# Qt MOC configuration (only MOC needed, no QML/UI files)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC OFF)
+set(CMAKE_AUTOUIC OFF)
+
 
 # Sources
 
@@ -65,6 +70,11 @@ qt_standard_project_setup()
 qt_add_executable(
     dobble_client
     ${CLIENT_SOURCES}
+)
+# Better include paths for Qt autogen files
+target_include_directories(dobble_client PRIVATE 
+    ${CMAKE_SOURCE_DIR}/src/client
+    ${CMAKE_SOURCE_DIR}/include
 )
 add_dependencies(dobble_client build_web_client)
 target_link_libraries(dobble_client PRIVATE Qt6::Core Qt6::Widgets Qt6::WebEngineWidgets)

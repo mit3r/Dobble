@@ -1,3 +1,11 @@
+export enum View {
+  Login = 0,
+  Browser = 1,
+  Room = 2,
+  Game = 3,
+  End = 4,
+}
+
 export enum GameStatus {
   Waiting = 0,
   InGame = 1,

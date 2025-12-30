@@ -20,8 +20,8 @@
 #include "Bridges/EndBridge.hpp"
 #include "Bridges/GameBridge.hpp"
 #include "Bridges/LobbyBridge.hpp"
+#include "Bridges/LoginBridge.hpp"
 #include "Bridges/MainBridge.hpp"
-#include "Bridges/StartBridge.hpp"
 #include "LocalsSchemeHandler.hpp"
 
 #pragma once
@@ -39,7 +39,7 @@ class UIWidget : public QWidget {
   MainBridge* mainBridge;  // Communicates on all pages
 
   // Specific page bridges
-  StartBridge* startBridge;
+  LoginBridge* loginBridge;
   BrowserBridge* browserBridge;
   LobbyBridge* lobbyBridge;
   GameBridge* gameBridge;
