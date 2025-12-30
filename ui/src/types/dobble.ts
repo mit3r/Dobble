@@ -6,6 +6,30 @@ export enum View {
   End = 4,
 }
 
+export enum ConnectionStatus {
+  Connecting = 0,
+  Connected = 1,
+  Retrying = 2,
+  Disconnected = 3,
+};
+
+export enum ConnectionError {
+  None = 0,
+  ConnectionRefused = 1,
+  HostNotFound = 2,
+  NetworkError = 3,
+  Timeout = 4,
+  UnknownError = 5,
+};
+
+export enum CommunicationStatus {
+  None = 0,          // before TCP connected
+  Connected = 1,     // after TCP connected
+  Waiting = 2,       // after request sent
+  Retrying = 3,      // after ping-pong timeout
+  Disconnected = 4,  // after several ping-pong timeouts
+};
+
 export enum GameStatus {
   Waiting = 0,
   InGame = 1,

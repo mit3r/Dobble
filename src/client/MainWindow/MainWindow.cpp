@@ -11,7 +11,18 @@ MainWindow::MainWindow(QWidget* parent)
   gameServerController = new GameServerController(this);
   lobbyServerController = new LobbyServerController(this);
 
-  // Login verification flow
+  // Connect page flows
+  connectLoginPageFlow();
+  connectBrowserPageFlow();
+  connectLobbyPageFlow();
+  connectGamePageFlow();
+  connectEndPageFlow();
+}
+
+MainWindow::~MainWindow() {
+}
+
+void MainWindow::connectLoginPageFlow() {
   connect(
       ui->loginBridge, &LoginBridge::requestVerifyNickname,
       lobbyServerController, &LobbyServerController::wantNicknameVerification);
@@ -22,12 +33,21 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(
       lobbyServerController, &LobbyServerController::hasLoginSucceeded,
-      [this](const QString&) { emit ui->mainBridge->onNavigated("browser"); });
+      [this](const QString&) { emit ui->mainBridge->onNavigated(View::Browser); });
 
   connect(
       lobbyServerController, &LobbyServerController::hasLoginFailed,
       ui->loginBridge, &LoginBridge::hasLoginFailed);
 }
 
-MainWindow::~MainWindow() {
+void MainWindow::connectBrowserPageFlow() {
+}
+
+void MainWindow::connectLobbyPageFlow() {
+}
+
+void MainWindow::connectGamePageFlow() {
+}
+
+void MainWindow::connectEndPageFlow() {
 }

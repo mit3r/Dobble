@@ -41,4 +41,10 @@ class MainWindow : public QMainWindow {
       // Controllers - Network communication
       GameServerController* gameServerController;    // Communicates with game server
       LobbyServerController* lobbyServerController;  // Communicates with lobby server
+
+      void connectLoginPageFlow();
+      void connectBrowserPageFlow();
+      void connectLobbyPageFlow();
+      void connectGamePageFlow();
+      void connectEndPageFlow();
 };

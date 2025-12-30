@@ -2,16 +2,16 @@
 
 template <typename T>
 inline void LobbyServerController::operator()(const T&) {
-  qDebug() << __FUNCTION__ << "LobbyServerController: Unhandled command type.";
+  qDebug() << "LobbyServerController: got unknown command type";
 }
 
 void LobbyServerController::operator()(const std::monostate&) {
-  qDebug() << __FUNCTION__ << "LobbyServerController: Received monostate command.";
+  qDebug() << "LobbyServerController: got monostate";
 }
 
 // Response commands (from server to client)
 void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
-  qDebug() << __FUNCTION__ << "LobbyServerController: Processing ResponseLoginCommand.";
+  qDebug() << "LobbyServerController: got ResponseLoginCommand";
   if (cmd.error.has_value()) {
     currentNickname.reset();
     emit hasLoginFailed(QString::fromStdString(cmd.error->message));

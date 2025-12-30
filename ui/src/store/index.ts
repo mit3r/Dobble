@@ -1,6 +1,6 @@
 import { createStore } from "zustand";
 import { createLobbySlice, type LobbySlice } from "./lobbySlice";
-import { createViewsSlice, type MainSlice } from "./mainSlice";
+import { createMainSlice, type MainSlice } from "./mainSlice";
 import { createLoginSlice, type LoginSlice } from "./loginSlice";
 import { createBrowserSlice, type BrowserSlice } from "./browserSlice";
 import { createGameSlice, type GameSlice } from "./gameSlice";
@@ -16,7 +16,7 @@ export type MainStore = {
 };
 
 export const mainStore = createStore<MainStore>()((...args) => ({
-  views: createViewsSlice(...args),
+  views: createMainSlice(...args),
   login: createLoginSlice(...args),
   browser: createBrowserSlice(...args),
   lobby: createLobbySlice(...args),

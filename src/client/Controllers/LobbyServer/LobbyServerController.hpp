@@ -6,6 +6,8 @@
 #include <protocol/lobby/lobbyroom/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
 
+#include "client/type/dobble.hpp"
+
 #pragma once
 
 /**
@@ -39,38 +41,54 @@ class LobbyServerController : public QObject {
 
   signals:  // Signals: controller -> ui
 
-      void hasLoginSucceeded(const QString& nickname);
-      void hasLoginFailed(const QString& error);
+      // Connection signals
+      void hasConnectionStateChanged(const ConnectionStatus& status);
+      void hasConnectionErrorOccurred(const ConnectionError& error);
 
-      void hasCreatedGame(const QString& playerName);
+      // Communication signals
 
-      void hasJoinedGame(const QString& gameId);
+      // Login signals
+      void hasLoginSucceeded(const std::string& nickname);
+      void hasLoginFailed(const std::string& error);
 
-      void hasObservedGame(const QString& gameId);
+      // Browser signals
+      void hasCreatedGame(const std::string& playerName);
+      void hasJoinedGame(const std::string& gameId);
+      void hasObservedGame(const std::string& gameId);
 
-      void hasDisconnected();
+      void hasReceivedPage(const std::list<ShortGameInfo>& games, const std::optional<std::string>& nextPage);
 
-      void hasErrorOccurred(const QString& errorMessage);
+      // Game signals
+      // TODO
+
+      // End signals
+      // TODO
+
+      // Global signals
+      void hasCommunicationStateChanged(const CommunicationStatus& status);
 
   private slots:  // Slots for ui events: ui -> server
 
   void whenReadReady();
+  void whenSocketStateChanged(QTcpSocket::SocketState socketState);
+  void whenSocketError(QTcpSocket::SocketError socketError);
 
   public slots:  // Slots: ui -> controller
 
-      void wantNicknameVerification(const QString& nickname);
+      void wantNicknameVerification(const std::string& nickname);
 
-      void wantCreateGame(const QString& gameName);
+      void wantCreateGame(const std::string& gameName);
 
-      void wantJoinGame(const QString& gameId);
+      void wantJoinGame(const std::string& gameId);
 
-      void wantObserveGame(const QString& gameId);
+      void wantObserveGame(const std::string& gameId);
 
       void wantDisconnect();
 
   private:
   QTcpSocket* socket;
   LobbyCommandFactory commandFactory;
-  std::optional<QString> currentNickname;
   QByteArray receiveBuffer;  // Buffer for incoming data
+
+  std::optional<std::string> currentNickname;
 };
