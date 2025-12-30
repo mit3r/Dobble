@@ -13,22 +13,13 @@ class MainBridge : public QObject {
   explicit MainBridge(QObject* parent = nullptr) : QObject(parent) {}
 
   // App -> Bridge (slots), "has"
-  public slots:
-      void hasLobbyServerStateChanged(const ServerStatus& status);
-      void hasGlobalErrorOccured(const std::string& error);
 
-      // App <- Bridge (signals), "request"
-  signals:
-  void requestCloseApp();
+  // App <- Bridge (signals), "request"
 
   // Bridge -> UI (js listeners), "on"
-  signals:
-      void onNavigated(const View& page);
-      void onLobbyServerStateChanged(const ServerStatus& status);
+signals:
+  void onNavigated(const View& page);
+  void onGlobalErrorOccured(const QString& errorMessage);
 
-      void onGlobalErrorOccured(const QString& error);
-
-      // Bridge <- UI (js methods), "call"
-  private slots:
-  void callCloseApp();
+  // Bridge <- UI (js methods), "call"
 };

@@ -14,9 +14,7 @@
 #include <iostream>
 
 #include "Bridges/BrowserBridge.hpp"
-#include "Bridges/EndBridge.hpp"
 #include "Bridges/GameBridge.hpp"
-#include "Bridges/LobbyBridge.hpp"
 #include "Bridges/MainBridge.hpp"
 #include "Controllers/GameServer/GameServerController.hpp"
 #include "Controllers/LobbyServer/LobbyServerController.hpp"
@@ -41,6 +39,9 @@ class MainWindow : public QMainWindow {
       // Controllers - Network communication
       GameServerController* gameServerController;    // Communicates with game server
       LobbyServerController* lobbyServerController;  // Communicates with lobby server
+
+      void connectLobbyServerFlow();
+      void connectGameServerFlow();
 
       void connectLoginPageFlow();
       void connectBrowserPageFlow();

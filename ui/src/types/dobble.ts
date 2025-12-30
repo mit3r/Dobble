@@ -36,30 +36,30 @@ export enum GameStatus {
   Finished = 2,
 }
 
-export interface GameInfo {
+export interface ShortGameInfo {
   gameId: string;
   gameName: string;
   players: number;
   maxPlayers: number;
-  nicknames: string[];
   status: GameStatus;
 }
 
-export enum PlayerStatus {
-  NotReady = 0,
-  Ready = 1,
-  Playing = 2,
-  Disconnected = 3,
+export interface PlayerGameInfo {
+  nickname: string;
+  cardId: number;
+  score: number;
+  goodMatches: number;
+  badMatches: number;
 }
 
-export interface PlayerInfo {
-  nickname: string;
-  status: PlayerStatus;
-  score: number;
-  handCardId: number | null;
-}
+export interface GameInfo {
+  gameId: string;
+  gameName: string;
 
-export interface PlaceInfo {
-  nickname: string;
-  score: number;
+  players: PlayerGameInfo[];
+
+  status: GameStatus;
+
+  topCardId: number;
+  lastsCards: number;
 }

@@ -1,42 +1,43 @@
-import type { StateCreator } from "zustand";
-import { mainStore, type MainStore } from ".";
-import { produce } from "immer";
 import type { QtSignal } from "@/bridge/channel";
 import { qwebchannelInitializer } from "@/bridge/initialize";
-import { ConnectionError, ConnectionStatus, View } from "@/types/dobble";
+import { View } from "@/types/dobble";
+import { produce } from "immer";
+import type { StateCreator } from "zustand";
+import { mainStore, type MainStore } from ".";
 
 export interface MainBridge {
-  // signals to listen to
   onNavigated: QtSignal<(view: View) => void>;
-  onLobbyServerStateChanged: QtSignal<(status: ConnectionStatus) => void>;
-  onLobbyServerErrorOccured: QtSignal<(error: ConnectionError) => void>;
-  // slots to be called
-  callCloseApp: () => void;
+  onGlobalErrorOccurred: QtSignal<(message: string) => void>;
 }
 
 export interface MainSlice {
+  nickname: string | null;
+
   view: View;
   setView: (view: View) => void;
 
-  lobbyServerStatus: ConnectionStatus;
-  lobbyServerError: ConnectionError | null;
+  globalErrorMessage: string | null;
 }
 
 export const createMainSlice: StateCreator<MainStore, [], [], MainSlice> = (set) => ({
-  view: View.Login,
-  lobbyServerStatus: ConnectionStatus.Connecting,
-  lobbyServerError: null,
+  nickname: null,
+  globalErrorMessage: null,
 
+  view: View.Login,
   setView: (view: View) =>
     set(
       produce((state: MainStore) => {
-        state.views.view = view;
+        state.main.view = view;
       })
     ),
 });
 
 qwebchannelInitializer.onReady(() => {
   window.bridges!.main.onNavigated.connect((view: View) => {
-    mainStore.getState().views.setView(view);
+    mainStore.getState().main.setView(view);
+  });
+
+  window.bridges!.main.onGlobalErrorOccurred.connect((message: string) => {
+    mainStore.getState().main.globalErrorMessage = message;
   });
 });

@@ -6,7 +6,7 @@ import LobbyCard from "./Components/LobbyCard";
 export default function BrowserPage() {
   const games = useStore(mainStore, (state) => state.browser.games);
   const pageNumber = useStore(mainStore, (state) => state.browser.pageNumber);
-  const nickname = useStore(mainStore, (state) => state.login.nickname);
+  const nickname = useStore(mainStore, (state) => state.main.nickname);
 
   const prevPage = null;
   const nextPage = null;

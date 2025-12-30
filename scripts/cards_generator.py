@@ -7,19 +7,19 @@ n = 7 #Number of symbols per card - 1
 #Add first set of n+1 cards (e.g. 8 cards)
 for i in range(n+1):  
   #Add new card with first symbol
-  cards.append([1])
+  cards.append([0])
   #Add n+1 symbols on the card (e.g. 8 symbols)
   for j in range(n):
-    cards[i].append((j+1)+(i*n)+1)
+    cards[i].append((j+1)+(i*n))
 
 #Add n sets of n cards 
 for i in range(0,n):
   for j in range(0,n):
     #Append a new card with 1 symbol
-    cards.append([i+2])
+    cards.append([i+1])
      #Add n symbols on the card (e.g. 7 symbols)
     for k in range(0,n):
-      val  = (n+1 + n*k + (i*k+j)%n)+1
+      val  = (n+1 + n*k + (i*k+j)%n)
       cards[len(cards)-1].append(val)
 
 

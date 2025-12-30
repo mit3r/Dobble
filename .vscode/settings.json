@@ -23,5 +23,13 @@
         "**/node_modules": true,
         "**/.git": true,
         "**/dobble_client_autogen": true
+    },
+    "[cpp]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[c]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
     }
 }

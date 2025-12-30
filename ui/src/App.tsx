@@ -9,8 +9,8 @@ import { mainStore } from "./store";
 import { View } from "./types/dobble";
 
 function App() {
-  const view = useStore(mainStore, (state) => state.views.view);
-  const setView = useStore(mainStore, (state) => state.views.setView);
+  const view = useStore(mainStore, (state) => state.main.view);
+  const setView = useStore(mainStore, (state) => state.main.setView);
 
   const Page = useMemo(() => {
     switch (view) {
@@ -32,7 +32,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen select-none">
-      <div className="flex p-1 gap-2 border-2 ">
+      <div className="h-14 flex p-1 gap-2 border-2 min-h-14 ">
         <h2>DevTools</h2>
 
         <button className="p-1 border-2" onClick={() => setView(View.Login)}>
@@ -52,7 +52,7 @@ function App() {
         </button>
       </div>
 
-      <div className=" flex-1 p-4">{Page}</div>
+      <div className="flex-1 overflow-hidden p-4">{Page}</div>
     </div>
   );
 }

@@ -9,14 +9,13 @@ void LobbyServerController::operator()(const std::monostate&) {
   qDebug() << "LobbyServerController: got monostate";
 }
 
-// Response commands (from server to client)
 void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
   qDebug() << "LobbyServerController: got ResponseLoginCommand";
   if (cmd.error.has_value()) {
-    currentNickname.reset();
-    emit hasLoginFailed(QString::fromStdString(cmd.error->message));
+    nickname.reset();
+    emit hasLoginFailed(cmd.error->message);
   } else {
-    emit hasLoginSucceeded(currentNickname.value());
+    emit hasLoginSucceeded(nickname.value());
   }
 }
 

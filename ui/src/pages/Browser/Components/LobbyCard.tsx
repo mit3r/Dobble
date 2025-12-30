@@ -1,6 +1,6 @@
-import type { GameInfo } from "@/types/dobble";
+import type { ShortGameInfo } from "@/types/dobble";
 
-export default function LobbyCard({ game }: { game: GameInfo }) {
+export default function LobbyCard({ game }: { game: ShortGameInfo }) {
   return (
     <div className="grid grid-cols-1 grid-rows-3 border-2 p-2">
       <h2>{game.gameName}</h2>

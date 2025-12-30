@@ -31,64 +31,48 @@ class LobbyServerController : public QObject {
   void operator()(const ResponseRegisterGameServerCommand& cmd);
   void operator()(const ResponseLeaveRoomCommand& cmd);
   void operator()(const ResponseSendGameInfoCommand& cmd);
-  void operator()(const SenderLoginCommand& cmd);
-  void operator()(const SenderPingCommand& cmd);
-  void operator()(const SenderJoinGameCommand& cmd);
-  void operator()(const SenderGetLobbyInfoCommand& cmd);
-  void operator()(const SenderCreateLobbyCommand& cmd);
-  void operator()(const SenderLeaveRoomCommand& cmd);
-  void operator()(const SenderSendGameInfoCommand& cmd);
 
-  signals:  // Signals: controller -> ui
+signals: // Signals: controller -> ui
 
-      // Connection signals
-      void hasConnectionStateChanged(const ConnectionStatus& status);
-      void hasConnectionErrorOccurred(const ConnectionError& error);
+  // Connection signals
+  void hasConnectionStateChanged(const ConnectionStatus& status);
+  void hasConnectionErrorOccurred(const ConnectionError& error);
 
-      // Communication signals
+  // Communication signals
+  void hasCommunicationStateChanged(const CommunicationStatus& status);
 
-      // Login signals
-      void hasLoginSucceeded(const std::string& nickname);
-      void hasLoginFailed(const std::string& error);
+  // Login signals
+  void hasLoginSucceeded(const std::string& nickname);
+  void hasLoginFailed(const std::string& error);
 
-      // Browser signals
-      void hasCreatedGame(const std::string& playerName);
-      void hasJoinedGame(const std::string& gameId);
-      void hasObservedGame(const std::string& gameId);
+  // Browser signals
+  void hasCreatedGame(const std::string& playerName);
+  void hasJoinedGame(const std::string& gameId);
+  void hasObservedGame(const std::string& gameId);
 
-      void hasReceivedPage(const std::list<ShortGameInfo>& games, const std::optional<std::string>& nextPage);
+  void hasReceivedPage(const std::list<ShortGameInfo>& games,
+                       const std::optional<std::string>& nextPage);
 
-      // Game signals
-      // TODO
+public slots: // Slots: ui -> controller
 
-      // End signals
-      // TODO
+  void wantConnectToServer(const std::string& ip, const int& port);
 
-      // Global signals
-      void hasCommunicationStateChanged(const CommunicationStatus& status);
+  void wantNicknameVerification(const std::string& nickname);
+  void wantCreateGame(const std::string& gameName);
+  void wantJoinGame(const std::string& gameId);
+  void wantObserveGame(const std::string& gameId);
+  void wantDisconnect();
 
-  private slots:  // Slots for ui events: ui -> server
+private slots: // Slots for ui events: ui -> server
 
   void whenReadReady();
   void whenSocketStateChanged(QTcpSocket::SocketState socketState);
   void whenSocketError(QTcpSocket::SocketError socketError);
 
-  public slots:  // Slots: ui -> controller
-
-      void wantNicknameVerification(const std::string& nickname);
-
-      void wantCreateGame(const std::string& gameName);
-
-      void wantJoinGame(const std::string& gameId);
-
-      void wantObserveGame(const std::string& gameId);
-
-      void wantDisconnect();
-
-  private:
+private:
   QTcpSocket* socket;
   LobbyCommandFactory commandFactory;
-  QByteArray receiveBuffer;  // Buffer for incoming data
+  QByteArray receiveBuffer; // Buffer for incoming data
 
-  std::optional<std::string> currentNickname;
+  std::optional<std::string> nickname;
 };

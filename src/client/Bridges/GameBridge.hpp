@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QString>
 
+#include "type/dobble.hpp"
+
 #pragma once
 
 class GameBridge : public QObject {
@@ -10,31 +12,18 @@ class GameBridge : public QObject {
   public:
   explicit GameBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  // App -> Bridge (slots), "has"
-  public slots:
-  void hasPlayerStatusChanged(const QString& nickname, const QString& status);
-  void hasPlayerScoreChanged(const QString& nickname, const int& score);
-  void hasTopCardChanged(const int& cardId);
-  void hasPlayerCardChanged(const QString& nickname, const int& cardId);
-  void hasLastsCardsChanged(const int& count);
-  void hasQuitGame();
-
+signals:
   // App <- Bridge (signals), "request"
-  signals:
   void requestMatch(const int& pick1, const int& pick2);
   void requestQuitGame();
 
   // Bridge -> UI (js listeners), "on"
-  signals:
-  void onPlayerStatusChanged(const QString& nickname, const QString& status);
-  void onPlayerScoreChanged(const QString& nickname, const int& score);
-  void onTopCardChanged(const int& cardId);
-  void onPlayerCardChanged(const QString& nickname, const int& cardId);
-  void onLastsCardsChanged(const int& count);
+  void onGameInfoChanged(const GameInfo& gameInfo);
+  void onMatchResult(const bool& isMatch);
   void onGameQuit();
 
   // Bridge <- UI (js methods), "call"
-  private slots:
+private slots:
   void callMatch(const int& pick1, const int& pick2);
   void callQuitGame();
 };

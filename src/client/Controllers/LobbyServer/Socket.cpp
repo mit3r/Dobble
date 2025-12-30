@@ -15,9 +15,13 @@ LobbyServerController::LobbyServerController(QObject* parent) {
 
   connect(socket, &QTcpSocket::errorOccurred,
           this, &LobbyServerController::whenSocketError);
+}
 
-  // Connect socket to server
-  socket->connectToHost("127.0.0.1", 1500, QIODevice::ReadWrite);
+void LobbyServerController::wantConnectToServer(const std::string& ip, const int& port) {
+  qDebug() << "LobbyServerController: Connecting to server at" << QString::fromStdString(ip) << ":"
+           << port;
+
+  socket->connectToHost(QString::fromStdString(ip), port, QIODevice::ReadWrite);
 }
 
 void LobbyServerController::whenReadReady() {
@@ -39,56 +43,9 @@ void LobbyServerController::whenReadReady() {
 }
 
 void LobbyServerController::whenSocketStateChanged(QTcpSocket::SocketState socketState) {
-  // Communitaction two states
-
-  // TCP Socket states:
-  // QTcpSocket::SocketState::ConnectedState;
-  // QTcpSocket::SocketState::ConnectingState;
-  // QTcpSocket::SocketState::HostLookupState;
-  // QTcpSocket::SocketState::UnconnectedState;
-
-  switch (socketState) {
-  case QTcpSocket::SocketState::ConnectedState:
-    emit hasLoginSucceeded(currentNickname.value_or("Unknown"));
-    break;
-  case QTcpSocket::SocketState::UnconnectedState:
-    emit hasDisconnected();
-    break;
-  default:
-    break;
-  }
+  emit this->hasConnectionStateChanged(static_cast<ConnectionStatus>(socketState));
 }
 
 void LobbyServerController::whenSocketError(QTcpSocket::SocketError socketError) {
-  // Communitaction errors
-
-  // TCP Socket errors:
-  // QTcpSocket::SocketError::ConnectionRefusedError;
-  // QTcpSocket::SocketError::HostNotFoundError;
-  // QTcpSocket::SocketError::NetworkError;
-  // QTcpSocket::SocketError::OperationError;
-  // QTcpSocket::SocketError::RemoteHostClosedError;
-  // QTcpSocket::SocketError::SocketAccessError;
-  // QTcpSocket::SocketError::SocketResourceError;
-  // QTcpSocket::SocketError::SocketTimeoutError;
-  // QTcpSocket::SocketError::TemporaryError;
-  // QTcpSocket::SocketError::UnknownSocketError;
-
-  switch (socketError) {
-  case QTcpSocket::SocketError::ConnectionRefusedError:
-    emit hasErrorOccurred("Connection refused by the server.");
-    break;
-  case QTcpSocket::SocketError::HostNotFoundError:
-    emit hasErrorOccurred("Host not found. Check the server address.");
-    break;
-  case QTcpSocket::SocketError::NetworkError:
-    emit hasErrorOccurred("Network error occurred.");
-    break;
-  case QTcpSocket::SocketError::RemoteHostClosedError:
-    emit hasDisconnected();
-    break;
-  default:
-    emit hasErrorOccurred("An unknown socket error occurred.");
-    break;
-  }
+  emit this->hasConnectionErrorOccurred(static_cast<ConnectionError>(socketError));
 }

@@ -4,32 +4,9 @@
 #include <QString>
 #include <QStringList>
 #include <QVariantList>
+#include <type/dobble.hpp>
 
 #pragma once
-
-enum GameStatus {
-  Waiting = 0,
-  InGame = 1,
-  Finished = 2
-};
-
-struct GameInfo {
-  Q_GADGET
-  Q_PROPERTY(QString gameId MEMBER gameId)
-  Q_PROPERTY(QString gameName MEMBER gameName)
-  Q_PROPERTY(int players MEMBER players)
-  Q_PROPERTY(int maxPlayers MEMBER maxPlayers)
-  Q_PROPERTY(QStringList nicknames MEMBER nicknames)
-  Q_PROPERTY(GameStatus status MEMBER status)
-
-  public:
-  QString gameId;
-  QString gameName;
-  int players;
-  int maxPlayers;
-  QStringList nicknames;
-  GameStatus status;
-};
 
 /**
  * @brief Controller for the browser page logic
@@ -39,25 +16,28 @@ class BrowserBridge : public QObject {
   public:
   explicit BrowserBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  // App -> Bridge (slots), "has"
-  public slots:
-  void hasPageChanged(const int& pageNumber, const QList<GameInfo>& gamesList);
-  void hasErrorOccurred(const QString& message);
+signals:
+  // Bridge -> UI (js listeners), "on"
+  void onServerConnectionStateChanged(const ConnectionStatus& status);
+  void onServerConnectionErrorOccurred(const ConnectionError& error);
+
+  void onServerCommunicationStateChanged(const CommunicationStatus& status);
+
+  void onLoginSucceeded(const std::string& nickname);
+  void onLoginFailed(const std::string& error);
+
+  void onPageChanged(const int& pageNumber, const std::list<ShortGameInfo>& gamesList);
 
   // App <- Bridge (signals), "request"
-  signals:
-      void requestNavigateToPage(const double& page);
-      void requestJoinGame(const QString& gameId);
-      void requestObserveGame(const QString& gameId);
+  void requestVerifyNickname(const std::string& nickname);
+  void requestNavigateToPage(const double& page);
+  void requestJoinGame(const std::string& gameId);
+  void requestObserveGame(const std::string& gameId);
 
-      // Bridge -> UI (js listeners), "on"
-  signals:
-      void onPageChanged(const int& pageNumber, const QList<GameInfo>& gamesList);
-      void onErrorOccurred(const QString& message);
-
-      // Bridge <- UI (js methods), "call"
-  private slots:
-      void callNavigateToPage(const double& page);
-      void callJoinGame(const QString& gameId);
-      void callObserveGame(const QString& gameId);
+  // Bridge <- UI (js methods), "call"
+private slots:
+  void callVerifyNickname(const std::string& nickname);
+  void callNavigateToPage(const double& page);
+  void callJoinGame(const std::string& gameId);
+  void callObserveGame(const std::string& gameId);
 };

@@ -1,14 +1,8 @@
 #include "BrowserBridge.hpp"
 
-void BrowserBridge::hasPageChanged(const int& pageNumber, const QList<GameInfo>& gamesList) {
-  qDebug() << "BrowserBridge::hasPageChanged - Page Number:" << pageNumber
-           << ", Games List Size:" << gamesList.size();
-  emit onPageChanged(pageNumber, gamesList);
-}
-
-void BrowserBridge::hasErrorOccurred(const QString& message) {
-  qDebug() << "BrowserBridge::hasErrorOccurred - Message:" << message;
-  emit onErrorOccurred(message);
+void BrowserBridge::callVerifyNickname(const std::string& nickname) {
+  qDebug() << "BrowserBridge::callVerifyNickname - Nickname:" << nickname.c_str();
+  emit requestVerifyNickname(nickname);
 }
 
 void BrowserBridge::callNavigateToPage(const double& page) {
@@ -16,12 +10,12 @@ void BrowserBridge::callNavigateToPage(const double& page) {
   emit requestNavigateToPage(page);
 }
 
-void BrowserBridge::callJoinGame(const QString& gameId) {
-  qDebug() << "BrowserBridge::callJoinGame - Game ID:" << gameId;
+void BrowserBridge::callJoinGame(const std::string& gameId) {
+  qDebug() << "BrowserBridge::callJoinGame - Game ID:" << gameId.c_str();
   emit requestJoinGame(gameId);
 }
 
-void BrowserBridge::callObserveGame(const QString& gameId) {
-  qDebug() << "BrowserBridge::callObserveGame - Game ID:" << gameId;
+void BrowserBridge::callObserveGame(const std::string& gameId) {
+  qDebug() << "BrowserBridge::callObserveGame - Game ID:" << gameId.c_str();
   emit requestObserveGame(gameId);
 }
