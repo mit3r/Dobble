@@ -11,7 +11,7 @@ export enum ConnectionStatus {
   Connected = 1,
   Retrying = 2,
   Disconnected = 3,
-};
+}
 
 export enum ConnectionError {
   None = 0,
@@ -20,15 +20,15 @@ export enum ConnectionError {
   NetworkError = 3,
   Timeout = 4,
   UnknownError = 5,
-};
+}
 
 export enum CommunicationStatus {
-  None = 0,          // before TCP connected
-  Connected = 1,     // after TCP connected
-  Waiting = 2,       // after request sent
-  Retrying = 3,      // after ping-pong timeout
-  Disconnected = 4,  // after several ping-pong timeouts
-};
+  None = 0, // before TCP connected
+  Connected = 1, // after TCP connected
+  Waiting = 2, // after request sent
+  Retrying = 3, // after ping-pong timeout
+  Disconnected = 4, // after several ping-pong timeouts
+}
 
 export enum GameStatus {
   Waiting = 0,
@@ -47,9 +47,9 @@ export interface ShortGameInfo {
 export interface PlayerGameInfo {
   nickname: string;
   cardId: number;
-  score: number;
-  goodMatches: number;
-  badMatches: number;
+  points: number; // matches - mistakes
+  matches: number; // total correct matches
+  mistakes: number; // total mistakes
 }
 
 export interface GameInfo {

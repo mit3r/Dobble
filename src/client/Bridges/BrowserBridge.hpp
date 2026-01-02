@@ -1,5 +1,3 @@
-
-
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -17,7 +15,7 @@
  */
 class BrowserBridge : public QObject {
   Q_OBJECT
-  public:
+public:
   explicit BrowserBridge(QObject* parent = nullptr) : QObject(parent) {}
 
 signals:

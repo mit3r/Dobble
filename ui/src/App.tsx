@@ -31,7 +31,7 @@ function App() {
   }, [view]);
 
   return (
-    <div className="flex flex-col h-screen select-none">
+    <div className="flex flex-col h-screen select-none min-w-lg">
       <div className="h-14 flex p-1 gap-2 border-2 min-h-14 ">
         <h2>DevTools</h2>
 

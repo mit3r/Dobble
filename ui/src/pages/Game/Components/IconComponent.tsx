@@ -1,5 +1,7 @@
 import { getIconsSource, quasiRandomRotation } from "@/utils/CardsSymbols";
 import { useMemo } from "react";
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export default function IconComponent(props: {
   cardId: number;
@@ -8,6 +10,8 @@ export default function IconComponent(props: {
   maxSize: number;
   left: number;
   top: number;
+  picked?: boolean;
+  onClick?: () => void;
 }) {
   const src = useMemo(() => getIconsSource(props.iconId), [props.iconId]);
   const rotation = useMemo(
@@ -33,8 +37,14 @@ export default function IconComponent(props: {
       }}
     >
       <img
+        onClick={props.onClick}
         draggable={false}
-        className=" w-full h-full object-contain hover:scale-110 transition-transform"
+        className={twMerge(
+          clsx(
+            " w-full h-full object-contain hover:scale-110 active:scale-95 transition-all",
+            props.picked && "drop-shadow-[0_0_10px_red]"
+          )
+        )}
         src={src}
         alt={`Icon ${props.iconId}`}
       />

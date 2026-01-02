@@ -1,20 +1,37 @@
-import CardComponent from "./Components/CardComponent";
+import Loading from "@/Components/Loading";
+import LobbyBar from "@/Components/LobbyBar";
+import QuitFooter from "@/Components/QuitFooter";
+import { mainStore } from "@/store";
+import { useMemo } from "react";
+import { useStore } from "zustand";
+import Gameplay from "./Components/Gameplay";
 
 export default function GamePage() {
-  // const topCardId = 0;
+  const gameInfo = useStore(mainStore, (state) => state.game.gameInfo);
 
-  const cards = [12, 45, 28, 23, 56, 34, 5, 47, 19];
+  const nickname = useStore(mainStore, (state) => state.main.nickname);
+
+  const you = useMemo(() => {
+    return gameInfo?.players.find((player) => player.nickname === nickname) || null;
+  }, [gameInfo, nickname]);
+
+  const otherPlayers = useMemo(() => {
+    return gameInfo?.players.filter((player) => player.nickname !== nickname);
+  }, [gameInfo, nickname]);
 
   return (
-    <div>
-      Game Page
-      <div className="w-full grid grid-cols-3 gap-4">
-        {cards.map((cardId, index) => (
-          <div key={index} className="h-full m-2">
-            <CardComponent cardId={cardId} />
-          </div>
-        ))}
-      </div>
+    <div className="w-full h-full flex  flex-col gap-2 ">
+      <LobbyBar />
+
+      {!gameInfo || !otherPlayers ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loading />
+        </div>
+      ) : (
+        <Gameplay gameInfo={gameInfo} you={you} otherPlayers={otherPlayers} />
+      )}
+
+      <QuitFooter onQuit={() => {}} />
     </div>
   );
 }
