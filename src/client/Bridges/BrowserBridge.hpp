@@ -10,7 +10,10 @@
 #pragma once
 
 /**
- * @brief Controller for the browser page logic
+ * @brief Controller for communication between app and ui, related to lobby server actions:
+ * - login,
+ * - browse games,
+ * - join/observe game
  */
 class BrowserBridge : public QObject {
   Q_OBJECT
@@ -18,6 +21,12 @@ class BrowserBridge : public QObject {
   explicit BrowserBridge(QObject* parent = nullptr) : QObject(parent) {}
 
 signals:
+  // App <- Bridge (signals), "request"
+  void requestVerifyNickname(const std::string& nickname);
+  void requestNavigateToPage(const double& page);
+  void requestJoinGame(const std::string& gameId);
+  void requestObserveGame(const std::string& gameId);
+
   // Bridge -> UI (js listeners), "on"
   void onServerConnectionStateChanged(const ConnectionStatus& status);
   void onServerConnectionErrorOccurred(const ConnectionError& error);
@@ -28,12 +37,6 @@ signals:
   void onLoginFailed(const std::string& error);
 
   void onPageChanged(const int& pageNumber, const std::list<ShortGameInfo>& gamesList);
-
-  // App <- Bridge (signals), "request"
-  void requestVerifyNickname(const std::string& nickname);
-  void requestNavigateToPage(const double& page);
-  void requestJoinGame(const std::string& gameId);
-  void requestObserveGame(const std::string& gameId);
 
   // Bridge <- UI (js methods), "call"
 private slots:

@@ -9,6 +9,12 @@
 
 #pragma once
 
+/**
+ * @brief Controller for communication between app and ui, related to in-game actions:
+ * - fetch game info,
+ * - match,
+ * - quit game
+ */
 class GameBridge : public QObject {
   Q_OBJECT
   public:

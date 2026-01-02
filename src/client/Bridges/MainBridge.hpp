@@ -6,18 +6,20 @@
 
 #pragma once
 
-/// @see ui/src/bridges/MainBridge.tsx
+/**
+ * @brief Controller for communication between app and ui, related to main application actions:
+ * - navigation,
+ * - global error handling
+ */
 class MainBridge : public QObject {
   Q_OBJECT
   public:
   explicit MainBridge(QObject* parent = nullptr) : QObject(parent) {}
 
-  // App -> Bridge (slots), "has"
-
+signals:
   // App <- Bridge (signals), "request"
 
   // Bridge -> UI (js listeners), "on"
-signals:
   void onNavigated(const View& page);
   void onGlobalErrorOccured(const QString& errorMessage);
 
