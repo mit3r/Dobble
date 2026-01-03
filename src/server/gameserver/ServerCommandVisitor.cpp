@@ -174,6 +174,7 @@ void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){
     ResponseSendGameInfoCommand response;
     response.command = "send_game_info";
     response.client_id = cmd.client_id;
+    response.game_id = g_game_server.getGameId();
     response.data_obj = ResponseSendGameInfoCommand::data{};
     response.data_obj->game_id = g_game_server.getGameInfo().game_id;
     
@@ -221,6 +222,7 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
     
     ResponseMatchSymbolCommand response;
     response.command = "match_symbol";
+    response.game_id = g_game_server.getGameId();
     response.data_obj = ResponseMatchSymbolCommand::data{};
     response.data_obj->success = result.success;
     response.data_obj->message = GameEnums::toString(result.result);
@@ -267,6 +269,7 @@ void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){
     ResponseGameClientPingCommand response;
     response.command = "ping";
     response.client_id = client_id;
+    response.game_id = g_game_server.getGameId();
     response.data_obj = ResponseGameClientPingCommand::data{};
     response.data_obj->message = "pong";
     
