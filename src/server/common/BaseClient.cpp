@@ -28,6 +28,10 @@ void UdsClient::connect() {
     sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sock_fd == -1) throw std::runtime_error("Błąd tworzenia gniazda UDS");
 
+    int sock_buf_size = 5 * 1024 * 1024; 
+    setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, &sock_buf_size, sizeof(sock_buf_size));
+    setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, &sock_buf_size, sizeof(sock_buf_size));
+
     struct sockaddr_un addr;
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
@@ -49,6 +53,10 @@ TcpClient::TcpClient(const std::string& ip, int p) : ip_address(ip), port(p) {}
 void TcpClient::connect() {
     sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (sock_fd == -1) throw std::runtime_error("Błąd tworzenia gniazda TCP");
+
+    int sock_buf_size = 5 * 1024 * 1024; 
+    setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, &sock_buf_size, sizeof(sock_buf_size));
+    setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, &sock_buf_size, sizeof(sock_buf_size));
 
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));

@@ -57,6 +57,9 @@ int BsdServer::run() {
       continue;
     }
 
+    int sock_buf_size = 5 * 1024 * 1024;
+    setsockopt(client_sock, SOL_SOCKET, SO_RCVBUF, &sock_buf_size, sizeof(sock_buf_size));
+    setsockopt(client_sock, SOL_SOCKET, SO_SNDBUF, &sock_buf_size, sizeof(sock_buf_size));
     
     if (client_handler_func) {
       std::thread t(client_handler_func, client_sock);
@@ -107,6 +110,10 @@ int UdsServer::run() {
     }
 
     std::cout << "[UDS] Nowe połączenie lokalne!" << std::endl;
+
+    int sock_buf_size = 5 * 1024 * 1024; 
+    setsockopt(client_sock, SOL_SOCKET, SO_RCVBUF, &sock_buf_size, sizeof(sock_buf_size));
+    setsockopt(client_sock, SOL_SOCKET, SO_SNDBUF, &sock_buf_size, sizeof(sock_buf_size));
 
     if (client_handler_func) {
       std::thread t(client_handler_func, client_sock);
