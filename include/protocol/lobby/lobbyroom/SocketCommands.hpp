@@ -82,6 +82,24 @@ class ResponseServersPingCommand : public GameServerMessageCore {
       std::optional<data> data_obj;
 };
 
+class SenderGameServerStatusCommand : public GameServerMessageCore {
+  public:
+      struct data {
+        std::string player_count;
+        std::string max_players;
+        std::string status;
+      };
+      std::optional<data> data_obj;
+};
+
+class ResponseGameServerStatusCommand : public GameServerMessageCore {
+  public:
+      struct data {
+        std::string message;
+      };
+      std::optional<data> data_obj;
+};
+
 using GameServerCommand = std::variant<
     std::monostate,
     SenderRegisterGameServerCommand,
@@ -90,6 +108,8 @@ using GameServerCommand = std::variant<
     ResponseEndGameCommand,
     SenderServersPingCommand,
     ResponseServersPingCommand,
+    SenderGameServerStatusCommand,
+    ResponseGameServerStatusCommand,
     GameServerErrorResponse
     >;
 
@@ -100,6 +120,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderRegisterGameServerCommand::data, ip, po
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseRegisterGameServerCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderServersPingCommand::data, player_number, status, turn)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseServersPingCommand::data, message)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderGameServerStatusCommand::data, player_count, max_players, status)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseGameServerStatusCommand::data, message)
 
 #define DEFINE_JSON_WITH_DATA_RENAME(Type)                                                \
   inline void to_json(json& j, const Type& p) {                                           \
@@ -128,3 +150,5 @@ DEFINE_JSON_WITH_DATA_RENAME(SenderEndGameCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseEndGameCommand)
 DEFINE_JSON_WITH_DATA_RENAME(SenderServersPingCommand)
 DEFINE_JSON_WITH_DATA_RENAME(ResponseServersPingCommand)
+DEFINE_JSON_WITH_DATA_RENAME(SenderGameServerStatusCommand)
+DEFINE_JSON_WITH_DATA_RENAME(ResponseGameServerStatusCommand)

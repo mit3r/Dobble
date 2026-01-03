@@ -34,6 +34,7 @@ public:
     void operator()(const SenderRegisterGameServerCommand& cmd);
     void operator()(const ResponseRegisterGameServerCommand& cmd);
     void operator()(const SenderEndGameCommand& cmd);
+    void operator()(const SenderGameServerStatusCommand& cmd);
     
     void operator()(const std::monostate&);
     

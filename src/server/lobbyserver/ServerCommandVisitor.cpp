@@ -280,6 +280,43 @@ void ServerCommandVisitor::operator()(const SenderEndGameCommand &cmd)
     }
 }
 
+void ServerCommandVisitor::operator()(const SenderGameServerStatusCommand &cmd)
+{
+    std::cout << "[CMD] Game server status update: " << cmd.game_id.value_or("brak") << std::endl;
+    
+    if (cmd.game_id.has_value() && cmd.data_obj) {
+        std::string game_id = cmd.game_id.value();
+        auto game = g_uds_server->getGameServerBySocket(client_sock);
+        
+        if (game) {
+            game->players = std::stoi(cmd.data_obj->player_count);
+            game->max_players = std::stoi(cmd.data_obj->max_players);
+            // Update status if needed - you can add a status field to GameServer struct
+            
+            std::cout << "[UDS] Updated game server " << game_id 
+                      << " - Players: " << game->players 
+                      << "/" << game->max_players 
+                      << ", Status: " << cmd.data_obj->status << std::endl;
+            
+            ResponseGameServerStatusCommand response;
+            response.command = "game_server_status";
+            response.lobby_server_id = "MainServer_v1";
+            response.game_id = game_id;
+            
+            ResponseGameServerStatusCommand::data d;
+            d.message = "Status updated successfully";
+            response.data_obj = d;
+            
+            json j = response;
+            send_json_packet(client_sock, j);
+        } else {
+            std::cerr << "[ERROR] Game server not found by socket: " << client_sock << std::endl;
+        }
+    } else {
+        std::cerr << "[ERROR] Missing game_id or data in status command" << std::endl;
+    }
+}
+
 
 void ServerCommandVisitor::operator()(const std::monostate &)
 {

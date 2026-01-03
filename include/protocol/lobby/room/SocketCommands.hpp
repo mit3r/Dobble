@@ -77,7 +77,7 @@ class ResponseJoinGameCommand : public GameClientMessageCore {
 class SenderLeaveRoomCommand : public GameClientMessageCore {
   public:
       struct data {
-        std::string game_id;
+        std::optional<std::string> message;
       };
       std::optional<data> data_obj;
 };
@@ -174,7 +174,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseGameClientPingCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderGameClientPingCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderJoinGameCommand::data, game_id, role)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseJoinGameCommand::data, status, role)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, game_id)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseLeaveRoomCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseSendGameInfoCommand::data, game_id, actual_turn)
