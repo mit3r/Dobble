@@ -44,10 +44,10 @@ struct ServerCommandVisitor {
 template <typename T>
 void ServerCommandVisitor::operator()(const T& cmd) {
   if constexpr (std::is_base_of_v<ServersCommandFactory, T>) {
-    std::cout << "[USD] Otrzymano inna komende: " << cmd.command << std::endl;
+    std::cout << "[UDS] Received other command: " << cmd.command << std::endl;
   } else if constexpr (std::is_base_of_v<GameCommandFactory, T>) {
-    std::cout << "[BSD] Otrzymano inna komende: " << cmd.command << std::endl;
+    std::cout << "[BSD] Received other command: " << cmd.command << std::endl;
   } else {
-    std::cout << "[INFO] Otrzymano nieznany typ wariantu." << std::endl;
+    std::cout << "[INFO] Received unknown variant type." << std::endl;
   }
 }

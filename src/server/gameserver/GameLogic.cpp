@@ -2,9 +2,10 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <ctime>
 
 GameLogic::GameLogic(GameStateManager& manager) 
-    : state_manager_(manager), current_deck_index_(0), gen_(rd_()) {
+    : state_manager_(manager), current_deck_index_(0), gen_(std::time(nullptr)) {
 }
 
 bool GameLogic::CheckSymbol(int cardId1, int cardId2, int symbolId) const {
@@ -69,40 +70,41 @@ void GameLogic::InitializeGame() {
     
     current_deck_index_ = next_card_index - 1;
     
-    state_manager_.setGameStatus("GAME_ACTIVE");
+    state_manager_.setGameStatus(GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE));
     
     std::cout << "[GameLogic] Game initialized. Top card: " << deck_indices_[0] 
               << ", players have cards from index 1 to " << (next_card_index - 1) << std::endl;
 }
 
-GameLogic::MatchResult GameLogic::ProcessMatch(const std::string& client_id, int turn_id, int symbol_id) {
-    MatchResult result;
+GameLogic::MatchResultInfo GameLogic::ProcessMatch(const std::string& client_id, int turn_id, int symbol_id) {
+    std::lock_guard<std::mutex> lock(mtx_);
+    MatchResultInfo result;
     result.success = false;
     result.points_awarded = 0;
     
     auto& turn = state_manager_.getCurrentTurn();
     
     if (turn.turn_id != turn_id) {
-        result.message = "TOO_LATE";
+        result.result = GameEnums::MatchResult::TOO_LATE;
         std::cout << "[GameLogic] Client " << client_id << " sent wrong turn_id (expected " 
                   << turn.turn_id << ", got " << turn_id << ")" << std::endl;
         return result;
     }
     
     if (!turn.is_active) {
-        result.message = "TOO_LATE";
+        result.result = GameEnums::MatchResult::TOO_LATE;
         std::cout << "[GameLogic] Client " << client_id << " too late - round already finished" << std::endl;
         return result;
     }
     
     if (turn.images_on_table.empty()) {
-        result.message = "NO_CARD_ON_TABLE";
+        result.result = GameEnums::MatchResult::NO_CARD_ON_TABLE;
         return result;
     }
     int top_card_id = turn.images_on_table[0];
     
     if (turn.clients_data.find(client_id) == turn.clients_data.end() || turn.clients_data[client_id].empty()) {
-        result.message = "NO_PLAYER_CARD";
+        result.result = GameEnums::MatchResult::NO_PLAYER_CARD;
         std::cout << "[GameLogic] Client " << client_id << " has no cards" << std::endl;
         return result;
     }
@@ -126,7 +128,7 @@ GameLogic::MatchResult GameLogic::ProcessMatch(const std::string& client_id, int
         std::cout << "[GameLogic] Client " << client_id << " received top card: " << top_card_id << std::endl;
         
         result.success = true;
-        result.message = "CORRECT";
+        result.result = GameEnums::MatchResult::CORRECT;
         result.points_awarded = 10;
         
         turn.past_turns.push_back(turn.turn_id);
@@ -137,7 +139,7 @@ GameLogic::MatchResult GameLogic::ProcessMatch(const std::string& client_id, int
         state_manager_.updatePlayerScore(client_id, 0, 1);
         
         result.success = false;
-        result.message = "INCORRECT";
+        result.result = GameEnums::MatchResult::INCORRECT;
         result.points_awarded = 0;
     }
     
@@ -153,7 +155,7 @@ void GameLogic::NextRound() {
     
     if (current_deck_index_ >= MAX_ROUNDS) {
         std::cout << "[GameLogic] Game Over - reached " << MAX_ROUNDS << " rounds" << std::endl;
-        state_manager_.setGameStatus("GAME_OVER");
+        state_manager_.setGameStatus(GameEnums::toString(GameEnums::GameStatus::GAME_OVER));
         turn.is_active = false;
         return;
     }

@@ -101,7 +101,6 @@ using LobbyClientCommand = std::variant<
     SenderGetLobbyInfoCommand, ResponseGetLobbyInfoCommand,
     SenderCreateLobbyCommand, ResponseCreateLobbyCommand>;
 
-// Serializacja JSON dla klas specyficznych dla lobby client
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ErrorResponse::data, message)
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLoginCommand::data, nickname)

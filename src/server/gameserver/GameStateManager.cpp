@@ -1,6 +1,7 @@
 #include "GameStateManager.hpp"
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 
 using namespace GameServerState;
 
@@ -116,6 +117,12 @@ void GameStateManager::setPlayerRank(const std::string& client_id, int rank) {
     }
 }
 
+void GameStateManager::updatePlayerPing(const std::string& client_id) {
+    if (players_.find(client_id) != players_.end()) {
+        players_[client_id].last_ping_timestamp = std::chrono::steady_clock::now();
+    }
+}
+
 PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) {
     auto it = players_.find(client_id);
     if (it == players_.end()) {
@@ -160,6 +167,10 @@ std::list<PlayerGameInfo> GameStateManager::getPlayersGameInfo() const {
         } else {
             info.cardId = -1;
         }
+        std::cout << "[GameStateManager] Player " << player.nickname 
+                  << " - CardId: " << info.cardId << ", Score: " << info.score 
+                  << ", Points: " << info.points << ", Mistakes: " << info.mistakes << std::endl;
+
         
         players_info.push_back(info);
     }

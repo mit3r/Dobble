@@ -1,6 +1,9 @@
 #include "ServerCommandVisitor.hpp"
 #include "GameStateManager.hpp"
 #include "GameLogic.hpp"
+#include <protocol/GameEnums.hpp>
+#include <thread>
+#include <chrono>
 
 std::string gen_random(const int len)
 {
@@ -49,7 +52,8 @@ void ServerCommandVisitor::sendErrorResponse(
 
 void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     std::optional<std::string> client_id_opt = cmd.client_id;
-    std::cout << "[CMD] Klient chce dolaczyc do gry: " << (cmd.data_obj ? cmd.data_obj->game_id : "brak") << std::endl;
+    std::cout << "[CMD] Client wants to join game: " << (cmd.data_obj ? cmd.data_obj->game_id : "none") << std::endl;
+    std::cout << "[DEBUG] client_nickname field: '" << cmd.client_nickname << "'" << std::endl;
 
     if (!client_id_opt.has_value() || !cmd.data_obj) {
         std::cout << "[ERROR] Invalid join command" << std::endl;
@@ -60,7 +64,22 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     std::string client_id = cmd.client_id.value();
     std::string nickname = cmd.client_nickname;
     
-    std::cout << "[INFO] Client '" << client_id_opt.value() << "' (ID: " << client_id << ") joining..." << std::endl;
+    std::cout << "[INFO] Client '" << client_id_opt.value() << "' (ID: " << client_id << ") joining with nickname: '" << nickname << "'" << std::endl;
+    
+    if (g_game_server.hasPlayer(client_id)) {
+        std::cout << "[INFO] Player " << client_id << " already joined" << std::endl;
+        ResponseJoinGameCommand response;
+        response.command = "join_game";
+        response.data_obj = ResponseJoinGameCommand::data{};
+        response.data_obj->status = "ALREADY_JOINED";
+        response.data_obj->role = cmd.data_obj->role;
+        response.data_obj->game_info.game_id = cmd.data_obj->game_id;
+        response.data_obj->game_info.name = g_game_server.getGameName();
+        
+        json j = response;
+        send_json_packet(client_sock, j);
+        return;
+    }
     
     if (g_game_server.isGameFull()) {
         std::cout << "[INFO] Game is full" << std::endl;
@@ -92,7 +111,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     json j = response;
     send_json_packet(client_sock, j);
     
-    g_game_server.setGameStatus("waiting");
+    g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
 
     std::cout << "[INFO] Player joined. Status: " << g_game_server.getGameStatus() 
               << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
@@ -105,10 +124,11 @@ void ServerCommandVisitor::operator()(const SenderStartGameCommand &cmd){
     response.command = "start_game";
     response.data_obj = ResponseStartGameCommand::data{};
     
-    if (g_game_server.getGameStatus() != "waiting") {
+    std::string current_status = g_game_server.getGameStatus();
+    if (current_status != GameEnums::toString(GameEnums::GameStatus::WAITING)) {
         response.data_obj->success = false;
         response.data_obj->message = "Game already started or finished";
-        response.data_obj->status = g_game_server.getGameStatus();
+        response.data_obj->status = current_status;
         
         json j = response;
         send_json_packet(client_sock, j);
@@ -118,7 +138,7 @@ void ServerCommandVisitor::operator()(const SenderStartGameCommand &cmd){
     if (!g_game_server.isGameReady()) {
         response.data_obj->success = false;
         response.data_obj->message = "Not enough players (need at least 2)";
-        response.data_obj->status = "waiting";
+        response.data_obj->status = GameEnums::toString(GameEnums::GameStatus::WAITING);
         
         json j = response;
         send_json_packet(client_sock, j);
@@ -131,7 +151,7 @@ void ServerCommandVisitor::operator()(const SenderStartGameCommand &cmd){
         
         response.data_obj->success = true;
         response.data_obj->message = "Game started successfully";
-        response.data_obj->status = "GAME_ACTIVE";
+        response.data_obj->status = GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE);
     } else {
         response.data_obj->success = false;
         response.data_obj->message = "Game logic not initialized";
@@ -150,11 +170,12 @@ void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){
         return;
     }
     
+    
     ResponseSendGameInfoCommand response;
     response.command = "send_game_info";
-    
+    response.client_id = cmd.client_id;
     response.data_obj = ResponseSendGameInfoCommand::data{};
-    response.data_obj->game_id = cmd.data_obj ? cmd.data_obj->game_id : "";
+    response.data_obj->game_id = g_game_server.getGameInfo().game_id;
     
     auto& turn = g_game_server.getCurrentTurn();
     
@@ -202,7 +223,7 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
     response.command = "match_symbol";
     response.data_obj = ResponseMatchSymbolCommand::data{};
     response.data_obj->success = result.success;
-    response.data_obj->message = result.message;
+    response.data_obj->message = GameEnums::toString(result.result);
     response.data_obj->points_awarded = result.points_awarded;
     
     if (g_game_server.hasPlayer(client_id)) {
@@ -224,16 +245,65 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
     }
 };
 
-void ServerCommandVisitor::operator()(const ResponseSendGameInfoCommand &cmd){};
-void ServerCommandVisitor::operator()(const ResponseStartGameCommand &cmd){};
-void ServerCommandVisitor::operator()(const ResponseMatchSymbolCommand &cmd){};
-void ServerCommandVisitor::operator()(const ResponseGameClientPingCommand &cmd){};
-void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){};
-void ServerCommandVisitor::operator()(const ResponseJoinGameCommand &cmd){};
-void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){};
-void ServerCommandVisitor::operator()(const ResponseLeaveRoomCommand &cmd){};
+void ServerCommandVisitor::operator()(const ResponseSendGameInfoCommand &){};
+void ServerCommandVisitor::operator()(const ResponseStartGameCommand &){};
+void ServerCommandVisitor::operator()(const ResponseMatchSymbolCommand &){};
+void ServerCommandVisitor::operator()(const ResponseGameClientPingCommand &){};
+void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){
+    std::cout << "[CMD] Client ping received" << std::endl;
+    
+    if (!cmd.client_id.has_value()) {
+        sendErrorResponse("ping", "400", "Invalid request: missing client_id");
+        return;
+    }
+    
+    std::string client_id = cmd.client_id.value();
+    
+    if (g_game_server.hasPlayer(client_id)) {
+        g_game_server.updatePlayerPing(client_id);
+        std::cout << "[PING] Updated ping timestamp for player: " << client_id << std::endl;
+    }
+    
+    ResponseGameClientPingCommand response;
+    response.command = "ping";
+    response.client_id = client_id;
+    response.data_obj = ResponseGameClientPingCommand::data{};
+    response.data_obj->message = "pong";
+    
+    json j = response;
+    send_json_packet(client_sock, j);
+};
+void ServerCommandVisitor::operator()(const ResponseJoinGameCommand &){};
+void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
+    std::cout << "[CMD] Client requests to leave room" << std::endl;
+    if (!g_game_server.hasPlayer(cmd.client_id.value_or(""))) {
+        sendErrorResponse("leave_room", "400", "Client not in game");
+        return;
+    }
+
+    std::string leaving_player = cmd.client_id.value();
+    g_game_server.removePlayer(leaving_player);
+    
+    std::cout << "[INFO] Player " << leaving_player << " left. Remaining players: " 
+              << g_game_server.getPlayerCount() << std::endl;
+
+    ResponseLeaveRoomCommand response;
+    response.command = "leave_room";
+    response.data_obj = ResponseLeaveRoomCommand::data{};
+    response.data_obj->message = "LEFT";
+    json j = response;
+    send_json_packet(client_sock, j);
+    
+    if (g_game_server.getPlayerCount() == 0) {
+        std::cout << "[INFO] All players left. Shutting down game server..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
+        exit(0);
+    }
+
+};
+void ServerCommandVisitor::operator()(const ResponseLeaveRoomCommand &){};
 
 void ServerCommandVisitor::operator()(const std::monostate &)
 {
-    std::cerr << "[ERROR] Nie udało się rozpoznać komendy w JSON." << std::endl;
+    std::cerr << "[ERROR] Failed to recognize command in JSON." << std::endl;
 };

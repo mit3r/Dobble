@@ -53,7 +53,6 @@ class LobbyCommandFactory {
     return std::monostate{};
   }
 
-  // KISS version
   LobbyClientCommand get(const json& j) {
     if (!j.contains("command")) return std::monostate{};
 

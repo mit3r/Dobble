@@ -7,10 +7,12 @@
 #include <string>
 #include <map>
 #include <list>
+#include <chrono>
 
 namespace GameServerState {
 
 struct GameInfo {
+    std::string game_id;
     std::string game_name;
     int players_count;
     int max_players;
@@ -28,10 +30,13 @@ struct PlayerInfo {
     int points;
     int mistakes;
     int rank;
+    std::chrono::steady_clock::time_point last_ping_timestamp;
 
-    PlayerInfo() : client_id("-1"), nickname(""), score(0), points(0), mistakes(0), rank(0) {}
+    PlayerInfo() : client_id("-1"), nickname(""), score(0), points(0), mistakes(0), rank(0), 
+                   last_ping_timestamp(std::chrono::steady_clock::now()) {}
     explicit PlayerInfo(std::string id, std::string nick = "") 
-        : client_id(id), nickname(nick), score(0), points(0), mistakes(0), rank(0) {}
+        : client_id(id), nickname(nick), score(0), points(0), mistakes(0), rank(0),
+          last_ping_timestamp(std::chrono::steady_clock::now()) {}
 };
 
 struct TurnInfo {
@@ -88,6 +93,7 @@ public:
     void setPlayerImages(const std::string& client_id, const std::vector<int>& images);
     void updatePlayerScore(const std::string& client_id, int points, int mistakes);
     void setPlayerRank(const std::string& client_id, int rank);
+    void updatePlayerPing(const std::string& client_id);
 
     GameServerState::PlayerInfo& getPlayer(const std::string& client_id);
     const GameServerState::PlayerInfo& getPlayer(const std::string& client_id) const;
@@ -96,7 +102,10 @@ public:
     int getPlayerCount() const;
     
     std::list<PlayerGameInfo> getPlayersGameInfo() const;
-    
+
+    void setGameId(const std::string& game_id) { game_info_.game_id = game_id; }
+    std::string getGameId() const { return game_info_.game_id; }
+
     bool isGameReady() const;
     bool isGameFull() const;
 };

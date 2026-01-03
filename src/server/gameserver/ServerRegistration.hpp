@@ -15,7 +15,6 @@ void registerServer(StateManager& server_state, int client_sock) {
   register_cmd.command = "register_game_server";
   register_cmd.lobby_server_id = g_game_server.server_id;
   register_cmd.game_id = g_game_server.server_id;
-  // register_cmd.game_id = gen_random(16);
 
   
   SenderRegisterGameServerCommand::data data;
@@ -37,7 +36,6 @@ void registerServer(StateManager& server_state, int client_sock) {
   } else {
     std::cerr << "[UDS] Failed to send registration request!" << std::endl;
   }
-  json response = receive_json_packet(client_sock); // wait for response
-  
+  json response = receive_json_packet(client_sock);
 
 }

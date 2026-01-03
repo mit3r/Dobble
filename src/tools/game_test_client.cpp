@@ -137,6 +137,7 @@ void send_join_game(int sock, const std::string& game_id, const std::string& rol
     SenderJoinGameCommand cmd;
     cmd.command = "join_game";
     cmd.client_id = g_client_id;
+    cmd.client_nickname = "TestPlayer_" + g_client_id;  // Dodaj nickname!
     cmd.data_obj = SenderJoinGameCommand::data{};
     cmd.data_obj->game_id = game_id;
     cmd.data_obj->role = role;
@@ -145,7 +146,7 @@ void send_join_game(int sock, const std::string& game_id, const std::string& rol
     
     json j = cmd;
     send_json_packet(sock, j);
-    std::cout << "[>>>] Sent JOIN_GAME to " << game_id << std::endl;
+    std::cout << "[>>>] Sent JOIN_GAME to " << game_id << " with nickname: " << cmd.client_nickname << std::endl;
 }
 
 void send_get_game_info(int sock) {

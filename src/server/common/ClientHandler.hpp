@@ -54,12 +54,15 @@ void handle_communication(int sock, VisitorCreator create_visitor, CommandFactor
     if (msg.contains("command")) {
       std::string cmd_name = msg["command"];
       std::cout << "[SERVER] Received command: " << cmd_name << std::endl;
+      if (cmd_name == "join_game") {
+        std::cout << "[DEBUG] Raw JSON: " << msg.dump(2) << std::endl;
+      }
       auto command_variant = command_factory.get(cmd_name, msg);
 
       auto visitor = create_visitor(sock, command_factory);
       std::visit(visitor, command_variant);
     } else {
-      std::cerr << "[WARNING] Otrzymano JSON bez pola 'command'" << std::endl;
+      std::cerr << "[WARNING] Received JSON without 'command' field" << std::endl;
     }
   }
 

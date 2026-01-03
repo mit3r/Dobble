@@ -2,10 +2,12 @@
 #define GAME_LOGIC_HPP
 
 #include "GameStateManager.hpp"
+#include <protocol/GameEnums.hpp>
 #include <vector>
 #include <algorithm>
 #include <random>
 #include <string>
+#include <mutex>
 
 constexpr int MAX_ROUNDS = 10;
 
@@ -74,8 +76,8 @@ private:
     GameStateManager& state_manager_;
     std::vector<int> deck_indices_;
     int current_deck_index_;
-    std::random_device rd_;
     std::mt19937 gen_;
+    std::mutex mtx_;
 
 public:
     explicit GameLogic(GameStateManager& manager);
@@ -83,12 +85,12 @@ public:
     bool CheckSymbol(int cardId1, int cardId2, int symbolId) const;
     void InitializeGame();
     
-    struct MatchResult {
+    struct MatchResultInfo {
         bool success;
-        std::string message;
+        GameEnums::MatchResult result;
         int points_awarded;
     };
-    MatchResult ProcessMatch(const std::string& client_id, int turn_id, int symbol_id);
+    MatchResultInfo ProcessMatch(const std::string& client_id, int turn_id, int symbol_id);
     
     void NextRound();
     bool IsGameOver() const;

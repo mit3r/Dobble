@@ -7,6 +7,8 @@
 #include "GameStateManager.hpp"
 #include "GameLogic.hpp"
 
+std::string gen_random(const int len);
+
 GameStateManager g_game_server;
 GameLogic* g_game_logic = nullptr;  // Globalny pointer do logiki gry
 
@@ -27,6 +29,7 @@ int main(int argc, char* argv[]) {
   
   g_game_logic = new GameLogic(g_game_server);
   g_game_server.setMaxPlayers(2); 
+  g_game_server.setGameId(gen_random(8));
   
 
   std::cout << "[GameServer] Starting with ID: " << server_id
@@ -53,7 +56,6 @@ int main(int argc, char* argv[]) {
   bsd_thread.join();
   uds_thread.join();
   
-  // Cleanup
   delete g_game_logic;
 
   return 0;
