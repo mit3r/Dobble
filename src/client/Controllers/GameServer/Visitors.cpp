@@ -15,26 +15,20 @@ void GameServerController::operator()(const ResponseGameClientPingCommand&) {
 void GameServerController::operator()(const ResponseJoinGameCommand& cmd) {
   qDebug() << "GameServerController: got ResponseJoinGameCommand";
 
-  qDebug() << "Join game response received:" << json(cmd).dump().c_str();
-
-  if (!cmd.error.has_value()) {
-    emit hasConnectGameSucceed();
-  } else {
+  if (cmd.error.has_value()) {
     emit hasConnectGameFailed(QString::fromStdString(cmd.error->message));
+    return;
   }
+
+  if (cmd.data_obj.has_value())
+    emit hasConnectGameSucceed();
 }
 
-void GameServerController::operator()(const ResponseLeaveRoomCommand& cmd) {
+void GameServerController::operator()(const ResponseLeaveRoomCommand&) {
   qDebug() << "GameServerController: got ResponseLeaveRoomCommand";
 
-  if (cmd.data_obj.has_value()) {
-    const auto& data = cmd.data_obj.value();
-    qDebug() << "Left game with message:" << QString::fromStdString(data.message);
-    emit hasLeftGame();
-  } else {
-    qDebug() << "Left game with no message.";
-    emit hasLeftGame();
-  }
+  socket_->disconnectFromHost();
+  emit hasLeftGame();
 }
 void GameServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
   qDebug() << "GameServerController: got ResponseSendGameInfoCommand";

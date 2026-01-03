@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget* parent)
   // Application start flow
   connect(ui->mainBridge, &MainBridge::uiIsReady, this, [this]() {
     qDebug() << "UI is ready.";
-    lobbyServerController->wantConnectToServer("localhost", 1500);
+    lobbyServerController->wantConnectToServer("127.0.0.1", 1500);
   });
 }
 
@@ -155,6 +155,12 @@ void MainWindow::connectGameServerFlow() {
           [this](const ConnectionError& error) {
             emit ui->gameBridge->onServerConnectionErrorOccured(error);
           });
+
+  connect(gameServerController, &GameServerController::hasConnectionStateChanged,
+          [this](const ConnectionStatus& status) {
+            if (status == ConnectionStatus::Disconnected)
+              emit ui->mainBridge->onNavigated(View::Browser);
+          });
 }
 
 void MainWindow::connectGameFlow() {
@@ -199,4 +205,8 @@ void MainWindow::connectGameFlow() {
   // Game info updates
   connect(gameServerController, &GameServerController::hasGameInfoUpdated, ui->gameBridge,
           &GameBridge::onGameInfoChanged);
+
+  // Quit game flow
+  connect(ui->gameBridge, &GameBridge::requestQuitGame, gameServerController,
+          &GameServerController::wantLeaveGame);
 }

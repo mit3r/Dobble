@@ -1,9 +1,10 @@
+import GameServStatus from "@/Components/ServerStatus/GameServStatus";
+import LobbyServStatus from "@/Components/ServerStatus/LobbyServStatus";
 import { mainStore } from "@/store";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "zustand";
-import LobbyCard from "./Components/LobbyCard";
 import CreateGameButton from "./Components/CreateGameButton";
-import LobbyServerStatus from "@/Components/LobbyServerStatus";
+import LobbyCard from "./Components/LobbyCard";
 
 export default function BrowserPage() {
   const games = useStore(mainStore, (state) => state.browser.games);
@@ -26,7 +27,8 @@ export default function BrowserPage() {
 
   return (
     <div className="flex flex-col items-center gap-8 h-full  p-2">
-      <LobbyServerStatus />
+      <LobbyServStatus />
+      <GameServStatus />
 
       <div className="grid grid-cols-3 w-full items-center">
         <CreateGameButton />

@@ -1,4 +1,4 @@
-import LobbyServerStatus from "@/Components/LobbyServerStatus";
+import LobbyServStatus from "@/Components/ServerStatus/LobbyServStatus";
 import { mainStore } from "@/store";
 import { useCallback, useState } from "react";
 import { useStore } from "zustand";
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <LobbyServerStatus />
+      <LobbyServStatus />
 
       <h1 className="text-4xl font-bold mb-4">Welcome to Dobble!</h1>
 

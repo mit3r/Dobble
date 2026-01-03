@@ -1,15 +1,17 @@
-import { mainStore } from "@/store";
-import { ConnectionError, ConnectionStatus } from "@/types/dobble";
 import { ConnectionStatusSpan } from "@/Components/Statuses";
+import { ConnectionError, ConnectionStatus } from "@/types/dobble";
 import { useMemo } from "react";
-import { useStore } from "zustand/react";
 import { ConnectionErrorSpan } from "../Statuses";
 
-export default function LobbyServerStatus() {
-  const connectionStatus = useStore(mainStore, (state) => state.browser.lobbyConnection);
-  const connectionError = useStore(mainStore, (state) => state.browser.lobbyError);
-  const connectToLobbyServer = useStore(mainStore, (state) => state.browser.connectToLobbyServer);
-
+export default function ServerStatus({
+  connectionStatus,
+  connectionError,
+  retryCallback,
+}: {
+  connectionStatus: ConnectionStatus;
+  connectionError: ConnectionError | null;
+  retryCallback?: () => void;
+}) {
   window.bridges?.main.callMsg(
     "LobbyServerConnectionStatus - connectionStatus: " +
       connectionStatus +
@@ -31,9 +33,11 @@ export default function LobbyServerStatus() {
     return (
       <div className="text-red-500 flex gap-4 items-baseline w-full justify-center">
         <span>{connectionErrorElement}</span>
-        <button className="p-2 border-red-500 px-4" onClick={connectToLobbyServer}>
-          Retry
-        </button>
+        {retryCallback && (
+          <button className="p-2 border-red-500 px-4" onClick={retryCallback}>
+            Retry
+          </button>
+        )}
       </div>
     );
 
@@ -41,8 +45,8 @@ export default function LobbyServerStatus() {
     return (
       <div className="text-blue-500 flex justify-center w-full">
         {connectionStatusElement}
-        {connectionStatus === ConnectionStatus.Disconnected && (
-          <button className="p-2 border-blue-500 px-4 ml-4" onClick={connectToLobbyServer}>
+        {connectionStatus === ConnectionStatus.Disconnected && retryCallback && (
+          <button className="p-2 border-blue-500 px-4 ml-4" onClick={retryCallback}>
             Reconnect
           </button>
         )}

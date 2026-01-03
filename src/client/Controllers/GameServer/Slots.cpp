@@ -11,7 +11,8 @@ void GameServerController::wantConnectToGame(const std::string& ip, const int& p
           [=]() { joinGame(gameId, client_id, nickname, role); });
 
   // Connect to server
-  socket_->connectToHost(QString::fromStdString(ip), static_cast<quint16>(port));
+  const QString qip = ip == "0.0.0.0" ? QString("127.0.0.1") : QString::fromStdString(ip);
+  socket_->connectToHost(qip, port, QIODevice::ReadWrite);
 };
 
 void GameServerController::wantMatchCard(const std::string& gameId, const std::string& turnId,
@@ -32,7 +33,7 @@ void GameServerController::wantMatchCard(const std::string& gameId, const std::s
 void GameServerController::wantLeaveGame() {
   qDebug() << "GameServerController: Requesting to leave the game.";
   SenderLeaveRoomCommand cmd;
-  cmd.command = "leave_game";
+  cmd.command = "leave_room";
 
   send_json_packet(socket_->socketDescriptor(), json(cmd));
   connectRequestTimer([=]() { send_json_packet(socket_->socketDescriptor(), json(cmd)); });

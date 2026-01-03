@@ -22,6 +22,23 @@ GameServerController::GameServerController(QObject* parent) {
       break;
     }
   });
+
+  connect(pingTimer, &QTimer::timeout, this, &GameServerController::handleServerPing);
+  connect(infoTimer, &QTimer::timeout, this, &GameServerController::handleServerInfo);
+
+  connect(this, &GameServerController::hasConnectionStateChanged,
+          [=](const ConnectionStatus& status) {
+            if (status == ConnectionStatus::Connected) {
+              infoTimer->start(3000);
+              handleServerInfo();
+
+              pingTimer->start(5000);
+              handleServerPing();
+              return;
+            }
+            pingTimer->stop();
+            infoTimer->stop();
+          });
 }
 
 void GameServerController::whenReadReady() {

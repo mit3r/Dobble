@@ -14,7 +14,7 @@ export default function LobbyPage() {
 
       {gameInfo === null ? <LoadingLobby /> : <PlayersList players={gameInfo.players} />}
 
-      <QuitFooter onQuit={() => {}} />
+      <QuitFooter onQuit={() => window.bridges?.game.callQuitGame()} />
     </div>
   );
 }

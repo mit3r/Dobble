@@ -85,7 +85,11 @@ private:
   void disconnectRequestTimer(bool failed);
 
   QTimer* pingTimer = new QTimer(this);
+  void handleServerPing();
 
   void joinGame(const std::string& gameId, const std::string& client_id,
                 const std::string& nickname, const Role& role);
+
+  QTimer* infoTimer = new QTimer(this);
+  void handleServerInfo();
 };

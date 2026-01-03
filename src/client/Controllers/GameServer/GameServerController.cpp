@@ -17,3 +17,15 @@ void GameServerController::joinGame(const std::string& gameId, const std::string
   send_json_packet(socket_->socketDescriptor(), json(cmd));
   connectRequestTimer([=]() { send_json_packet(socket_->socketDescriptor(), json(cmd)); });
 }
+
+void GameServerController::handleServerPing() {
+  SenderGameClientPingCommand pingCmd;
+  pingCmd.command = "ping";
+  send_json_packet(socket_->socketDescriptor(), json(pingCmd));
+}
+
+void GameServerController::handleServerInfo() {
+  SenderSendGameInfoCommand infoCmd;
+  infoCmd.command = "send_game_info";
+  send_json_packet(socket_->socketDescriptor(), json(infoCmd));
+}
