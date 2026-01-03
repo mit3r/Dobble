@@ -24,6 +24,7 @@ public:
     void disconnect();
     bool isConnected() const;
     void setClientHandler(std::function<void(int)> handler);
+    int getSocket() const { return sock_fd; }
 };
 
 class UdsClient : public BaseClient {

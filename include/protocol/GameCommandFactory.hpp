@@ -12,7 +12,7 @@ class GameCommandFactory {
   std::map<std::string, CreatorFunc> dictionary;
 
   bool isResponse(const json& j) {  // is_server determine its a response command
-    return j.contains("game_server_id") && !j["game_server_id"].is_null();
+    return j.contains("game_id") && !j["game_id"].is_null();
   }
 
   public:

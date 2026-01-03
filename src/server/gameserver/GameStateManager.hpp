@@ -106,6 +106,7 @@ public:
     std::vector<std::string> getInactivePlayers(std::chrono::seconds timeout) const;
 
     void setGameId(const std::string& game_id) { game_info_.game_id = game_id; }
+    const std::string& getGameId() const { return game_info_.game_id; }
 
     bool isGameReady() const;
     bool isGameFull() const;
