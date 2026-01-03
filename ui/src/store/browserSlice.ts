@@ -1,14 +1,16 @@
 import {
   CommunicationStatus,
   ConnectionStatus,
+  GameStatus,
   type ConnectionError,
   type ShortGameInfo,
 } from "@/types/dobble";
 import type { StateCreator } from "zustand";
 import { type MainStore } from ".";
 
-export type BrowserSlice = {
-  nicknameError: string | null;
+export type BrowserSliceState = {
+  lobbyIpAddress: string;
+  lobbyPort: number;
 
   lobbyConnection: ConnectionStatus;
   lobbyError: ConnectionError | null;
@@ -20,15 +22,51 @@ export type BrowserSlice = {
   currentPageNumber: number | null;
 };
 
-export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> = () => ({
-  nicknameError: null,
+export type BrowserSlice = BrowserSliceState & {
+  isBlocked(): boolean;
+
+  setLobbyAddress(ip: string, port: number): void;
+  connectToLobbyServer(): void;
+};
+
+export const initialBrowserState: BrowserSliceState = {
+  lobbyIpAddress: "localhost",
+  lobbyPort: 1500,
 
   lobbyConnection: ConnectionStatus.Connecting,
   lobbyError: null,
 
   lobbyCommunication: CommunicationStatus.None,
 
-  games: null,
+  // games: null,
+  games: new Array<ShortGameInfo>(5).fill({
+    gameId: "abc123",
+    gameName: "Fun Game",
+    maxPlayers: 8,
+    players: 5,
+    status: GameStatus.Waiting,
+  }),
   nextPageNumber: null,
   currentPageNumber: null,
+};
+
+export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> = (_, get) => ({
+  ...initialBrowserState,
+
+  isBlocked() {
+    return (
+      this.lobbyCommunication !== CommunicationStatus.Good ||
+      this.lobbyConnection !== ConnectionStatus.Connected
+    );
+  },
+
+  setLobbyAddress(ip: string, port: number) {
+    this.lobbyIpAddress = ip;
+    this.lobbyPort = port;
+  },
+
+  connectToLobbyServer() {
+    const { lobbyIpAddress, lobbyPort } = get().browser;
+    window.bridges?.browser.callConnectToLobbyServer(lobbyIpAddress, lobbyPort);
+  },
 });

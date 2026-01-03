@@ -25,10 +25,15 @@ export enum ConnectionError {
 
 export enum CommunicationStatus {
   None, // before TCP connected
-  Connected, // after TCP connected
+  Good, // after TCP connected
   Waiting, // after request sent
   Retrying, // after ping-pong timeout
-  Disconnected, // after several ping-pong timeouts
+  Failed, // after several ping-pong timeouts
+}
+
+export enum Role {
+  Play,
+  Spectate,
 }
 
 export enum GameStatus {

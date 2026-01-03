@@ -2,6 +2,8 @@ import { mainStore } from "@/store";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "zustand";
 import LobbyCard from "./Components/LobbyCard";
+import CreateGameButton from "./Components/CreateGameButton";
+import LobbyServerStatus from "@/Components/LobbyServerStatus";
 
 export default function BrowserPage() {
   const games = useStore(mainStore, (state) => state.browser.games);
@@ -23,21 +25,25 @@ export default function BrowserPage() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-2 h-full relative">
-      <div className="flex justify-center items-center w-full relative">
-        <h1 className="text-4xl font-bold">Dobble</h1>
-        <h2 className="absolute right-0">
+    <div className="flex flex-col items-center gap-8 h-full  p-2">
+      <LobbyServerStatus />
+
+      <div className="grid grid-cols-3 w-full items-center">
+        <CreateGameButton />
+
+        <h1 className="text-center text-4xl font-bold">Dobble</h1>
+        <h2 className="text-right ">
           Hi, <span className="font-bold">{nickname ?? "Test object #1"}</span>
         </h2>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 w-full">
         {games === null ? (
           <LoadingGames />
         ) : games.length === 0 ? (
           <div className="p-20">No games available</div>
         ) : (
-          <div className="w-full p-2 grid grid-cols-2 grid-rows-2 gap-2">
+          <div className="w-full grid grid-cols-4 grid-rows-3 gap-2">
             {games.map((game) => (
               <LobbyCard key={game.gameId} game={game} />
             ))}

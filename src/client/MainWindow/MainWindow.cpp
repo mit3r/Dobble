@@ -33,6 +33,12 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::connectLobbyServerFlow() {
+
+  connect(ui->browserBridge, &BrowserBridge::requestConnectToLobbyServer,
+          [this](const std::string& ip, const int& port) {
+            lobbyServerController->wantConnectToServer(ip, port);
+          });
+
   connect(lobbyServerController, &LobbyServerController::hasCommunicationStateChanged,
           [this](const CommunicationStatus& status) {
             emit ui->browserBridge->onServerCommunicationStateChanged(status);
@@ -80,6 +86,10 @@ void MainWindow::connectLoginPageFlow() {
 }
 
 void MainWindow::connectBrowserPageFlow() {
+
+  // Create game request
+  connect(ui->browserBridge, &BrowserBridge::requestCreateGame, lobbyServerController,
+          &LobbyServerController::wantCreateGame);
 
   // Page navigation request
   connect(ui->browserBridge, &BrowserBridge::requestNavigateToPage, [this](const int& page) {

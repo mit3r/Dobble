@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QTimer>
 #include <protocol/LobbyCommandFactory.hpp>
 #include <protocol/lobby/lobbyroom/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
@@ -19,8 +20,7 @@ class LobbyServerController : public QObject {
   explicit LobbyServerController(QObject* parent = nullptr);
 
   // Visitor operators for handling commands from variant
-  template <typename T>
-  void operator()(const T& cmd);
+  template <typename T> void operator()(const T& cmd);
 
   void operator()(const std::monostate&);
   void operator()(const ResponseLoginCommand& cmd);
@@ -61,7 +61,7 @@ public slots: // Slots: ui -> controller
 
   void wantNicknameVerification(const std::string& nickname);
   void wantNavigateToPage(const int& page);
-  void wantCreateGame(const std::string& gameName);
+  void wantCreateGame(const std::string& gameName, const int& maxPlayers);
   void wantJoinGame(const std::string& gameId);
   void wantObserveGame(const std::string& gameId);
   void wantDisconnect();
@@ -76,4 +76,9 @@ private:
   QTcpSocket* socket;
   LobbyCommandFactory commandFactory;
   QByteArray receiveBuffer; // Buffer for incoming data
+
+  QTimer* requestTimer = new QTimer(this);
+  int requestCounter = 0;
+  void connectRequestTimer(std::function<void()> slot);
+  void disconnectRequestTimer(bool failed);
 };

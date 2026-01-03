@@ -5,6 +5,7 @@ import { type MainStore } from ".";
 
 export interface MainSlice {
   nickname: string | null;
+  nicknameError: string | null;
 
   view: View;
   setView: (view: View) => void;
@@ -18,6 +19,7 @@ export interface MainSlice {
 
 export const createMainSlice: StateCreator<MainStore, [], [], MainSlice> = (set) => ({
   nickname: "Player1",
+  nicknameError: null,
   globalErrorMessage: null,
 
   view: View.Login,

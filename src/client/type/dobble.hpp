@@ -33,11 +33,11 @@ enum class ConnectionError {
 
 // Status of communication with server
 enum class CommunicationStatus {
-  None,         // before TCP connected
-  Connected,    // after TCP connected
-  Waiting,      // after request sent
-  Retrying,     // after ping-pong timeout
-  Disconnected, // after several ping-pong timeouts
+  None,     // before TCP connected
+  Good,     // after TCP connected
+  Waiting,  // after request sent
+  Retrying, // after ping-pong timeout
+  Failed,   // after several ping-pong timeouts
 };
 
 // Browser and Game screen

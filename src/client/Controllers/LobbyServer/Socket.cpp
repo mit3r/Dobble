@@ -15,6 +15,20 @@ LobbyServerController::LobbyServerController(QObject* parent) {
 
   connect(socket, &QTcpSocket::errorOccurred,
           this, &LobbyServerController::whenSocketError);
+
+  // Initialize request timer
+  connect(requestTimer, &QTimer::timeout, [this]() {
+    switch (requestCounter++) {
+    case 1:
+      emit hasCommunicationStateChanged(CommunicationStatus::Retrying);
+      break;
+    case 5:
+      emit hasCommunicationStateChanged(CommunicationStatus::Failed);
+      disconnectRequestTimer(true);
+      wantDisconnect();
+      break;
+    }
+  });
 }
 
 void LobbyServerController::wantConnectToServer(const std::string& ip, const int& port) {
@@ -39,32 +53,39 @@ void LobbyServerController::whenReadReady() {
     return;
   }
 
+  disconnectRequestTimer(false); // Successfully received a packet
   std::visit(*this, this->commandFactory.get(packet));
 }
 
 void LobbyServerController::whenSocketStateChanged(QTcpSocket::SocketState socketState) {
   qDebug() << "LobbyServerController: Socket state changed to" << static_cast<int>(socketState);
 
-  std::optional<ConnectionStatus> state;
+  std::optional<ConnectionStatus> connState;
+  CommunicationStatus comState = CommunicationStatus::None;
   switch (socketState) {
   case QTcpSocket::ConnectedState:
-    state = ConnectionStatus::Connected;
+    connState = ConnectionStatus::Connected;
+    comState = CommunicationStatus::Good;
     break;
   case QTcpSocket::ConnectingState:
-    state = ConnectionStatus::Connecting;
+    connState = ConnectionStatus::Connecting;
+    comState = CommunicationStatus::None;
     break;
   case QTcpSocket::UnconnectedState:
-    state = ConnectionStatus::Disconnected;
+    connState = ConnectionStatus::Disconnected;
     break;
   case QTcpSocket::HostLookupState:
-    state = ConnectionStatus::HostLookup;
+    connState = ConnectionStatus::HostLookup;
+    comState = CommunicationStatus::None;
     break;
   default:
     break;
   };
 
-  if (state.has_value())
-    emit this->hasConnectionStateChanged(state.value());
+  if (connState.has_value()) {
+    emit this->hasConnectionStateChanged(connState.value());
+    emit this->hasCommunicationStateChanged(comState);
+  }
 }
 
 void LobbyServerController::whenSocketError(QTcpSocket::SocketError socketError) {
@@ -91,4 +112,25 @@ void LobbyServerController::whenSocketError(QTcpSocket::SocketError socketError)
 
   if (error.has_value())
     emit this->hasConnectionErrorOccured(error.value());
+}
+
+void LobbyServerController::connectRequestTimer(std::function<void()> slot) {
+  if (requestTimer->isActive())
+    return;
+
+  emit hasCommunicationStateChanged(CommunicationStatus::Waiting);
+
+  connect(requestTimer, &QTimer::timeout, slot);
+  requestTimer->start(500); // 0.5 second interval
+  requestCounter = 0;
+}
+
+void LobbyServerController::disconnectRequestTimer(bool failed) {
+  requestTimer->stop();
+  requestCounter = 0;
+
+  if (failed)
+    emit hasCommunicationStateChanged(CommunicationStatus::Failed);
+  else
+    emit hasCommunicationStateChanged(CommunicationStatus::Good);
 }

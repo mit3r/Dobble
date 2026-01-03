@@ -1,34 +1,29 @@
-import { GameStatus, type GameInfo } from "@/types/dobble";
+import { type GameInfo } from "@/types/dobble";
 import type { StateCreator } from "zustand";
 import { type MainStore } from ".";
 
-export type GameSlice = {
+export type GameSliceState = {
   gameInfo: GameInfo | null;
 
   topPick: number | undefined;
   handPick: number | undefined;
+};
 
+export type GameSlice = GameSliceState & {
   pickTopCard: (cardId: number) => void;
   pickHandCard: (cardId: number) => void;
   clearPicks: () => void;
 };
 
+export const initialGameState: GameSliceState = {
+  gameInfo: null,
+
+  topPick: undefined,
+  handPick: undefined,
+};
+
 export const createGameSlice: StateCreator<MainStore, [], [], GameSlice> = (set) => ({
-  // gameInfo: null,
-  gameInfo: {
-    gameId: "abc123",
-    gameName: "Fun Game",
-    lastsCards: 5,
-    status: GameStatus.InGame,
-    topCardId: 10,
-    players: new Array(4).fill(null).map((_, i) => ({
-      nickname: `Player${i + 1}`,
-      cardId: i + 5,
-      matches: i * 2,
-      mistakes: i,
-      points: i * 10,
-    })),
-  },
+  gameInfo: null,
 
   topPick: undefined,
   handPick: undefined,

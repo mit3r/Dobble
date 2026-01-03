@@ -14,6 +14,8 @@ void LobbyServerController::wantNicknameVerification(const std::string& nickname
 
   qDebug() << "Sending login command JSON:" << QString::fromStdString(j.dump());
   send_json_packet(socket->socketDescriptor(), json(cmd));
+
+  connectRequestTimer([=]() { send_json_packet(socket->socketDescriptor(), json(cmd)); });
 }
 
 void LobbyServerController::wantNavigateToPage(const int& page) {
@@ -25,11 +27,12 @@ void LobbyServerController::wantNavigateToPage(const int& page) {
   cmd.data_obj->page = std::to_string(page);
 
   send_json_packet(socket->socketDescriptor(), json(cmd));
+  connectRequestTimer([=]() { send_json_packet(socket->socketDescriptor(), json(cmd)); });
 }
 
-void LobbyServerController::wantCreateGame(const std::string& gameName) {
+void LobbyServerController::wantCreateGame(const std::string& gameName, const int& maxPlayers) {
   qDebug() << "LobbyController: Requesting game creation with name:"
-           << QString::fromStdString(gameName);
+           << QString::fromStdString(gameName) << ", max players:" << maxPlayers;
 
   SenderCreateLobbyCommand cmd;
   cmd.command = "create_lobby";
@@ -37,6 +40,7 @@ void LobbyServerController::wantCreateGame(const std::string& gameName) {
   cmd.data_obj->game_name = gameName;
 
   send_json_packet(socket->socketDescriptor(), json(cmd));
+  connectRequestTimer([=]() { send_json_packet(socket->socketDescriptor(), json(cmd)); });
 }
 
 void LobbyServerController::wantJoinGame(const std::string& gameId) {

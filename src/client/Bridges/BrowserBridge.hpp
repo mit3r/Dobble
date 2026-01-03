@@ -20,8 +20,10 @@ public:
 
 signals:
   // App <- Bridge (signals), "request"
+  void requestConnectToLobbyServer(const std::string& ip, const int& port);
   void requestVerifyNickname(const std::string& nickname);
   void requestNavigateToPage(const int& page);
+  void requestCreateGame(const std::string& gameName, const int& maxPlayers);
   void requestJoinGame(const std::string& gameId);
   void requestObserveGame(const std::string& gameId);
 
@@ -38,8 +40,10 @@ signals:
 
   // Bridge <- UI (js methods), "call"
 public slots:
+  void callConnectToLobbyServer(const QString& ip, const int& port);
   void callVerifyNickname(const QString& nickname);
   void callNavigateToPage(const int& page);
   void callJoinGame(const QString& gameId);
   void callObserveGame(const QString& gameId);
+  void callCreateGame(const QString& gameName, const int& maxPlayers);
 };

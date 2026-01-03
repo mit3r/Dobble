@@ -21,15 +21,19 @@ export interface BrowserBridge {
     (gamesList: ShortGameInfo[], currentPageNumber: number, nextPageNumber: number) => void
   >;
 
+  callConnectToLobbyServer(ip: string, port: number): void;
   callVerifyNickname(nickname: string): void;
   callNavigateToPage(pageNumber: number): void;
+  callCreateGame(gameName: string, maxPlayers: number): void;
   callJoinGame(gameId: string): void;
   callObserveGame(gameId: string): void;
 }
 
 qwebchannelInitializer.onReady("browser", (bridge) => {
   bridge.onServerConnectionStateChanged.connect((status: ConnectionStatus) => {
-    mainStore.setState((state) => ({ browser: { ...state.browser, lobbyConnection: status } }));
+    mainStore.setState((state) => ({
+      browser: { ...state.browser, lobbyConnection: status, lobbyError: null },
+    }));
   });
 
   bridge.onServerConnectionErrorOccured.connect((error: ConnectionError) => {
@@ -44,27 +48,19 @@ qwebchannelInitializer.onReady("browser", (bridge) => {
 
   bridge.onLoginSucceeded.connect((nickname: string) => {
     mainStore.setState((state) => ({
-      main: { ...state.main, nickname },
-      browser: { ...state.browser, nicknameError: null },
+      main: { ...state.main, nickname, nicknameError: null },
     }));
   });
 
   bridge.onLoginFailed.connect((error: string) => {
     mainStore.setState((state) => ({
-      main: { ...state.main, nickname: null },
-      browser: { ...state.browser, nicknameError: error },
+      main: { ...state.main, nickname: null, nicknameError: error },
     }));
   });
 
   bridge.onPageChanged.connect(
     (gamesList: ShortGameInfo[], currentPageNumber: number, nextPageNumber: number) => {
-      const gamesStr = JSON.stringify(gamesList);
-      window.bridges?.main.callMsg(
-        `BrowserBridge.onPageChanged: currentPageNumber=${currentPageNumber}, nextPageNumber=${nextPageNumber}, gamesList=${gamesStr}`
-      );
-
       const next = nextPageNumber > 0 ? nextPageNumber : null;
-
       mainStore.setState((state) => ({
         browser: {
           ...state.browser,

@@ -11,13 +11,12 @@ void LobbyServerController::operator()(const std::monostate&) {
 
 void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
   qDebug() << "LobbyServerController: got ResponseLoginCommand";
-  qDebug() << "ResponseLoginCommand content:" << QString::fromStdString(json(cmd).dump());
 
   if (cmd.error.has_value()) {
 
-    if (cmd.error->code == 400)
+    if (cmd.error->code == 400) {
       emit hasAlreadyLoggedIn();
-    else {
+    } else {
       emit hasLoginFailed(cmd.error->message);
     }
   } else {
@@ -29,7 +28,6 @@ void LobbyServerController::operator()(const ResponsePingCommand&) {}
 
 void LobbyServerController::operator()(const ResponseGetLobbyInfoCommand& cmd) {
   qDebug() << "LobbyServerController: got ResponseGetLobbyInfoCommand";
-  qDebug() << "ResponseGetLobbyInfoCommand content:" << QString::fromStdString(json(cmd).dump());
 
   if (cmd.error.has_value()) {
     // TODO: handle error properly
