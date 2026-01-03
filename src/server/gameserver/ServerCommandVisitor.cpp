@@ -274,6 +274,12 @@ void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){
     if (g_game_server.hasPlayer(client_id)) {
         g_game_server.updatePlayerPing(client_id);
         std::cout << "[PING] Updated ping timestamp for player: " << client_id << std::endl;
+    } else { //xdxd
+        auto client = g_game_server.findClientBySocket(client_sock);
+        if (client) {
+            g_game_server.updatePlayerPing(client->client_id);
+            std::cout << "[PING] Updated ping timestamp for player: " << client->client_id << std::endl;
+        }
     }
     
     ResponseGameClientPingCommand response;

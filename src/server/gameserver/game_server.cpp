@@ -27,11 +27,10 @@ int main(int argc, const char* const argv[]) {
   g_game_server.server_id = server_id;
   g_game_server.port = port;
   g_game_server.ip = "0.0.0.0";
-  g_game_server.max_players = "4";
+  g_game_server.setMaxPlayers(4);
   g_game_server.name = "Dobble Game Server";
   
   g_game_logic = new GameLogic(g_game_server);
-  g_game_server.setMaxPlayers(2); 
   g_game_server.setGameId(gen_random(8));
   
 
