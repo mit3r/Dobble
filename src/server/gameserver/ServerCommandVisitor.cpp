@@ -128,6 +128,7 @@ void ServerCommandVisitor::operator()(const SenderStartGameCommand&){
     
     ResponseStartGameCommand response;
     response.command = "start_game";
+    response.game_id = g_game_server.getGameId();
     response.data_obj = ResponseStartGameCommand::data{};
     
     std::string current_status = g_game_server.getGameStatus();
