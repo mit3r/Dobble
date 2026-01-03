@@ -22,16 +22,24 @@ class GameBridge : public QObject {
 
 signals:
   // App <- Bridge (signals), "request"
-  void requestMatch(const int& pick1, const int& pick2);
+  void requestJoinToGame(const std::string& ip, const int& port, const std::string& gameId,
+                         const Role& role);
+
+  void requestMatch(const std::string& turnId, const int& symbolId);
   void requestQuitGame();
 
   // Bridge -> UI (js listeners), "on"
-  void onGameInfoChanged(const GameStruct& gameInfo);
+  void onServerConnectionStateChanged(const ConnectionStatus& status);
+  void onServerConnectionErrorOccured(const ConnectionError& error);
+  void onServerCommunicationStateChanged(const CommunicationStatus& status);
+
+  void onGameInfoChanged(const QVariantMap& gameInfo);
   void onMatchResult(const bool& isMatch);
   void onGameQuit();
 
   // Bridge <- UI (js methods), "call"
 public slots:
-  void callMatch(const int& pick1, const int& pick2);
+  void callJoinGame(const QString& ip, const int& port, const QString& gameId, const Role& role);
+  void callMatch(const QString& turnId, const int& symbolId);
   void callQuitGame();
 };

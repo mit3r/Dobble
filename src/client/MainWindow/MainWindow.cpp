@@ -18,9 +18,7 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect page flows
   connectLoginPageFlow();
   connectBrowserPageFlow();
-  connectLobbyPageFlow();
-  connectGamePageFlow();
-  connectEndPageFlow();
+  connectGameFlow();
 
   // Application start flow
   connect(ui->mainBridge, &MainBridge::uiIsReady, this, [this]() {
@@ -55,8 +53,6 @@ void MainWindow::connectLobbyServerFlow() {
           });
 }
 
-void MainWindow::connectGameServerFlow() {}
-
 void MainWindow::connectLoginPageFlow() {
   // Nickname verification request
   connect(ui->browserBridge, &BrowserBridge::requestVerifyNickname,
@@ -66,10 +62,14 @@ void MainWindow::connectLoginPageFlow() {
           });
 
   //   Login success handling
-  connect(lobbyServerController, &LobbyServerController::hasLoginSucceeded, [this]() {
-    emit ui->browserBridge->onLoginSucceeded(QString::fromStdString(this->nickname.value()));
-    emit ui->mainBridge->onNavigated(View::Browser);
-  });
+  connect(lobbyServerController, &LobbyServerController::hasLoginSucceeded,
+          [this](const std::string& clientId) {
+            this->clientId = clientId;
+
+            emit ui->browserBridge->onLoginSucceeded(
+                QString::fromStdString(this->nickname.value()));
+            emit ui->mainBridge->onNavigated(View::Browser);
+          });
 
   //   Already logged in handling
   connect(lobbyServerController, &LobbyServerController::hasAlreadyLoggedIn, [this]() {
@@ -81,6 +81,7 @@ void MainWindow::connectLoginPageFlow() {
   connect(lobbyServerController, &LobbyServerController::hasLoginFailed,
           [this](const std::string& error) {
             this->nickname.reset();
+            this->clientId.reset();
             emit ui->browserBridge->onLoginFailed(QString::fromStdString(error));
           });
 }
@@ -104,11 +105,98 @@ void MainWindow::connectBrowserPageFlow() {
           });
 }
 
-void MainWindow::connectLobbyPageFlow() {
+void MainWindow::connectGameServerFlow() {
+
+  // Connect to game request
+  connect(
+      ui->gameBridge, &GameBridge::requestJoinToGame,
+      [this](const std::string& ip, const int& port, const std::string& gameId, const Role& role) {
+        this->gameId = gameId;
+        this->role = role;
+
+        if (!this->clientId.has_value())
+          return emit this->gameServerController->hasConnectGameFailed(
+              "Client ID is not set! Cannot join game.");
+
+        if (!this->nickname.has_value())
+          return emit this->gameServerController->hasConnectGameFailed(
+              "Nickname is not set! Cannot join game.");
+
+        if (!this->gameId.has_value())
+          return emit this->gameServerController->hasConnectGameFailed(
+              "Game ID is not set! Cannot join game.");
+
+        gameServerController->wantConnectToGame(ip, port, gameId, this->clientId.value(),
+                                                this->nickname.value(), this->role.value());
+      });
+
+  // Handle connection result
+  connect(gameServerController, &GameServerController::hasConnectGameSucceed,
+          [this]() { emit ui->mainBridge->onNavigated(View::Room); });
+
+  connect(gameServerController, &GameServerController::hasConnectGameFailed,
+          [this](const QString& error) {
+            emit ui->mainBridge->onNavigated(View::Browser);
+            emit ui->mainBridge->onGlobalErrorOccured(error);
+          });
+
+  // Handle server communication signals
+  connect(gameServerController, &GameServerController::hasCommunicationStateChanged,
+          [this](const CommunicationStatus& status) {
+            emit ui->gameBridge->onServerCommunicationStateChanged(status);
+          });
+
+  connect(gameServerController, &GameServerController::hasConnectionStateChanged,
+          [this](const ConnectionStatus& status) {
+            emit ui->gameBridge->onServerConnectionStateChanged(status);
+          });
+
+  connect(gameServerController, &GameServerController::hasConnectionErrorOccured,
+          [this](const ConnectionError& error) {
+            emit ui->gameBridge->onServerConnectionErrorOccured(error);
+          });
 }
 
-void MainWindow::connectGamePageFlow() {
-}
+void MainWindow::connectGameFlow() {
+  // Joining game flow
+  connect(gameServerController, &GameServerController::hasConnectGameSucceed,
+          [this]() { emit ui->mainBridge->onNavigated(View::Room); });
 
-void MainWindow::connectEndPageFlow() {
+  connect(gameServerController, &GameServerController::hasConnectGameFailed,
+          [this](const QString& error) {
+            emit ui->mainBridge->onNavigated(View::Browser);
+            emit ui->mainBridge->onGlobalErrorOccured(error);
+          });
+
+  //  Game start flow
+  connect(gameServerController, &GameServerController::hasGameStartedSucceed,
+          [this]() { emit ui->mainBridge->onNavigated(View::Game); });
+
+  //  Game end flow
+  connect(gameServerController, &GameServerController::hasGameStartedFailed,
+          [this](const QString& error) {
+            emit ui->mainBridge->onNavigated(View::End);
+            emit ui->mainBridge->onGlobalErrorOccured(error);
+          });
+
+  // Leaving game flow
+  connect(gameServerController, &GameServerController::hasLeftGame,
+          [this]() { emit ui->mainBridge->onNavigated(View::Browser); });
+
+  // Match cards
+  connect(ui->gameBridge, &GameBridge::requestMatch,
+          [this](const std::string& turnId, const int& symbolId) {
+            if (!this->gameId.has_value())
+              return emit this->gameServerController->hasGameStartedFailed(
+                  "Game ID is not set! Cannot match card.");
+
+            gameServerController->wantMatchCard(this->gameId.value(), turnId, symbolId);
+          });
+
+  connect(gameServerController, &GameServerController::hasMatchResult, ui->gameBridge,
+          &GameBridge::onMatchResult);
+
+  // Game info updates
+  connect(gameServerController, &GameServerController::hasGameInfoUpdated, ui->gameBridge,
+          &GameBridge::onGameInfoChanged);
 }

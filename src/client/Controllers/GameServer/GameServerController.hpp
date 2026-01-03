@@ -49,13 +49,24 @@ signals: // Signals: controller -> ui
   void hasCommunicationStateChanged(const CommunicationStatus& status);
 
   // Game signals
+  void hasConnectGameSucceed();
+  void hasConnectGameFailed(const QString& error);
+
+  void hasGameStartedSucceed();
+  void hasGameStartedFailed(const QString& error);
+
+  void hasMatchResult(const bool& correct);
+
   void hasGameInfoUpdated(const QVariantMap& gameInfo);
-  void hasMatchedCardResult(bool isCorrect);
   void hasLeftGame();
 
-public slots: // Slots called when game server responds
-  void wantConnect(const std::string& ip, const int& port);
-  void wantMatchCard(int topCard, int topPick, int handPick);
+public slots: // Slots: ui -> controller
+  void wantConnectToGame(const std::string& ip, const int& port, const std::string& gameId,
+                         const std::string& client_id, const std::string& nickname,
+                         const Role& role);
+  void wantStartGame();
+
+  void wantMatchCard(const std::string& gameId, const std::string& turnId, const int& symbolId);
   void wantLeaveGame();
 
 private slots:
@@ -67,4 +78,14 @@ private:
   QTcpSocket* socket_;
   GameCommandFactory commandFactory;
   QByteArray receiveBuffer;
+
+  int requestCounter = 0;
+  QTimer* requestTimer = new QTimer(this);
+  void connectRequestTimer(std::function<void()> slot);
+  void disconnectRequestTimer(bool failed);
+
+  QTimer* pingTimer = new QTimer(this);
+
+  void joinGame(const std::string& gameId, const std::string& client_id,
+                const std::string& nickname, const Role& role);
 };

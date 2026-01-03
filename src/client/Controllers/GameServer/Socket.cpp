@@ -9,6 +9,19 @@ GameServerController::GameServerController(QObject* parent) {
   connect(socket_, &QTcpSocket::readyRead, this, &GameServerController::whenReadReady);
   connect(socket_, &QTcpSocket::stateChanged, this, &GameServerController::whenSocketStateChanged);
   connect(socket_, &QTcpSocket::errorOccurred, this, &GameServerController::whenSocketError);
+
+  connect(requestTimer, &QTimer::timeout, [this]() {
+    switch (requestCounter++) {
+    case 1:
+      emit hasCommunicationStateChanged(CommunicationStatus::Retrying);
+      break;
+    case 5:
+      emit hasCommunicationStateChanged(CommunicationStatus::Failed);
+      disconnectRequestTimer(true);
+      wantLeaveGame();
+      break;
+    }
+  });
 }
 
 void GameServerController::whenReadReady() {
@@ -25,6 +38,7 @@ void GameServerController::whenReadReady() {
     return;
   }
 
+  disconnectRequestTimer(false); // Successfully received a packet
   std::visit(*this, this->commandFactory.get(packet["command"], packet));
 }
 
@@ -77,4 +91,20 @@ void GameServerController::whenSocketError(QTcpSocket::SocketError socketError) 
 
   if (error.has_value())
     emit this->hasConnectionErrorOccured(error.value());
+}
+
+void GameServerController::connectRequestTimer(std::function<void()> slot) {
+  requestCounter = 0;
+  requestTimer->start(1000);
+  connect(requestTimer, &QTimer::timeout, this, slot);
+}
+
+void GameServerController::disconnectRequestTimer(bool failed) {
+  requestTimer->stop();
+  requestCounter = 0;
+  if (failed) {
+    emit hasCommunicationStateChanged(CommunicationStatus::Failed);
+  } else {
+    emit hasCommunicationStateChanged(CommunicationStatus::Good);
+  }
 }

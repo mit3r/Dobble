@@ -32,8 +32,8 @@ export enum CommunicationStatus {
 }
 
 export enum Role {
-  Play,
-  Spectate,
+  Player,
+  Observer,
 }
 
 export enum GameStatus {
@@ -45,6 +45,8 @@ export enum GameStatus {
 export interface ShortGameInfo {
   gameId: string;
   gameName: string;
+  ip: string;
+  port: number;
   players: number;
   maxPlayers: number;
   status: GameStatus;
@@ -60,7 +62,8 @@ export interface PlayerGameInfo {
 
 export interface GameInfo {
   gameId: string;
-  gameName: string;
+  turnId: string;
+  winnerNickname: string | null;
 
   players: PlayerGameInfo[];
 

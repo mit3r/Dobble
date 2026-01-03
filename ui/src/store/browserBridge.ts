@@ -1,9 +1,9 @@
 import type { QtSignal } from "@/bridge/channel";
 import { qwebchannelInitializer } from "@/bridge/initialize";
 import type {
-  ConnectionStatus,
-  ConnectionError,
   CommunicationStatus,
+  ConnectionError,
+  ConnectionStatus,
   ShortGameInfo,
 } from "@/types/dobble";
 import { mainStore } from ".";
@@ -21,12 +21,10 @@ export interface BrowserBridge {
     (gamesList: ShortGameInfo[], currentPageNumber: number, nextPageNumber: number) => void
   >;
 
-  callConnectToLobbyServer(ip: string, port: number): void;
+  callConnectToLobby(ip: string, port: number): void;
   callVerifyNickname(nickname: string): void;
   callNavigateToPage(pageNumber: number): void;
   callCreateGame(gameName: string, maxPlayers: number): void;
-  callJoinGame(gameId: string): void;
-  callObserveGame(gameId: string): void;
 }
 
 qwebchannelInitializer.onReady("browser", (bridge) => {
