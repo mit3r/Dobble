@@ -69,7 +69,7 @@ class ResponseJoinGameCommand : public GameClientMessageCore {
       struct data {
         std::string status;
         std::string role;
-        ShortGameInfo game_info;
+    
       };
       std::optional<data> data_obj;
 };

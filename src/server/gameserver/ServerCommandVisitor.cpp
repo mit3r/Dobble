@@ -73,8 +73,6 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         response.data_obj = ResponseJoinGameCommand::data{};
         response.data_obj->status = "ALREADY_JOINED";
         response.data_obj->role = cmd.data_obj->role;
-        response.data_obj->game_info.game_id = cmd.data_obj->game_id;
-        response.data_obj->game_info.name = g_game_server.getGameName();
         
         json j = response;
         send_json_packet(client_sock, j);
@@ -88,7 +86,6 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         response.data_obj = ResponseJoinGameCommand::data{};
         response.data_obj->status = "GAME_FULL";
         response.data_obj->role = "OBSERVER";
-        response.data_obj->game_info = ShortGameInfo{};
         
         json j = response;
         send_json_packet(client_sock, j);
@@ -105,8 +102,6 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     response.data_obj->status = "JOINED";
     response.data_obj->role = cmd.data_obj->role;
     
-    response.data_obj->game_info.game_id = cmd.data_obj->game_id;
-    response.data_obj->game_info.name = g_game_server.getGameName();
     
     json j = response;
     send_json_packet(client_sock, j);
