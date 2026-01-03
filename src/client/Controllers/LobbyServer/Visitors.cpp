@@ -1,7 +1,6 @@
 #include "LobbyServerController.hpp"
 
-template <typename T>
-inline void LobbyServerController::operator()(const T&) {
+template <typename T> inline void LobbyServerController::operator()(const T& cmd) {
   qDebug() << "LobbyServerController: got unknown command type";
 }
 
@@ -23,8 +22,6 @@ void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
     emit hasLoginSucceeded();
   }
 }
-
-void LobbyServerController::operator()(const ResponsePingCommand&) {}
 
 void LobbyServerController::operator()(const ResponseGetLobbyInfoCommand& cmd) {
   qDebug() << "LobbyServerController: got ResponseGetLobbyInfoCommand";

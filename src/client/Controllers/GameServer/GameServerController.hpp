@@ -1,6 +1,13 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QTimer>
+#include <protocol/GameCommandFactory.hpp>
+#include <protocol/lobby/room/SocketCommands.hpp>
+#include <protocol/utils/SendAndReceiveUtils.hpp>
+#include "Controllers/ControllersUtils.hpp"
+
+#include "client/type/dobble.hpp"
 
 #pragma once
 
@@ -9,54 +16,55 @@
  */
 class GameServerController : public QObject {
   Q_OBJECT
-  public:
+public:
   explicit GameServerController(QObject* parent = nullptr);
 
-  signals:  // Signals emmitted to game server
+  // Visitor operators for handling commands from variant
+  template <typename T = GameClientCommand> void operator()(const T& cmd);
+  void operator()(const std::monostate&);
+  inline void operator()(const RoomServerReceivedMessage&) {}
+  inline void operator()(const RoomClientReceivedMessage&) {}
 
-  // Request to start the game
-  void setReady(bool isReady);
+  void operator()(const ResponseGameClientPingCommand& cmd);
+  void operator()(const ResponseJoinGameCommand& cmd);
+  void operator()(const ResponseLeaveRoomCommand& cmd);
+  void operator()(const ResponseSendGameInfoCommand& cmd);
+  void operator()(const ResponseMatchSymbolCommand& cmd);
+  void operator()(const ResponseStartGameCommand& cmd);
 
-  // Request to play a card
-  void matchCard(int pick1, int pick2);
+  inline void operator()(const SenderGameClientPingCommand&) {};
+  inline void operator()(const SenderJoinGameCommand&) {};
+  inline void operator()(const SenderLeaveRoomCommand&) {};
+  inline void operator()(const SenderSendGameInfoCommand&) {};
+  inline void operator()(const SenderMatchSymbolCommand&) {};
+  inline void operator()(const SenderStartGameCommand&) {};
 
-  // Request to leave the game
-  void leaveGame();
+signals: // Signals: controller -> ui
 
-  public slots:  // Slots called when game server responds
+  // Connection signals
+  void hasConnectionStateChanged(const ConnectionStatus& status);
+  void hasConnectionErrorOccured(const ConnectionError& error);
 
-  // Handle update about player's readiness
-  void onPlayerReadyUpdated(int playerId, bool isReady);
+  // Communication signals
+  void hasCommunicationStateChanged(const CommunicationStatus& status);
 
-  // Handle game started notification
-  void onGameStarted();
+  // Game signals
+  void hasGameInfoUpdated(const QVariantMap& gameInfo);
+  void hasMatchedCardResult(bool isCorrect);
+  void hasLeftGame();
 
-  // Handle card match result
-  void onCardMatched(int playerId, bool isCorrect);
+public slots: // Slots called when game server responds
+  void wantConnect(const std::string& ip, const int& port);
+  void wantMatchCard(int topCard, int topPick, int handPick);
+  void wantLeaveGame();
 
-  // Handle score update
-  void onScoreUpdated(int playerId, int newScore);
+private slots:
+  void whenReadReady();
+  void whenSocketStateChanged(QTcpSocket::SocketState socketState);
+  void whenSocketError(QTcpSocket::SocketError socketError);
 
-  // Handle new top card notification
-  void onNewTopCard(const QString& cardData);
-
-  // Handle player's hand update
-  void onHandUpdated(int playerId, int cardId);
-
-  // Handle lasts cards counter
-  void onLastCardsUpdated(int count);
-
-  // Handle game ended notification
-  void onGameEnded(
-      const QList<QString>& playerNames,
-      const QList<int>& playerScores);
-
-  // Handle disconnection from the server
-  void onDisconnected();
-
-  // Handle errors
-  void onError(QAbstractSocket::SocketError socketError);
-
-  private:
+private:
   QTcpSocket* socket_;
+  GameCommandFactory commandFactory;
+  QByteArray receiveBuffer;
 };

@@ -1,20 +1,14 @@
-#include "LobbyControllerUtils.hpp"
 #include "LobbyServerController.hpp"
 
 LobbyServerController::LobbyServerController(QObject* parent) {
   Q_UNUSED(parent);
   socket = new QTcpSocket(this);
-  commandFactory = LobbyCommandFactory();  // TODO: make it singleton?
+  commandFactory = LobbyCommandFactory(); // TODO: make it singleton?
 
   // Connect socket signals to slots
-  connect(socket, &QTcpSocket::readyRead,
-          this, &LobbyServerController::whenReadReady);
-
-  connect(socket, &QTcpSocket::stateChanged,
-          this, &LobbyServerController::whenSocketStateChanged);
-
-  connect(socket, &QTcpSocket::errorOccurred,
-          this, &LobbyServerController::whenSocketError);
+  connect(socket, &QTcpSocket::readyRead, this, &LobbyServerController::whenReadReady);
+  connect(socket, &QTcpSocket::stateChanged, this, &LobbyServerController::whenSocketStateChanged);
+  connect(socket, &QTcpSocket::errorOccurred, this, &LobbyServerController::whenSocketError);
 
   // Initialize request timer
   connect(requestTimer, &QTimer::timeout, [this]() {
@@ -44,7 +38,8 @@ void LobbyServerController::whenReadReady() {
 
   // Try to extract and process complete packets from buffer
   auto packetOpt = try_extract_packet(receiveBuffer);
-  if (!packetOpt.has_value()) return;
+  if (!packetOpt.has_value())
+    return;
 
   json packet = packetOpt.value();
 

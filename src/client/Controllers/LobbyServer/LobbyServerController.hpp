@@ -6,6 +6,7 @@
 #include <protocol/LobbyCommandFactory.hpp>
 #include <protocol/lobby/lobbyroom/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
+#include "Controllers/ControllersUtils.hpp"
 
 #include "client/type/dobble.hpp"
 
@@ -20,14 +21,15 @@ class LobbyServerController : public QObject {
   explicit LobbyServerController(QObject* parent = nullptr);
 
   // Visitor operators for handling commands from variant
-  template <typename T> void operator()(const T& cmd);
+  template <typename T = LobbyClientCommand> void operator()(const T& cmd);
 
   void operator()(const std::monostate&);
   void operator()(const ResponseLoginCommand& cmd);
-  void operator()(const ResponsePingCommand& cmd);
   void operator()(const ResponseGetLobbyInfoCommand& cmd);
   void operator()(const ResponseCreateLobbyCommand& cmd);
   void operator()(const ResponseRegisterGameServerCommand& cmd);
+
+  inline void operator()(const ResponsePingCommand&) {};
   inline void operator()(const SenderLoginCommand&) {};
   inline void operator()(const SenderPingCommand&) {};
   inline void operator()(const SenderGetLobbyInfoCommand&) {};
