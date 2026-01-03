@@ -147,6 +147,15 @@ std::shared_ptr<GameServer> UdsServer::getGameServerById(const std::string& serv
   return (it != game_servers.end()) ? *it : nullptr;
 }
 
+std::shared_ptr<GameServer> UdsServer::getGameServerBySocket(int socket) {
+  std::lock_guard<std::mutex> lock(game_servers_mutex);
+  auto it = std::find_if(game_servers.begin(), game_servers.end(),
+    [socket](const std::shared_ptr<GameServer>& game) {
+      return game->socket == socket;
+    });
+  return (it != game_servers.end()) ? *it : nullptr;
+}
+
 std::vector<std::shared_ptr<GameServer>> UdsServer::getAllGameServers() {
   std::lock_guard<std::mutex> lock(game_servers_mutex);
   return game_servers;

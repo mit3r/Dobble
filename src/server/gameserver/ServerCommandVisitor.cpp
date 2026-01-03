@@ -1,6 +1,7 @@
 #include "ServerCommandVisitor.hpp"
 #include "GameStateManager.hpp"
 #include "GameLogic.hpp"
+#include "GameStatusManager.hpp"
 #include <protocol/GameEnums.hpp>
 #include <thread>
 #include <chrono>
@@ -115,6 +116,9 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
 
     std::cout << "[INFO] Player joined. Status: " << g_game_server.getGameStatus() 
               << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
+    
+    // Send status update to lobby server
+    send_status_update_to_lobby();
 }
 
 void ServerCommandVisitor::operator()(const SenderStartGameCommand&){
@@ -152,6 +156,9 @@ void ServerCommandVisitor::operator()(const SenderStartGameCommand&){
         response.data_obj->success = true;
         response.data_obj->message = "Game started successfully";
         response.data_obj->status = GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE);
+        
+        // Send status update to lobby server
+        send_status_update_to_lobby();
     } else {
         response.data_obj->success = false;
         response.data_obj->message = "Game logic not initialized";
@@ -292,10 +299,12 @@ void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
 
     ResponseLeaveRoomCommand response;
     response.command = "leave_room";
+    response.game_id = g_game_server.getGameId();
     response.data_obj = ResponseLeaveRoomCommand::data{};
     response.data_obj->message = "LEFT";
     json j = response;
     send_json_packet(client_sock, j);
+    send_status_update_to_lobby();
     //disconnect client
     close(client_sock);
 

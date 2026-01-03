@@ -38,6 +38,13 @@ class ServersCommandFactory {
       else
         return j.get<SenderServersPingCommand>();
     };
+
+    dictionary["game_server_status"] = [this](const json& j) -> GameServerCommand {
+      if (isResponse(j))
+        return j.get<ResponseGameServerStatusCommand>();
+      else
+        return j.get<SenderGameServerStatusCommand>();
+    };
   }
 
   GameServerCommand get(const std::string& commandName, const json& j) {
