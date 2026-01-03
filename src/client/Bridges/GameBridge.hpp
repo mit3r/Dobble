@@ -25,6 +25,7 @@ signals:
   void requestJoinToGame(const std::string& ip, const int& port, const std::string& gameId,
                          const Role& role);
 
+  void requestStartGame();
   void requestMatch(const std::string& turnId, const int& symbolId);
   void requestQuitGame();
 
@@ -40,6 +41,7 @@ signals:
   // Bridge <- UI (js methods), "call"
 public slots:
   void callJoinGame(const QString& ip, const int& port, const QString& gameId, const Role& role);
+  void callStartGame();
   void callMatch(const QString& turnId, const int& symbolId);
   void callQuitGame();
 };

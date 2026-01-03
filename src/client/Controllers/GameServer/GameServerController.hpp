@@ -58,7 +58,6 @@ signals: // Signals: controller -> ui
   void hasMatchResult(const bool& correct);
 
   void hasGameInfoUpdated(const QVariantMap& gameInfo);
-  void hasLeftGame();
 
 public slots: // Slots: ui -> controller
   void wantConnectToGame(const std::string& ip, const int& port, const std::string& gameId,
@@ -66,7 +65,7 @@ public slots: // Slots: ui -> controller
                          const Role& role);
   void wantStartGame();
 
-  void wantMatchCard(const std::string& gameId, const std::string& turnId, const int& symbolId);
+  void wantMatchCard(const std::string& turnId, const int& symbolId);
   void wantLeaveGame();
 
 private slots:
@@ -79,16 +78,27 @@ private:
   GameCommandFactory commandFactory;
   QByteArray receiveBuffer;
 
+  // Game related members
+  std::optional<std::string> gameId;
+  std::optional<std::string> clientId;
+  std::optional<std::string> nickname;
+  std::optional<Role> role;
+
+  // Request timeout handling
   int requestCounter = 0;
   QTimer* requestTimer = new QTimer(this);
   void connectRequestTimer(std::function<void()> slot);
   void disconnectRequestTimer(bool failed);
 
+  void handleRequestTimeout();
+
+  // Game actions
+  void joinGame();
+  void leaveGame();
+
+  // Periodic tasks
   QTimer* pingTimer = new QTimer(this);
   void handleServerPing();
-
-  void joinGame(const std::string& gameId, const std::string& client_id,
-                const std::string& nickname, const Role& role);
 
   QTimer* infoTimer = new QTimer(this);
   void handleServerInfo();

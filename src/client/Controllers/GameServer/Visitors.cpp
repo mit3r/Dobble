@@ -26,9 +26,6 @@ void GameServerController::operator()(const ResponseJoinGameCommand& cmd) {
 
 void GameServerController::operator()(const ResponseLeaveRoomCommand&) {
   qDebug() << "GameServerController: got ResponseLeaveRoomCommand";
-
-  socket_->disconnectFromHost();
-  emit hasLeftGame();
 }
 void GameServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
   qDebug() << "GameServerController: got ResponseSendGameInfoCommand";

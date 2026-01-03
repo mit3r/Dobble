@@ -9,19 +9,9 @@ GameServerController::GameServerController(QObject* parent) {
   connect(socket_, &QTcpSocket::readyRead, this, &GameServerController::whenReadReady);
   connect(socket_, &QTcpSocket::stateChanged, this, &GameServerController::whenSocketStateChanged);
   connect(socket_, &QTcpSocket::errorOccurred, this, &GameServerController::whenSocketError);
+  connect(socket_, &QTcpSocket::connected, this, &GameServerController::joinGame);
 
-  connect(requestTimer, &QTimer::timeout, [this]() {
-    switch (requestCounter++) {
-    case 1:
-      emit hasCommunicationStateChanged(CommunicationStatus::Retrying);
-      break;
-    case 5:
-      emit hasCommunicationStateChanged(CommunicationStatus::Failed);
-      disconnectRequestTimer(true);
-      wantLeaveGame();
-      break;
-    }
-  });
+  connect(requestTimer, &QTimer::timeout, this, &GameServerController::handleRequestTimeout);
 
   connect(pingTimer, &QTimer::timeout, this, &GameServerController::handleServerPing);
   connect(infoTimer, &QTimer::timeout, this, &GameServerController::handleServerInfo);
@@ -54,6 +44,8 @@ void GameServerController::whenReadReady() {
     std::cout << "[CLIENT ERROR] Received packet without command field." << std::endl;
     return;
   }
+
+  qDebug() << "GameServerController: Received packet: " << QString::fromStdString(packet.dump());
 
   disconnectRequestTimer(false); // Successfully received a packet
   std::visit(*this, this->commandFactory.get(packet["command"], packet));

@@ -20,6 +20,7 @@ export interface GameBridge {
 
   // slots
   callJoinGame(ip: string, port: number, gameId: string, role: Role): void;
+  callStartGame: () => void;
   callMatchCards: (turnId: string, symbolId: number) => void;
   callQuitGame: () => void;
 }

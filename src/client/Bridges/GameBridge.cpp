@@ -6,6 +6,11 @@ void GameBridge::callJoinGame(const QString& ip, const int& port, const QString&
   emit requestJoinToGame(ip.toStdString(), port, gameId.toStdString(), role);
 }
 
+void GameBridge::callStartGame() {
+  qDebug() << "GameBridge::callStartGame called";
+  emit requestStartGame();
+}
+
 void GameBridge::callMatch(const QString& turnId, const int& symbolId) {
   qDebug() << "GameBridge::callMatch called with" << turnId << symbolId;
   emit requestMatch(turnId.toStdString(), symbolId);

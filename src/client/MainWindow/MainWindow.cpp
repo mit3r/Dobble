@@ -111,9 +111,6 @@ void MainWindow::connectGameServerFlow() {
   connect(
       ui->gameBridge, &GameBridge::requestJoinToGame,
       [this](const std::string& ip, const int& port, const std::string& gameId, const Role& role) {
-        this->gameId = gameId;
-        this->role = role;
-
         if (!this->clientId.has_value())
           return emit this->gameServerController->hasConnectGameFailed(
               "Client ID is not set! Cannot join game.");
@@ -122,12 +119,8 @@ void MainWindow::connectGameServerFlow() {
           return emit this->gameServerController->hasConnectGameFailed(
               "Nickname is not set! Cannot join game.");
 
-        if (!this->gameId.has_value())
-          return emit this->gameServerController->hasConnectGameFailed(
-              "Game ID is not set! Cannot join game.");
-
         gameServerController->wantConnectToGame(ip, port, gameId, this->clientId.value(),
-                                                this->nickname.value(), this->role.value());
+                                                this->nickname.value(), role);
       });
 
   // Handle connection result
@@ -175,29 +168,21 @@ void MainWindow::connectGameFlow() {
           });
 
   //  Game start flow
+  connect(ui->gameBridge, &GameBridge::requestStartGame, gameServerController,
+          &GameServerController::wantStartGame);
+
   connect(gameServerController, &GameServerController::hasGameStartedSucceed,
           [this]() { emit ui->mainBridge->onNavigated(View::Game); });
 
-  //  Game end flow
   connect(gameServerController, &GameServerController::hasGameStartedFailed,
           [this](const QString& error) {
             emit ui->mainBridge->onNavigated(View::End);
             emit ui->mainBridge->onGlobalErrorOccured(error);
           });
 
-  // Leaving game flow
-  connect(gameServerController, &GameServerController::hasLeftGame,
-          [this]() { emit ui->mainBridge->onNavigated(View::Browser); });
-
   // Match cards
-  connect(ui->gameBridge, &GameBridge::requestMatch,
-          [this](const std::string& turnId, const int& symbolId) {
-            if (!this->gameId.has_value())
-              return emit this->gameServerController->hasGameStartedFailed(
-                  "Game ID is not set! Cannot match card.");
-
-            gameServerController->wantMatchCard(this->gameId.value(), turnId, symbolId);
-          });
+  connect(ui->gameBridge, &GameBridge::requestMatch, gameServerController,
+          &GameServerController::wantMatchCard);
 
   connect(gameServerController, &GameServerController::hasMatchResult, ui->gameBridge,
           &GameBridge::onMatchResult);

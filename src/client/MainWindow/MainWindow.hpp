@@ -54,8 +54,4 @@ class MainWindow : public QMainWindow {
 
       // Browser page state
       std::optional<int> page = 1;
-
-      // Game state
-      std::optional<Role> role = std::nullopt;
-      std::optional<std::string> gameId = std::nullopt;
 };

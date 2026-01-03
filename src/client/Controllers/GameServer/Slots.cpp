@@ -7,23 +7,29 @@ void GameServerController::wantConnectToGame(const std::string& ip, const int& p
   qDebug() << "GameServerController: Requesting connection to game server at"
            << QString::fromStdString(ip) << ":" << port;
 
-  connect(socket_, &QTcpSocket::connected, this,
-          [=]() { joinGame(gameId, client_id, nickname, role); });
+  // Save connection info for later use
+  this->gameId = gameId;
+  this->clientId = client_id;
+  this->nickname = nickname;
+  this->role = role;
 
   // Connect to server
   const QString qip = ip == "0.0.0.0" ? QString("127.0.0.1") : QString::fromStdString(ip);
   socket_->connectToHost(qip, port, QIODevice::ReadWrite);
 };
 
-void GameServerController::wantMatchCard(const std::string& gameId, const std::string& turnId,
-                                         const int& symbolId) {
+void GameServerController::wantMatchCard(const std::string& turnId, const int& symbolId) {
   qDebug() << "GameServerController: Requesting to match cards.";
+
+  if (!this->gameId.has_value()) {
+    qDebug() << "GameServerController: Missing game ID for matching.";
+    return;
+  }
 
   SenderMatchSymbolCommand cmd;
   cmd.command = "match_symbol";
 
   cmd.data_obj = SenderMatchSymbolCommand::data{};
-  cmd.data_obj->game_id = gameId;
   cmd.data_obj->turn_id = stoi(turnId);
   cmd.data_obj->symbol_id = symbolId;
 
@@ -32,7 +38,14 @@ void GameServerController::wantMatchCard(const std::string& gameId, const std::s
 };
 void GameServerController::wantLeaveGame() {
   qDebug() << "GameServerController: Requesting to leave the game.";
+
+  if (!this->gameId.has_value()) {
+    qDebug() << "GameServerController: Missing game ID for leaving.";
+    return;
+  }
+
   SenderLeaveRoomCommand cmd;
+  cmd.client_id = this->clientId.value();
   cmd.command = "leave_room";
 
   send_json_packet(socket_->socketDescriptor(), json(cmd));
@@ -41,9 +54,14 @@ void GameServerController::wantLeaveGame() {
 
 void GameServerController::wantStartGame() {
   qDebug() << "GameServerController: Requesting to start the game.";
+  if (!this->gameId.has_value()) {
+    qDebug() << "GameServerController: Missing game ID for starting.";
+    return;
+  }
+
   SenderStartGameCommand cmd;
+  cmd.client_id = this->clientId.value();
   cmd.command = "start_game";
-  cmd.data_obj = SenderStartGameCommand::data{};
 
   send_json_packet(socket_->socketDescriptor(), json(cmd));
   connectRequestTimer([=]() { send_json_packet(socket_->socketDescriptor(), json(cmd)); });
