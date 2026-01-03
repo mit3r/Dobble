@@ -30,13 +30,14 @@ struct PlayerInfo {
     int points;
     int mistakes;
     int rank;
+    int socket_fd;
     std::chrono::steady_clock::time_point last_ping_timestamp;
 
     PlayerInfo() : client_id("-1"), nickname(""), score(0), points(0), mistakes(0), rank(0), 
-                   last_ping_timestamp(std::chrono::steady_clock::now()) {}
-    explicit PlayerInfo(std::string id, std::string nick = "") 
+                   socket_fd(-1), last_ping_timestamp(std::chrono::steady_clock::now()) {}
+    explicit PlayerInfo(std::string id, std::string nick = "", int sock = -1) 
         : client_id(id), nickname(nick), score(0), points(0), mistakes(0), rank(0),
-          last_ping_timestamp(std::chrono::steady_clock::now()) {}
+          socket_fd(sock), last_ping_timestamp(std::chrono::steady_clock::now()) {}
 };
 
 struct TurnInfo {
@@ -61,38 +62,38 @@ private:
     
 public:
     GameStateManager() = default;
-    void setGameName(const std::string& name);
-    std::string getGameName() const;
+    // void setGameName(const std::string& name);
+    const std::string& getGameName() const;
     
     void setMaxPlayers(int max);
     int getMaxPlayers() const;
     
     void setGameStatus(const std::string& status);
-    std::string getGameStatus() const;
+    const std::string& getGameStatus() const;
     
     GameServerState::GameInfo& getGameInfo();
     const GameServerState::GameInfo& getGameInfo() const;
 
-    void startNewTurn(int turn_id);
-    void endCurrentTurn(const std::string& winner_id);
-    bool isTurnActive() const;
+    // void startNewTurn(int turn_id);
+    // void endCurrentTurn(const std::string& winner_id);
+    // bool isTurnActive() const;
     
-    void setImagesOnTable(const std::vector<int>& images);
-    const std::vector<int>& getImagesOnTable() const;
+    // void setImagesOnTable(const std::vector<int>& images);
+    // const std::vector<int>& getImagesOnTable() const;
     
-    void updateScoreboard(const std::string& client_id, int score);
-    int getScore(const std::string& client_id) const;
+    // void updateScoreboard(const std::string& client_id, int score);
+    // int getScore(const std::string& client_id) const;
 
     GameServerState::TurnInfo& getCurrentTurn();
     const GameServerState::TurnInfo& getCurrentTurn() const;
     
-    void addPlayer(const std::string& client_id, const std::string& nickname);
+    void addPlayer(const std::string& client_id, const std::string& nickname, int socket_fd);
     void removePlayer(const std::string& client_id);
     bool hasPlayer(const std::string& client_id) const;
 
     void setPlayerImages(const std::string& client_id, const std::vector<int>& images);
     void updatePlayerScore(const std::string& client_id, int points, int mistakes);
-    void setPlayerRank(const std::string& client_id, int rank);
+    // void setPlayerRank(const std::string& client_id, int rank);
     void updatePlayerPing(const std::string& client_id);
 
     GameServerState::PlayerInfo& getPlayer(const std::string& client_id);
@@ -102,9 +103,9 @@ public:
     int getPlayerCount() const;
     
     std::list<PlayerGameInfo> getPlayersGameInfo() const;
+    std::vector<std::string> getInactivePlayers(std::chrono::seconds timeout) const;
 
     void setGameId(const std::string& game_id) { game_info_.game_id = game_id; }
-    std::string getGameId() const { return game_info_.game_id; }
 
     bool isGameReady() const;
     bool isGameFull() const;

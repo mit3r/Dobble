@@ -37,7 +37,7 @@ class BsdServer : public BaseServer {
   const char* host;
 
   public:
-  BsdServer(int port = 1500, const char* host = "127.0.0.1");
+  explicit BsdServer(int port = 1500, const char* host = "127.0.0.1");
   int run() override;
 };
 
@@ -49,7 +49,7 @@ class UdsServer : public BaseServer {
   std::vector<std::shared_ptr<GameServer>> game_servers;
   std::mutex game_servers_mutex;
 
-  UdsServer(const char* socket_path = "/tmp/uds_socket");
+  explicit UdsServer(const char* socket_path = "/tmp/uds_socket");
   int run() override;
   
   void addGameServer(std::shared_ptr<GameServer> game);

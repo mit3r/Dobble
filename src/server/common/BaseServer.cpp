@@ -128,24 +128,23 @@ void UdsServer::addGameServer(std::shared_ptr<GameServer> game) {
   std::cout << "[UDS] Dodano game server do listy (socket: " << game->socket << ")" << std::endl;
 }
 
-void UdsServer::removeGameServer(const std::string& server_id) {
-  std::lock_guard<std::mutex> lock(game_servers_mutex);
-  auto it = std::remove_if(game_servers.begin(), game_servers.end(),
-    [&server_id](const std::shared_ptr<GameServer>& g) {
-      return g->server_id == server_id;
-    });
-  game_servers.erase(it, game_servers.end());
-  std::cout << "[UDS] Usunięto game server: " << server_id << std::endl;
-}
+// void UdsServer::removeGameServer(const std::string& server_id) {
+//   std::lock_guard<std::mutex> lock(game_servers_mutex);
+//   auto it = std::remove_if(game_servers.begin(), game_servers.end(),
+//     [&server_id](const std::shared_ptr<GameServer>& g) {
+//       return g->server_id == server_id;
+//     });
+//   game_servers.erase(it, game_servers.end());
+//   std::cout << "[UDS] Usunięto game server: " << server_id << std::endl;
+// }
 
 std::shared_ptr<GameServer> UdsServer::getGameServerById(const std::string& server_id) {
   std::lock_guard<std::mutex> lock(game_servers_mutex);
-  for (auto& game : game_servers) {
-    if (game->server_id == server_id) {
-      return game;
-    }
-  }
-  return nullptr;
+  auto it = std::find_if(game_servers.begin(), game_servers.end(),
+    [&server_id](const std::shared_ptr<GameServer>& game) {
+      return game->server_id == server_id;
+    });
+  return (it != game_servers.end()) ? *it : nullptr;
 }
 
 std::vector<std::shared_ptr<GameServer>> UdsServer::getAllGameServers() {

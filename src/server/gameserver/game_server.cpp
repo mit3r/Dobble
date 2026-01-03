@@ -6,13 +6,15 @@
 #include "server/common/BaseClient.hpp"
 #include "GameStateManager.hpp"
 #include "GameLogic.hpp"
+#include "InactivityMonitor.hpp"
 
 std::string gen_random(const int len);
 
 GameStateManager g_game_server;
-GameLogic* g_game_logic = nullptr;  // Globalny pointer do logiki gry
+GameLogic* g_game_logic = nullptr;
+bool g_server_running = true;
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* const argv[]) {
   if (argc < 4) {
     std::cerr << "Usage: " << argv[0] << " <server_id> <port> <lobby_uds_path>" << std::endl;
     return 1;
@@ -46,15 +48,19 @@ int main(int argc, char* argv[]) {
     bsd_server.run();
   });
 
-
   std::thread uds_thread([&uds_client]() {
     uds_client.connect();
   });
-
   
+  std::thread monitor_thread(inactivity_monitor_thread);
 
   bsd_thread.join();
   uds_thread.join();
+  
+  g_server_running = false;
+  if (monitor_thread.joinable()) {
+    monitor_thread.join();
+  }
   
   delete g_game_logic;
 

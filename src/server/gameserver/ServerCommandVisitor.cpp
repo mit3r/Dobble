@@ -95,7 +95,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         return;
     }
     
-    g_game_server.addPlayer(client_id, nickname);
+    g_game_server.addPlayer(client_id, nickname, client_sock);
     std::cout << "[INFO] Player " << client_id << " (" << nickname << ") joined. "
               << "Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
     
@@ -117,7 +117,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
               << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
 }
 
-void ServerCommandVisitor::operator()(const SenderStartGameCommand &cmd){
+void ServerCommandVisitor::operator()(const SenderStartGameCommand&){
     std::cout << "[CMD] Client requests to start game" << std::endl;
     
     ResponseStartGameCommand response;
@@ -177,7 +177,7 @@ void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){
     response.data_obj = ResponseSendGameInfoCommand::data{};
     response.data_obj->game_id = g_game_server.getGameInfo().game_id;
     
-    auto& turn = g_game_server.getCurrentTurn();
+    const auto& turn = g_game_server.getCurrentTurn();
     
     response.data_obj->actual_turn.turn_id = std::to_string(turn.turn_id);
     response.data_obj->actual_turn.active = turn.is_active;

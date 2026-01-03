@@ -94,10 +94,10 @@ public:
     
     void NextRound();
     bool IsGameOver() const;
-    void CalculateRanks();
+    // void CalculateRanks();
     
-    int GetTopCardId() const;
-    const std::vector<int>& GetCardSymbols(int cardId) const;
+    // int GetTopCardId() const;
+    // const std::vector<int>& GetCardSymbols(int cardId) const;
 };
 
 #endif

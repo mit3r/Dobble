@@ -5,11 +5,13 @@
 
 using namespace GameServerState;
 
+/*
 void GameStateManager::setGameName(const std::string& name) {
     game_info_.game_name = name;
 }
+*/
 
-std::string GameStateManager::getGameName() const {
+const std::string& GameStateManager::getGameName() const {
     return game_info_.game_name;
 }
 
@@ -25,7 +27,7 @@ void GameStateManager::setGameStatus(const std::string& status) {
     game_info_.status = status;
 }
 
-std::string GameStateManager::getGameStatus() const {
+const std::string& GameStateManager::getGameStatus() const {
     return game_info_.status;
 }
 
@@ -37,6 +39,7 @@ const GameInfo& GameStateManager::getGameInfo() const {
     return game_info_;
 }
 
+/*
 void GameStateManager::startNewTurn(int turn_id) {
     current_turn_.turn_id = turn_id;
     current_turn_.is_active = true;
@@ -51,7 +54,9 @@ void GameStateManager::endCurrentTurn(const std::string& winner_id) {
     current_turn_.winner_id = winner_id;
     current_turn_.past_turns.push_back(current_turn_.turn_id);
 }
+*/
 
+/*
 bool GameStateManager::isTurnActive() const {
     return current_turn_.is_active;
 }
@@ -72,6 +77,7 @@ int GameStateManager::getScore(const std::string& client_id) const {
     auto it = current_turn_.scoreboard.find(client_id);
     return (it != current_turn_.scoreboard.end()) ? it->second : 0;
 }
+*/
 
 TurnInfo& GameStateManager::getCurrentTurn() {
     return current_turn_;
@@ -81,8 +87,8 @@ const TurnInfo& GameStateManager::getCurrentTurn() const {
     return current_turn_;
 }
 
-void GameStateManager::addPlayer(const std::string& client_id, const std::string& nickname) {
-    players_[client_id] = PlayerInfo(client_id, nickname);
+void GameStateManager::addPlayer(const std::string& client_id, const std::string& nickname, int socket_fd) {
+    players_[client_id] = PlayerInfo(client_id, nickname, socket_fd);
     game_info_.player_nicknames.push_back(nickname);
     game_info_.players_count = static_cast<int>(players_.size());
 }
@@ -111,11 +117,13 @@ void GameStateManager::updatePlayerScore(const std::string& client_id, int point
     }
 }
 
+/*
 void GameStateManager::setPlayerRank(const std::string& client_id, int rank) {
     if (players_.find(client_id) != players_.end()) {
         players_[client_id].rank = rank;
     }
 }
+*/
 
 void GameStateManager::updatePlayerPing(const std::string& client_id) {
     if (players_.find(client_id) != players_.end()) {
@@ -176,6 +184,20 @@ std::list<PlayerGameInfo> GameStateManager::getPlayersGameInfo() const {
     }
     
     return players_info;
+}
+
+std::vector<std::string> GameStateManager::getInactivePlayers(std::chrono::seconds timeout) const {
+    std::vector<std::string> inactive_players;
+    auto now = std::chrono::steady_clock::now();
+    
+    for (const auto& [client_id, player] : players_) {
+        auto time_since_ping = std::chrono::duration_cast<std::chrono::seconds>(now - player.last_ping_timestamp);
+        if (time_since_ping > timeout) {
+            inactive_players.push_back(client_id);
+        }
+    }
+    
+    return inactive_players;
 }
 
 bool GameStateManager::isGameReady() const {

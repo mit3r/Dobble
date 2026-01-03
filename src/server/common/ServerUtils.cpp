@@ -1,6 +1,6 @@
 #include "ServerUtils.hpp"
 
-ServerStateManager::ServerStateManager() {}
+ServerStateManager::ServerStateManager() : port(0) {}
 
 ServerStateManager::~ServerStateManager() {}
 
@@ -45,14 +45,14 @@ std::shared_ptr<Client> ServerStateManager::findClientByNickname(const std::stri
   return nullptr;
 }
 
-size_t ServerStateManager::getClientCount() const {
-  return clients.size();
-}
+// size_t ServerStateManager::getClientCount() const {
+//   return clients.size();
+// }
 
-std::vector<std::shared_ptr<Client>> ServerStateManager::getClients() {
-  std::lock_guard<std::mutex> lock(clients_mutex);
-  return clients;
-}
+// std::vector<std::shared_ptr<Client>> ServerStateManager::getClients() {
+//   std::lock_guard<std::mutex> lock(clients_mutex);
+//   return clients;
+// }
 
 int find_available_port() {
   static int last_port = 2000;

@@ -33,7 +33,7 @@ void server_handle_client(int client_sock, StateManager& server_state, VisitorCr
 }
 
 template <typename StateManager, typename VisitorCreator, typename CommandFactory>
-void client_handle_client(int client_sock, StateManager& server_state, VisitorCreator create_visitor, CommandFactory& command_factory) {
+void client_handle_client(int client_sock, StateManager&, VisitorCreator create_visitor, CommandFactory& command_factory) {
   std::cout << "[CLIENT] Connected to: " << client_sock << std::endl;
   handle_communication(client_sock, create_visitor, command_factory);
   std::cout << "[CLIENT] Client disconnected: " << client_sock << std::endl;

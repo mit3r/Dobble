@@ -9,7 +9,7 @@
 extern GameStateManager g_game_server;
 
 template <typename StateManager>
-void registerServer(StateManager& server_state, int client_sock) {
+void registerServer(StateManager&, int client_sock) {
 
   SenderRegisterGameServerCommand register_cmd;
   register_cmd.command = "register_game_server";

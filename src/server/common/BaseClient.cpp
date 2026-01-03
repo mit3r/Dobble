@@ -18,9 +18,9 @@ void BaseClient::setClientHandler(std::function<void(int)> handler) {
 }
 
 
-bool BaseClient::isConnected() const {
-    return connected;
-}
+// bool BaseClient::isConnected() const {
+//     return connected;
+// }
 
 UdsClient::UdsClient(const std::string& path) : socket_path(path) {}
 

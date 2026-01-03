@@ -174,6 +174,7 @@ bool GameLogic::IsGameOver() const {
     return state_manager_.getGameStatus() == "GAME_OVER";
 }
 
+/*
 void GameLogic::CalculateRanks() {
     std::cout << "[GameLogic] Calculating ranks..." << std::endl;
     
@@ -207,3 +208,4 @@ const std::vector<int>& GameLogic::GetCardSymbols(int cardId) const {
     
     return symbols;
 }
+*/

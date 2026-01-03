@@ -46,12 +46,6 @@ void ServerCommandVisitor::sendErrorResponse(
 void ServerCommandVisitor::operator()(const SenderLoginCommand &cmd)
 {
     std::shared_ptr<Client> client = g_lobby_server.findClientBySocket(client_sock);
-
-    if (!client)
-    {
-        std::cout << "Brak clienta o socketcie" << client_sock << std::endl;
-    }
-    std::cout << client->logged_in << std::endl;
     if (client->logged_in == true)
     {
         sendErrorResponse(
@@ -137,6 +131,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
                   << std::endl;
         d.actual_games.emplace_back(std::move(gs));
     }
+    d.next_page = (actual_games.size() > static_cast<size_t>(page_num * 10)) ? std::optional<std::string>(std::to_string(page_num + 1)) : std::nullopt;
 
     response.data_obj = d;
 
@@ -157,7 +152,6 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     game->port = dynamic_port;
     game->ip = "0.0.0.0";
 
-    std::string port_arg = std::to_string(dynamic_port);
 
     g_uds_server->addGameServer(game);
 
