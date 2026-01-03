@@ -38,28 +38,29 @@ signals: // Signals: controller -> ui
 
   // Connection signals
   void hasConnectionStateChanged(const ConnectionStatus& status);
-  void hasConnectionErrorOccurred(const ConnectionError& error);
+  void hasConnectionErrorOccured(const ConnectionError& error);
 
   // Communication signals
   void hasCommunicationStateChanged(const CommunicationStatus& status);
 
   // Login signals
-  void hasLoginSucceeded(const std::string& nickname);
+  void hasLoginSucceeded();
   void hasLoginFailed(const std::string& error);
+  void hasAlreadyLoggedIn();
 
   // Browser signals
   void hasCreatedGame(const std::string& playerName);
   void hasJoinedGame(const std::string& gameId);
   void hasObservedGame(const std::string& gameId);
 
-  void hasReceivedPage(const std::list<ShortGameInfo>& games,
-                       const std::optional<std::string>& nextPage);
+  void hasReceivedPage(const QVariantList& games, const int& nextPage);
 
 public slots: // Slots: ui -> controller
 
   void wantConnectToServer(const std::string& ip, const int& port);
 
   void wantNicknameVerification(const std::string& nickname);
+  void wantNavigateToPage(const int& page);
   void wantCreateGame(const std::string& gameName);
   void wantJoinGame(const std::string& gameId);
   void wantObserveGame(const std::string& gameId);
@@ -75,6 +76,4 @@ private:
   QTcpSocket* socket;
   LobbyCommandFactory commandFactory;
   QByteArray receiveBuffer; // Buffer for incoming data
-
-  std::optional<std::string> nickname;
 };

@@ -1,7 +1,7 @@
 import type { QWebChannelConstructor, QWebChannelTransport } from "@/bridge/channel";
-import type { BrowserBridge } from "@/store/browserBridge";
-import type { GameBridge } from "@/store/gameBridge";
-import type { MainBridge } from "@/store/mainBridge";
+import { type BrowserBridge } from "@/store/browserBridge";
+import { type GameBridge } from "@/store/gameBridge";
+import { type MainBridge } from "@/store/mainBridge";
 
 import "@/bridge/initialize";
 

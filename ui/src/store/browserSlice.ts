@@ -16,7 +16,8 @@ export type BrowserSlice = {
   lobbyCommunication: CommunicationStatus;
 
   games: ShortGameInfo[] | null;
-  pageNumber: number | null;
+  nextPageNumber: number | null;
+  currentPageNumber: number | null;
 };
 
 export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> = () => ({
@@ -28,5 +29,6 @@ export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> =
   lobbyCommunication: CommunicationStatus.None,
 
   games: null,
-  pageNumber: null,
+  nextPageNumber: null,
+  currentPageNumber: null,
 });

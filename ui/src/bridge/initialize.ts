@@ -1,9 +1,18 @@
-type InitCallback = () => void;
+import type { ChannelObjects } from ".";
+import type { QWebChannelInstance } from "./channel";
+
+type InitCallback<T extends keyof ChannelObjects> = (bridge: ChannelObjects[T]) => void;
 
 class QWebChannelInitializer {
   private initialized = false;
   private initializationPromise: Promise<void> | null = null;
-  private callbacks: InitCallback[] = [];
+  private callbacks: {
+    [K in keyof ChannelObjects]: InitCallback<K>[];
+  } = {
+    browser: [],
+    main: [],
+    game: [],
+  };
 
   async initialize(): Promise<void> {
     if (this.initialized) return Promise.resolve();
@@ -31,30 +40,44 @@ class QWebChannelInitializer {
       console.log("[QWebChannel] Initializing QWebChannel...");
 
       try {
-        new window.QWebChannel(window.qt.webChannelTransport, (channel) => {
-          // Pobierz obiekt backend z C++
-          const bridges = channel.objects;
+        new window.QWebChannel(
+          window.qt.webChannelTransport,
+          (channel: QWebChannelInstance<ChannelObjects>) => {
+            // Pobierz obiekt backend z C++
+            const bridges = channel.objects as ChannelObjects;
 
-          if (!bridges) {
-            console.error("[QWebChannel] Backend object not found in channel.objects");
-            reject(new Error("Backend object not found"));
-            return;
+            if (!bridges) {
+              console.error("[QWebChannel] Backend object not found in channel.objects");
+              reject(new Error("Backend object not found"));
+              return;
+            }
+
+            console.log("[QWebChannel] Connected to Qt backend");
+
+            // Udostępnij backend globalnie
+            window.bridges = bridges;
+            this.initialized = true;
+
+            console.log("[QWebChannel] All signal handlers connected");
+
+            // Call all pending callbacks
+            for (const [bridgeName, callbacks] of Object.entries(this.callbacks)) {
+              for (const cb of callbacks) {
+                try {
+                  cb(window.bridges![bridgeName as keyof ChannelObjects] as any);
+                } catch (error) {
+                  console.error(
+                    `[QWebChannel] Error in onReady callback for bridge "${bridgeName}": ${error}`
+                  );
+                }
+              }
+
+              this.callbacks[bridgeName as keyof ChannelObjects] = [];
+            }
+
+            resolve();
           }
-
-          console.log("[QWebChannel] Connected to Qt backend");
-
-          // Udostępnij backend globalnie
-          window.bridges = bridges;
-          this.initialized = true;
-
-          console.log("[QWebChannel] All signal handlers connected");
-
-          // Call all pending callbacks
-          this.callbacks.forEach((cb) => cb());
-          this.callbacks = [];
-
-          resolve();
-        });
+        );
       } catch (error) {
         console.error("[QWebChannel] Error initializing QWebChannel:", error);
         reject(error);
@@ -64,11 +87,15 @@ class QWebChannelInitializer {
     return this.initializationPromise;
   }
 
-  onReady(callback: InitCallback): void {
-    if (this.initialized) {
-      callback();
-    } else {
-      this.callbacks.push(callback);
+  onReady<T extends keyof ChannelObjects>(bridge: T, callback: InitCallback<T>): void {
+    try {
+      if (this.initialized) {
+        callback(window.bridges![bridge]);
+      } else {
+        this.callbacks[bridge].push(callback);
+      }
+    } catch (error) {
+      console.error("[QWebChannel] Error in onReady callback:", error);
     }
   }
 
@@ -80,6 +107,12 @@ class QWebChannelInitializer {
 export const qwebchannelInitializer = new QWebChannelInitializer();
 
 // Start initialization immediately
-qwebchannelInitializer.initialize().catch((err) => {
-  console.error("[QWebChannel] Failed to initialize:", err);
-});
+qwebchannelInitializer
+  .initialize()
+  .then(() => {
+    console.log("[QWebChannel] Initialization completed");
+    window.bridges?.main.callUIReady();
+  })
+  .catch((err) => {
+    console.error("[QWebChannel] Failed to initialize:", err);
+  });

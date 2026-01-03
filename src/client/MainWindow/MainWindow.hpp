@@ -48,4 +48,8 @@ class MainWindow : public QMainWindow {
       void connectLobbyPageFlow();
       void connectGamePageFlow();
       void connectEndPageFlow();
+
+    private:
+      std::optional<std::string> nickname = std::nullopt;
+      std::optional<int> page = 1;
 };

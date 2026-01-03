@@ -1,21 +1,21 @@
 #include "BrowserBridge.hpp"
 
-void BrowserBridge::callVerifyNickname(const std::string& nickname) {
-  qDebug() << "BrowserBridge::callVerifyNickname - Nickname:" << nickname.c_str();
-  emit requestVerifyNickname(nickname);
+void BrowserBridge::callVerifyNickname(const QString& nickname) {
+  qDebug() << "BrowserBridge::callVerifyNickname - Nickname:" << nickname;
+  emit requestVerifyNickname(nickname.toStdString());
 }
 
-void BrowserBridge::callNavigateToPage(const double& page) {
+void BrowserBridge::callNavigateToPage(const int& page) {
   qDebug() << "BrowserBridge::callNavigateToPage - Page:" << page;
   emit requestNavigateToPage(page);
 }
 
-void BrowserBridge::callJoinGame(const std::string& gameId) {
-  qDebug() << "BrowserBridge::callJoinGame - Game ID:" << gameId.c_str();
-  emit requestJoinGame(gameId);
+void BrowserBridge::callJoinGame(const QString& gameId) {
+  qDebug() << "BrowserBridge::callJoinGame - Game ID:" << gameId;
+  emit requestJoinGame(gameId.toStdString());
 }
 
-void BrowserBridge::callObserveGame(const std::string& gameId) {
-  qDebug() << "BrowserBridge::callObserveGame - Game ID:" << gameId.c_str();
-  emit requestObserveGame(gameId);
+void BrowserBridge::callObserveGame(const QString& gameId) {
+  qDebug() << "BrowserBridge::callObserveGame - Game ID:" << gameId;
+  emit requestObserveGame(gameId.toStdString());
 }

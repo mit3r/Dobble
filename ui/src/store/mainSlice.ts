@@ -10,10 +10,14 @@ export interface MainSlice {
   setView: (view: View) => void;
 
   globalErrorMessage: string | null;
+
+  alert: string | null;
+  setAlert: (message: string) => void;
+  clearAlert: () => void;
 }
 
 export const createMainSlice: StateCreator<MainStore, [], [], MainSlice> = (set) => ({
-  nickname: null,
+  nickname: "Player1",
   globalErrorMessage: null,
 
   view: View.Login,
@@ -21,6 +25,20 @@ export const createMainSlice: StateCreator<MainStore, [], [], MainSlice> = (set)
     set(
       produce((state: MainStore) => {
         state.main.view = view;
+      })
+    ),
+
+  alert: null,
+  setAlert: (message: string) =>
+    set(
+      produce((state: MainStore) => {
+        state.main.alert = message;
+      })
+    ),
+  clearAlert: () =>
+    set(
+      produce((state: MainStore) => {
+        state.main.alert = null;
       })
     ),
 });

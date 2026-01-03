@@ -5,43 +5,118 @@
 #pragma once
 
 enum class View {
-  Start = 0,
-  Browser = 1,
-  Room = 2,
-  Game = 3,
-  End = 4,
+  Start,
+  Browser,
+  Room,
+  Game,
+  End,
 };
 
 // Status of tcp connection to server
 enum class ConnectionStatus {
-  Connecting = 0,
-  Connected = 1,
-  Retrying = 2,
-  Disconnected = 3,
+  Connecting,
+  HostLookup,
+  Connected,
+  Retrying,
+  Disconnected,
 };
 
 // Error types of connection to server
 enum class ConnectionError {
-  None = 0,
-  ConnectionRefused = 1,
-  HostNotFound = 2,
-  NetworkError = 3,
-  Timeout = 4,
-  UnknownError = 5,
+  None,
+  ConnectionRefused,
+  HostNotFound,
+  NetworkError,
+  Timeout,
+  UnknownError,
 };
 
 // Status of communication with server
 enum class CommunicationStatus {
-  None = 0,          // before TCP connected
-  Connected = 1,     // after TCP connected
-  Waiting = 2,       // after request sent
-  Retrying = 3,      // after ping-pong timeout
-  Disconnected = 4,  // after several ping-pong timeouts
+  None,         // before TCP connected
+  Connected,    // after TCP connected
+  Waiting,      // after request sent
+  Retrying,     // after ping-pong timeout
+  Disconnected, // after several ping-pong timeouts
 };
 
 // Browser and Game screen
 enum class GameStatus {
-  Waiting = 0,
-  InGame = 1,
-  Finished = 2,
+  Waiting,
+  InGame,
+  Finished,
+};
+
+struct CShortGameInfo {
+  QString gameId;
+  QString gameName;
+  int players;
+  int maxPlayers;
+  GameStatus status;
+
+  bool operator==(const CShortGameInfo& other) const {
+    return gameId == other.gameId && gameName == other.gameName && players == other.players &&
+           maxPlayers == other.maxPlayers && status == other.status;
+  }
+
+  QVariantMap toVariantMap() const {
+    QVariantMap map;
+    map["gameId"] = gameId;
+    map["gameName"] = gameName;
+    map["players"] = players;
+    map["maxPlayers"] = maxPlayers;
+    map["status"] = static_cast<int>(status);
+    return map;
+  }
+};
+
+struct CPlayerGameInfo {
+
+  QString nickname;
+  int cardId;
+  int points;   // matches - mistakes
+  int matches;  // total correct matches
+  int mistakes; // total mistakes
+
+  bool operator==(const CPlayerGameInfo& other) const {
+    return nickname == other.nickname && cardId == other.cardId && points == other.points &&
+           matches == other.matches && mistakes == other.mistakes;
+  }
+
+  QVariantMap toVariantMap() const {
+    QVariantMap map;
+    map["nickname"] = nickname;
+    map["cardId"] = cardId;
+    map["points"] = points;
+    map["matches"] = matches;
+    map["mistakes"] = mistakes;
+    return map;
+  }
+};
+
+struct CGameInfo {
+  QString gameId;
+  QString gameName;
+  QList<CPlayerGameInfo> players;
+  GameStatus status;
+
+  int topCardId;
+  int lastsCards;
+
+  QVariantMap toVariantMap() const {
+    QVariantMap map;
+    map["gameId"] = gameId;
+    map["gameName"] = gameName;
+
+    QVariantList playersList;
+    for (const auto& player : players) {
+      playersList.append(player.toVariantMap());
+    }
+    map["players"] = playersList;
+
+    map["status"] = static_cast<int>(status);
+    map["topCardId"] = topCardId;
+    map["lastsCards"] = lastsCards;
+    return map;
+  }
 };

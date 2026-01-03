@@ -38,6 +38,9 @@ struct GameStruct {
   std::string status;
 };
 
+/**
+ * @deprecated Use GameStruct instead
+ */
 struct ShortGameInfo {
   std::string game_id;
   std::string name;

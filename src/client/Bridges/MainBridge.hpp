@@ -18,10 +18,16 @@ class MainBridge : public QObject {
 
 signals:
   // App <- Bridge (signals), "request"
+  void uiIsReady();
 
   // Bridge -> UI (js listeners), "on"
   void onNavigated(const View& page);
   void onGlobalErrorOccured(const QString& errorMessage);
 
+  void onAlert(const QString& message);
+
+public slots:
   // Bridge <- UI (js methods), "call"
+  void callMsg(const QString& msg);
+  void callUIReady();
 };

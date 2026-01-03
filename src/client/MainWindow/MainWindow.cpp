@@ -8,8 +8,8 @@ MainWindow::MainWindow(QWidget* parent)
   resize(1024, 768);
 
   // Initialize controllers
-  gameServerController = new GameServerController(this);
   lobbyServerController = new LobbyServerController(this);
+  gameServerController = new GameServerController(this);
 
   // Connect controllers' flows
   connectLobbyServerFlow();
@@ -21,6 +21,12 @@ MainWindow::MainWindow(QWidget* parent)
   connectLobbyPageFlow();
   connectGamePageFlow();
   connectEndPageFlow();
+
+  // Application start flow
+  connect(ui->mainBridge, &MainBridge::uiIsReady, this, [this]() {
+    qDebug() << "UI is ready.";
+    lobbyServerController->wantConnectToServer("localhost", 1500);
+  });
 }
 
 MainWindow::~MainWindow() {
@@ -37,9 +43,9 @@ void MainWindow::connectLobbyServerFlow() {
             emit ui->browserBridge->onServerConnectionStateChanged(status);
           });
 
-  connect(lobbyServerController, &LobbyServerController::hasConnectionErrorOccurred,
+  connect(lobbyServerController, &LobbyServerController::hasConnectionErrorOccured,
           [this](const ConnectionError& error) {
-            emit ui->browserBridge->onServerConnectionErrorOccurred(error);
+            emit ui->browserBridge->onServerConnectionErrorOccured(error);
           });
 }
 
@@ -47,22 +53,46 @@ void MainWindow::connectGameServerFlow() {}
 
 void MainWindow::connectLoginPageFlow() {
   // Nickname verification request
-  connect(ui->browserBridge, &BrowserBridge::requestVerifyNickname, lobbyServerController,
-          &LobbyServerController::wantNicknameVerification);
+  connect(ui->browserBridge, &BrowserBridge::requestVerifyNickname,
+          [this](const std::string& nickname) {
+            this->nickname = nickname;
+            lobbyServerController->wantNicknameVerification(nickname);
+          });
 
   //   Login success handling
-  connect(lobbyServerController, &LobbyServerController::hasLoginSucceeded,
-          [this](const std::string& nickname) {
-            emit ui->browserBridge->onLoginSucceeded(nickname);
-            emit ui->mainBridge->onNavigated(View::Browser);
-          });
+  connect(lobbyServerController, &LobbyServerController::hasLoginSucceeded, [this]() {
+    emit ui->browserBridge->onLoginSucceeded(QString::fromStdString(this->nickname.value()));
+    emit ui->mainBridge->onNavigated(View::Browser);
+  });
+
+  //   Already logged in handling
+  connect(lobbyServerController, &LobbyServerController::hasAlreadyLoggedIn, [this]() {
+    emit ui->browserBridge->onLoginSucceeded(QString::fromStdString(this->nickname.value()));
+    emit ui->mainBridge->onNavigated(View::Browser);
+  });
 
   //   Login failure handling
   connect(lobbyServerController, &LobbyServerController::hasLoginFailed,
-          [this](const std::string& error) { emit ui->browserBridge->onLoginFailed(error); });
+          [this](const std::string& error) {
+            this->nickname.reset();
+            emit ui->browserBridge->onLoginFailed(QString::fromStdString(error));
+          });
 }
 
-void MainWindow::connectBrowserPageFlow() {}
+void MainWindow::connectBrowserPageFlow() {
+
+  // Page navigation request
+  connect(ui->browserBridge, &BrowserBridge::requestNavigateToPage, [this](const int& page) {
+    this->page = page;
+    lobbyServerController->wantNavigateToPage(page);
+  });
+
+  //  Page data received handling
+  connect(lobbyServerController, &LobbyServerController::hasReceivedPage,
+          [this](const QVariantList& games, const int& nextPage) {
+            emit ui->browserBridge->onPageChanged(games, this->page.value_or(1), nextPage);
+          });
+}
 
 void MainWindow::connectLobbyPageFlow() {
 }

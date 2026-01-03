@@ -5,15 +5,24 @@ import { mainStore } from ".";
 
 export interface MainBridge {
   onNavigated: QtSignal<(view: View) => void>;
-  onGlobalErrorOccurred: QtSignal<(message: string) => void>;
+  onGlobalErrorOccured: QtSignal<(message: string) => void>;
+
+  onAlert: QtSignal<(message: string) => void>;
+
+  callMsg(message: string): void;
+  callUIReady(): void;
 }
 
-qwebchannelInitializer.onReady(() => {
-  window.bridges!.main.onNavigated.connect((view: View) => {
+qwebchannelInitializer.onReady("main", (bridge) => {
+  bridge.onNavigated.connect((view: View) => {
     mainStore.getState().main.setView(view);
   });
 
-  window.bridges!.main.onGlobalErrorOccurred.connect((message: string) => {
+  bridge.onGlobalErrorOccured.connect((message: string) => {
     mainStore.getState().main.globalErrorMessage = message;
+  });
+
+  bridge.onAlert.connect((message: string) => {
+    mainStore.getState().main.setAlert(message);
   });
 });

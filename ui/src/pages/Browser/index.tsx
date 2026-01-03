@@ -5,11 +5,22 @@ import LobbyCard from "./Components/LobbyCard";
 
 export default function BrowserPage() {
   const games = useStore(mainStore, (state) => state.browser.games);
-  const pageNumber = useStore(mainStore, (state) => state.browser.pageNumber);
+  const pageNumber = useStore(mainStore, (state) => state.browser.currentPageNumber);
   const nickname = useStore(mainStore, (state) => state.main.nickname);
 
-  const prevPage = null;
-  const nextPage = null;
+  const nextPage = useStore(mainStore, (state) => state.browser.nextPageNumber);
+  const prevPage = useMemo(() => {
+    if (pageNumber === null) return null;
+    return pageNumber > 1 ? pageNumber - 1 : null;
+  }, [pageNumber]);
+
+  useEffect(() => {
+    const it = setInterval(() => {
+      window.bridges?.browser.callNavigateToPage(pageNumber ?? 1);
+    }, 1_000);
+
+    return () => clearInterval(it);
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-2 h-full relative">
@@ -23,6 +34,8 @@ export default function BrowserPage() {
       <div className="flex-1">
         {games === null ? (
           <LoadingGames />
+        ) : games.length === 0 ? (
+          <div className="p-20">No games available</div>
         ) : (
           <div className="w-full p-2 grid grid-cols-2 grid-rows-2 gap-2">
             {games.map((game) => (
@@ -34,7 +47,7 @@ export default function BrowserPage() {
 
       <div className="flex gap-4 w-full justify-center items-center relative">
         <button
-          onClick={() => window.bridges?.browser.callNavigateToPage(0)}
+          onClick={() => window.bridges?.browser.callNavigateToPage(prevPage ?? 1)}
           disabled={prevPage === null}
           className="p-2 border-2 disabled:opacity-50 disabled:cursor-not-allowed w-36"
         >
@@ -42,7 +55,7 @@ export default function BrowserPage() {
         </button>
 
         <button
-          onClick={() => window.bridges?.browser.callNavigateToPage(1)}
+          onClick={() => window.bridges?.browser.callNavigateToPage(nextPage ?? 1)}
           disabled={nextPage === null}
           className="p-2 border-2 disabled:opacity-50 disabled:cursor-not-allowed w-36"
         >

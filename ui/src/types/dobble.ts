@@ -1,39 +1,40 @@
 export enum View {
-  Login = 0,
-  Browser = 1,
-  Room = 2,
-  Game = 3,
-  End = 4,
+  Login,
+  Browser,
+  Room,
+  Game,
+  End,
 }
 
 export enum ConnectionStatus {
-  Connecting = 0,
-  Connected = 1,
-  Retrying = 2,
-  Disconnected = 3,
+  Connecting,
+  HostLookup,
+  Connected,
+  Retrying,
+  Disconnected,
 }
 
 export enum ConnectionError {
-  None = 0,
-  ConnectionRefused = 1,
-  HostNotFound = 2,
-  NetworkError = 3,
-  Timeout = 4,
-  UnknownError = 5,
+  None,
+  ConnectionRefused,
+  HostNotFound,
+  NetworkError,
+  Timeout,
+  UnknownError,
 }
 
 export enum CommunicationStatus {
-  None = 0, // before TCP connected
-  Connected = 1, // after TCP connected
-  Waiting = 2, // after request sent
-  Retrying = 3, // after ping-pong timeout
-  Disconnected = 4, // after several ping-pong timeouts
+  None, // before TCP connected
+  Connected, // after TCP connected
+  Waiting, // after request sent
+  Retrying, // after ping-pong timeout
+  Disconnected, // after several ping-pong timeouts
 }
 
 export enum GameStatus {
-  Waiting = 0,
-  InGame = 1,
-  Finished = 2,
+  Waiting,
+  InGame,
+  Finished,
 }
 
 export interface ShortGameInfo {

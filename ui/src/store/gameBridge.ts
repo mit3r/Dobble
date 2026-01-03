@@ -14,16 +14,16 @@ export interface GameBridge {
   callQuitGame: () => void;
 }
 
-qwebchannelInitializer.onReady(() => {
-  window.bridges!.game.onGameInfoChanged.connect((gameInfo: GameInfo) => {
+qwebchannelInitializer.onReady("game", (bridge) => {
+  bridge.onGameInfoChanged.connect((gameInfo: GameInfo) => {
     mainStore.setState((state) => ({ game: { ...state.game, gameInfo } }));
   });
 
-  window.bridges!.game.onMatchResult.connect((_isMatch: boolean) => {
+  bridge.onMatchResult.connect((_isMatch: boolean) => {
     // no-op for now
   });
 
-  window.bridges!.game.onGameQuit.connect(() => {
+  bridge.onGameQuit.connect(() => {
     mainStore.setState((state) => ({ game: { ...state.game, gameInfo: null } }));
   });
 });

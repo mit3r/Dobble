@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-export default function Dots() {
+export default function Dots(props: { text?: string }) {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
@@ -12,5 +12,10 @@ export default function Dots() {
     return ".".repeat(value);
   }, [value]);
 
-  return <span>{dots}</span>;
+  return (
+    <span>
+      {props.text ?? ""}
+      {dots}
+    </span>
+  );
 }

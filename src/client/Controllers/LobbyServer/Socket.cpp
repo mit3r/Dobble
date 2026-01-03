@@ -43,9 +43,52 @@ void LobbyServerController::whenReadReady() {
 }
 
 void LobbyServerController::whenSocketStateChanged(QTcpSocket::SocketState socketState) {
-  emit this->hasConnectionStateChanged(static_cast<ConnectionStatus>(socketState));
+  qDebug() << "LobbyServerController: Socket state changed to" << static_cast<int>(socketState);
+
+  std::optional<ConnectionStatus> state;
+  switch (socketState) {
+  case QTcpSocket::ConnectedState:
+    state = ConnectionStatus::Connected;
+    break;
+  case QTcpSocket::ConnectingState:
+    state = ConnectionStatus::Connecting;
+    break;
+  case QTcpSocket::UnconnectedState:
+    state = ConnectionStatus::Disconnected;
+    break;
+  case QTcpSocket::HostLookupState:
+    state = ConnectionStatus::HostLookup;
+    break;
+  default:
+    break;
+  };
+
+  if (state.has_value())
+    emit this->hasConnectionStateChanged(state.value());
 }
 
 void LobbyServerController::whenSocketError(QTcpSocket::SocketError socketError) {
-  emit this->hasConnectionErrorOccurred(static_cast<ConnectionError>(socketError));
+  qDebug() << "LobbyServerController: Socket error occurred:" << static_cast<int>(socketError);
+
+  std::optional<ConnectionError> error;
+  switch (socketError) {
+  case QTcpSocket::ConnectionRefusedError:
+    error = ConnectionError::ConnectionRefused;
+    break;
+  case QTcpSocket::HostNotFoundError:
+    error = ConnectionError::HostNotFound;
+    break;
+  case QTcpSocket::NetworkError:
+    error = ConnectionError::NetworkError;
+    break;
+  case QTcpSocket::SocketTimeoutError:
+    error = ConnectionError::Timeout;
+    break;
+  default:
+    error = ConnectionError::UnknownError;
+    break;
+  };
+
+  if (error.has_value())
+    emit this->hasConnectionErrorOccured(error.value());
 }

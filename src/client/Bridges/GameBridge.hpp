@@ -31,7 +31,7 @@ signals:
   void onGameQuit();
 
   // Bridge <- UI (js methods), "call"
-private slots:
+public slots:
   void callMatch(const int& pick1, const int& pick2);
   void callQuitGame();
 };

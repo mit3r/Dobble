@@ -58,10 +58,10 @@ class ResponsePingCommand : public LobbyServerMessageCore {
 };
 
 class SenderGetLobbyInfoCommand : public LobbyServerMessageCore {
-  public:
-      struct data {
-        std::string page;
-      };
+public:
+  struct data {
+    std::string page;
+  };
       std::optional<data> data_obj;
 };
 class ResponseGetLobbyInfoCommand : public LobbyServerMessageCore {

@@ -3,7 +3,6 @@
 void LobbyServerController::wantNicknameVerification(const std::string& nickname) {
   qDebug() << "LobbyController: Requesting nickname verification for:"
            << QString::fromStdString(nickname);
-  this->nickname = nickname; // Store nickname for later use
 
   SenderLoginCommand cmd;
   cmd.command = "login";
@@ -12,6 +11,19 @@ void LobbyServerController::wantNicknameVerification(const std::string& nickname
   cmd.data_obj->nickname = nickname;
 
   json j = cmd;
+
+  qDebug() << "Sending login command JSON:" << QString::fromStdString(j.dump());
+  send_json_packet(socket->socketDescriptor(), json(cmd));
+}
+
+void LobbyServerController::wantNavigateToPage(const int& page) {
+  qDebug() << "LobbyController: Requesting lobby info for page:" << page;
+
+  SenderGetLobbyInfoCommand cmd;
+  cmd.command = "getinfolobby";
+  cmd.data_obj = SenderGetLobbyInfoCommand::data();
+  cmd.data_obj->page = std::to_string(page);
+
   send_json_packet(socket->socketDescriptor(), json(cmd));
 }
 

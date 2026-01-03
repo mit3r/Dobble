@@ -21,25 +21,25 @@ public:
 signals:
   // App <- Bridge (signals), "request"
   void requestVerifyNickname(const std::string& nickname);
-  void requestNavigateToPage(const double& page);
+  void requestNavigateToPage(const int& page);
   void requestJoinGame(const std::string& gameId);
   void requestObserveGame(const std::string& gameId);
 
   // Bridge -> UI (js listeners), "on"
   void onServerConnectionStateChanged(const ConnectionStatus& status);
-  void onServerConnectionErrorOccurred(const ConnectionError& error);
+  void onServerConnectionErrorOccured(const ConnectionError& error);
 
   void onServerCommunicationStateChanged(const CommunicationStatus& status);
 
-  void onLoginSucceeded(const std::string& nickname);
-  void onLoginFailed(const std::string& error);
+  void onLoginSucceeded(const QString& nickname);
+  void onLoginFailed(const QString& error);
 
-  void onPageChanged(const int& pageNumber, const std::list<ShortGameInfo>& gamesList);
+  void onPageChanged(const QVariantList& gamesList, const int& currentPage, const int& nextPage);
 
   // Bridge <- UI (js methods), "call"
-private slots:
-  void callVerifyNickname(const std::string& nickname);
-  void callNavigateToPage(const double& page);
-  void callJoinGame(const std::string& gameId);
-  void callObserveGame(const std::string& gameId);
+public slots:
+  void callVerifyNickname(const QString& nickname);
+  void callNavigateToPage(const int& page);
+  void callJoinGame(const QString& gameId);
+  void callObserveGame(const QString& gameId);
 };
