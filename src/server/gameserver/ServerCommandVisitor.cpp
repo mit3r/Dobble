@@ -70,6 +70,8 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         std::cout << "[INFO] Player " << client_id << " already joined" << std::endl;
         ResponseJoinGameCommand response;
         response.command = "join_game";
+        response.game_id = g_game_server.getGameId();
+
         response.data_obj = ResponseJoinGameCommand::data{};
         response.data_obj->status = "ALREADY_JOINED";
         response.data_obj->role = cmd.data_obj->role;
@@ -83,6 +85,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         std::cout << "[INFO] Game is full" << std::endl;
         ResponseJoinGameCommand response;
         response.command = "join_game";
+        response.game_id = g_game_server.getGameId();
         response.data_obj = ResponseJoinGameCommand::data{};
         response.data_obj->status = "GAME_FULL";
         response.data_obj->role = "OBSERVER";
@@ -98,6 +101,8 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     
     ResponseJoinGameCommand response;
     response.command = "join_game";
+    response.game_id = g_game_server.getGameId();
+
     response.data_obj = ResponseJoinGameCommand::data{};
     response.data_obj->status = "JOINED";
     response.data_obj->role = cmd.data_obj->role;

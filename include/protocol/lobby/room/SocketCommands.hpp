@@ -173,7 +173,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RoomClientReceivedMessage, command, client_id
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseGameClientPingCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderGameClientPingCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderJoinGameCommand::data, game_id, role)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseJoinGameCommand::data, status, role, game_info)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseJoinGameCommand::data, status, role)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderLeaveRoomCommand::data, game_id)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResponseLeaveRoomCommand::data, message)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SenderSendGameInfoCommand::data, game_id)

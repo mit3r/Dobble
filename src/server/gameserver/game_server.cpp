@@ -13,6 +13,7 @@ std::string gen_random(const int len);
 GameStateManager g_game_server;
 GameLogic* g_game_logic = nullptr;
 bool g_server_running = true;
+UdsClient* g_uds_client = nullptr;
 
 int main(int argc, const char* const argv[]) {
   if (argc < 4) {
@@ -40,6 +41,7 @@ int main(int argc, const char* const argv[]) {
 
   BsdServer bsd_server(port, "127.0.0.1");
   UdsClient uds_client(lobby_uds_path);
+  g_uds_client = &uds_client;
 
   bsd_server.setClientHandler(tcp_client_handler);
   uds_client.setClientHandler(uds_client_handler);
