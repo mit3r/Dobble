@@ -111,12 +111,14 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     
     json j = response;
     send_json_packet(client_sock, j);
-    
-    g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
+    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::INIT) 
+       && g_game_server.getPlayerCount() >= 2) {
+        g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
 
+         }
     std::cout << "[INFO] Player joined. Status: " << g_game_server.getGameStatus() 
-              << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
-    
+                    << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
+
     // Send status update to lobby server
     send_status_update_to_lobby();
 }
@@ -305,6 +307,8 @@ void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
     json j = response;
     send_json_packet(client_sock, j);
     send_status_update_to_lobby();
+
+
     //disconnect client
     close(client_sock);
 
