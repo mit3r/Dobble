@@ -64,6 +64,8 @@ void GameServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
   }
 
   emit hasGameInfoUpdated(gameInfo.toVariantMap());
+  if (gameInfo.status == GameStatus::InGame)
+    emit hasGameStartedSucceed();
 }
 void GameServerController::operator()(const ResponseMatchSymbolCommand& cmd) {
   qDebug() << "GameServerController: got ResponseMatchSymbolCommand";

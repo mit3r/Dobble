@@ -16,7 +16,7 @@ export default function Gameplay({
 }) {
   useEffect(() => {
     return () => mainStore.getState().game.clearPicks();
-  }, [OtherPlayers]);
+  }, [otherPlayers]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4 flex-1">

@@ -10,7 +10,10 @@ export default function CardComponent(props: {
   onIconClick?: (iconPosition: number) => void;
   disabled?: boolean;
 }) {
-  const [first, ...icons] = useMemo(() => getCardSymbols(props.cardId), [props.cardId]);
+  const symbols = useMemo(() => getCardSymbols(props.cardId), [props.cardId]);
+
+  if (!symbols || symbols.length < 2) return null;
+  const [first, ...icons] = symbols;
 
   return (
     <div

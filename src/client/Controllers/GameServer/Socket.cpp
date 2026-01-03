@@ -19,10 +19,10 @@ GameServerController::GameServerController(QObject* parent) {
   connect(this, &GameServerController::hasConnectionStateChanged,
           [=](const ConnectionStatus& status) {
             if (status == ConnectionStatus::Connected) {
-              infoTimer->start(3000);
+              infoTimer->start(500);
               handleServerInfo();
 
-              pingTimer->start(5000);
+              pingTimer->start(30000);
               handleServerPing();
               return;
             }

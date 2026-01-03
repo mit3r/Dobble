@@ -5,7 +5,7 @@
 #pragma once
 
 enum class View {
-  Start,
+  Login,
   Browser,
   Room,
   Game,
