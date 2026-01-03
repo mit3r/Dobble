@@ -296,6 +296,8 @@ void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
     response.data_obj->message = "LEFT";
     json j = response;
     send_json_packet(client_sock, j);
+    //disconnect client
+    close(client_sock);
 
 };
 void ServerCommandVisitor::operator()(const ResponseLeaveRoomCommand &){};

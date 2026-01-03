@@ -193,6 +193,7 @@ std::vector<std::string> GameStateManager::getInactivePlayers(std::chrono::secon
     for (const auto& [client_id, player] : players_) {
         auto time_since_ping = std::chrono::duration_cast<std::chrono::seconds>(now - player.last_ping_timestamp);
         if (time_since_ping > timeout) {
+            std::cout << "[GameStateManager] Player " << player.nickname << " is inactive (last ping: " << time_since_ping.count() << "s ago)" << std::endl;
             inactive_players.push_back(client_id);
         }
     }
