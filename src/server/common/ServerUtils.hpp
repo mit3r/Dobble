@@ -21,6 +21,7 @@ struct GameServer {
   std::string servername;
   int max_players;
   int players;
+  int server_socket;
   int socket;
   std::string server_id;
   

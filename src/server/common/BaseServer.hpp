@@ -53,7 +53,7 @@ class UdsServer : public BaseServer {
   int run() override;
   
   void addGameServer(std::shared_ptr<GameServer> game);
-  void removeGameServer(const std::string& server_id);
+  void removeGameServer(const int& client_sock);
   std::shared_ptr<GameServer> getGameServerById(const std::string& server_id);
   std::vector<std::shared_ptr<GameServer>> getAllGameServers();
 };

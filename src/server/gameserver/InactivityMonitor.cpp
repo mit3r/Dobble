@@ -42,12 +42,10 @@ void inactivity_monitor_thread() {
           end_cmd.data_obj = msg_data;
           
           json j = end_cmd;
-          std::string message = j.dump();
-          
-          send(g_uds_client->getSocket(), message.c_str(), message.length(), 0);
+
+          send_json_packet(g_uds_client->getSocket(), j);
           std::cout << "[MONITOR] Sent end_game command to lobby server" << std::endl;
           
-          // Give lobby server time to process
           std::this_thread::sleep_for(std::chrono::milliseconds(500));
         } catch (const std::exception& e) {
           std::cerr << "[MONITOR] Error sending end_game command: " << e.what() << std::endl;

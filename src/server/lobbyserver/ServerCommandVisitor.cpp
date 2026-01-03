@@ -228,6 +228,7 @@ void ServerCommandVisitor::operator()(const SenderRegisterGameServerCommand &cmd
             game->ip = cmd.data_obj->ip;
             game->port = std::stoi(cmd.data_obj->port);
             game->max_players = std::stoi(cmd.data_obj->max_players);
+            game ->server_socket = client_sock;
             
             std::cout << "[UDS] Game server zarejestrowany pomyślnie: " << game_id << std::endl;
             
@@ -271,22 +272,11 @@ void ServerCommandVisitor::operator()(const SenderEndGameCommand &cmd)
     if (cmd.game_id.has_value()) {
         std::string game_id = cmd.game_id.value();
         
-        g_uds_server->removeGameServer(game_id);
+        g_uds_server->removeGameServer(client_sock);
+
         std::cout << "[UDS] Game server " << game_id << " usunięty z listy" << std::endl;
-        
-        ResponseEndGameCommand response;
-        response.command = "end_game";
-        response.lobby_server_id = "MainServer_v1";
-        response.game_id = game_id;
-        
-        ResponseEndGameCommand::data d;
-        d.message = "Server removed successfully";
-        response.data_obj = d;
-        
-        json j = response;
-        send_json_packet(client_sock, j);
     } else {
-        std::cerr << "[ERROR] Brak game_id w komendzie end_game" << std::endl;
+        std::cerr << "[ERROR] No game_id in command" << std::endl;
     }
 }
 
