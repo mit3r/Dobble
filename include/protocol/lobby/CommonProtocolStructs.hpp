@@ -13,7 +13,6 @@ struct PlayerGameInfo {
   int score;
   int points;
   int mistakes;
-  int rank;
 };
 
 struct TurnStruct {
@@ -36,6 +35,8 @@ struct GameStruct {
   std::string max_players;
   std::list<std::string> nicknames;
   std::string status;
+  std::string ip;
+  int port;
 };
 
 /**
@@ -51,10 +52,10 @@ struct ErrorStruct {
   std::string message;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, nickname, cardId, score, points, mistakes, rank)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, nickname, cardId, score, points, mistakes)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TurnStruct, turn_id, active, clients_data, images_on_table,
                                    past_turns, winner_id, actual_imgs, topCardId, cardsLeft, status)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GameStruct, game_id, game_name, players, max_players, nicknames,
-                                   status)
+                                   status, ip, port)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShortGameInfo, game_id, name)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ErrorStruct, code, message)

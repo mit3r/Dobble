@@ -59,6 +59,14 @@ class GameCommandFactory {
         return j.get<SenderMatchSymbolCommand>();
     };
 
+
+    dictionary["leave_room"] = [this](const json& j) -> GameClientCommand {
+      if (isResponse(j))
+        return j.get<ResponseLeaveRoomCommand>();
+      else
+        return j.get<SenderLeaveRoomCommand>();
+    };
+
   }
 
   GameClientCommand get(const std::string& commandName, const json& j) {

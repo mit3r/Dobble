@@ -42,6 +42,7 @@ void GameStateManager::startNewTurn(int turn_id) {
     current_turn_.winner_id = "";
     current_turn_.images_on_table.clear();
     current_turn_.clients_data.clear();
+    current_turn_.scoreboard.clear();
 }
 
 void GameStateManager::endCurrentTurn(const std::string& winner_id) {
@@ -60,6 +61,15 @@ void GameStateManager::setImagesOnTable(const std::vector<int>& images) {
 
 const std::vector<int>& GameStateManager::getImagesOnTable() const {
     return current_turn_.images_on_table;
+}
+
+void GameStateManager::updateScoreboard(const std::string& client_id, int score) {
+    current_turn_.scoreboard[client_id] = score;
+}
+
+int GameStateManager::getScore(const std::string& client_id) const {
+    auto it = current_turn_.scoreboard.find(client_id);
+    return (it != current_turn_.scoreboard.end()) ? it->second : 0;
 }
 
 TurnInfo& GameStateManager::getCurrentTurn() {
@@ -144,7 +154,6 @@ std::list<PlayerGameInfo> GameStateManager::getPlayersGameInfo() const {
         info.score = player.score;
         info.points = player.points;
         info.mistakes = player.mistakes;
-        info.rank = player.rank;
         
         if (!player.images.empty()) {
             info.cardId = player.images[0];

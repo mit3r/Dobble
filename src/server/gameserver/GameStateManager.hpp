@@ -30,7 +30,8 @@ struct PlayerInfo {
     int rank;
 
     PlayerInfo() : client_id("-1"), nickname(""), score(0), points(0), mistakes(0), rank(0) {}
-    explicit PlayerInfo(std::string id, std::string nick = "") : client_id(id), nickname(nick), score(0), points(0), mistakes(0), rank(0) {}
+    explicit PlayerInfo(std::string id, std::string nick = "") 
+        : client_id(id), nickname(nick), score(0), points(0), mistakes(0), rank(0) {}
 };
 
 struct TurnInfo {
@@ -38,6 +39,7 @@ struct TurnInfo {
     bool is_active;
     std::map<std::string, std::vector<int>> clients_data;  
     std::vector<int> images_on_table;
+    std::map<std::string, int> scoreboard;  
     std::vector<int> past_turns;
     std::string winner_id;
     
@@ -72,6 +74,9 @@ public:
     
     void setImagesOnTable(const std::vector<int>& images);
     const std::vector<int>& getImagesOnTable() const;
+    
+    void updateScoreboard(const std::string& client_id, int score);
+    int getScore(const std::string& client_id) const;
 
     GameServerState::TurnInfo& getCurrentTurn();
     const GameServerState::TurnInfo& getCurrentTurn() const;

@@ -115,9 +115,9 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
     ResponseGetLobbyInfoCommand::data d;
     d.page = page;
     std::vector<std::shared_ptr<GameServer>> actual_games = g_uds_server->getAllGameServers();
-
     
-    for (size_t i = page_num - 1; i < static_cast<size_t>(page_num + 10) && i < actual_games.size(); ++i)
+
+    for (size_t i = static_cast<size_t>((page_num - 1) * 10); i < static_cast<size_t>(page_num * 10) && i < actual_games.size(); ++i)
     {
         GameStruct gs;
         gs.game_id = actual_games[i]->server_id;
@@ -125,7 +125,16 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
         gs.max_players = std::to_string(actual_games[i]->max_players);
         gs.players = std::to_string(actual_games[i]->players);
         gs.nicknames = {};
+        gs.ip = actual_games[i]->ip;
+        gs.port = actual_games[i]->port;
         gs.status = actual_games[i]->registered ? "ACTIVE" : "INACTIVE";
+        std::cout << "[GAME] ID: " << gs.game_id
+                  << ", Name: " << gs.game_name
+                  << ", Players: " << gs.players << "/" << gs.max_players
+                  << ", Status: " << gs.status
+                  << ", IP: " << gs.ip
+                  << ", Port: " << gs.port
+                  << std::endl;
         d.actual_games.emplace_back(std::move(gs));
     }
 
@@ -144,10 +153,13 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     game->servername = cmd.data_obj->game_name;
     game->registered = false;
     game->socket = -1;
-    g_uds_server->addGameServer(game);
-
     int dynamic_port = find_available_port();
+    game->port = dynamic_port;
+    game->ip = "0.0.0.0";
+
     std::string port_arg = std::to_string(dynamic_port);
+
+    g_uds_server->addGameServer(game);
 
     const std::string &lobby_uds_path = g_lobby_server.getUDSPath();
 

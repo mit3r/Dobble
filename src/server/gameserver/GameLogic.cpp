@@ -155,7 +155,6 @@ void GameLogic::NextRound() {
         std::cout << "[GameLogic] Game Over - reached " << MAX_ROUNDS << " rounds" << std::endl;
         state_manager_.setGameStatus("GAME_OVER");
         turn.is_active = false;
-        CalculateRanks();
         return;
     }
     
@@ -163,7 +162,6 @@ void GameLogic::NextRound() {
     turn.images_on_table.push_back(deck_indices_[current_deck_index_]);
     
     turn.turn_id++;
-    
     turn.is_active = true;
     turn.winner_id = "";
     
@@ -187,14 +185,8 @@ void GameLogic::CalculateRanks() {
     std::sort(scores.begin(), scores.end(), 
               [](const auto& a, const auto& b) { return a.second > b.second; });
     
-    int rank = 1;
-    for (const auto& [client_id, score] : scores) {
-        state_manager_.setPlayerRank(client_id, rank);
-        std::cout << "[GameLogic] Rank " << rank << ": Client " << client_id 
-                  << " with score " << score << std::endl;
-        rank++;
+   
     }
-}
 
 int GameLogic::GetTopCardId() const {
     if (current_deck_index_ >= 57) return -1;
