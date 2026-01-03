@@ -1,7 +1,6 @@
 #include "LobbyServerController.hpp"
 
-template <typename T>
-inline void LobbyServerController::operator()(const T&) {
+template <typename T> inline void LobbyServerController::operator()(const T& cmd) {
   qDebug() << "LobbyServerController: got unknown command type";
 }
 
@@ -19,12 +18,13 @@ void LobbyServerController::operator()(const ResponseLoginCommand& cmd) {
     } else {
       emit hasLoginFailed(cmd.error->message);
     }
-  } else {
-    emit hasLoginSucceeded();
+    return;
+  }
+
+  if (cmd.data_obj.has_value()) {
+    emit hasLoginSucceeded(cmd.client_id.value());
   }
 }
-
-void LobbyServerController::operator()(const ResponsePingCommand&) {}
 
 void LobbyServerController::operator()(const ResponseGetLobbyInfoCommand& cmd) {
   qDebug() << "LobbyServerController: got ResponseGetLobbyInfoCommand";
@@ -47,6 +47,8 @@ void LobbyServerController::operator()(const ResponseGetLobbyInfoCommand& cmd) {
     shortInfo.gameName = QString::fromStdString(game.game_name);
     shortInfo.players = stoi(game.players);
     shortInfo.maxPlayers = stoi(game.max_players);
+    shortInfo.ip = QString::fromStdString(game.ip);
+    shortInfo.port = game.port;
 
     if (game.status == "waiting")
       shortInfo.status = GameStatus::Waiting;

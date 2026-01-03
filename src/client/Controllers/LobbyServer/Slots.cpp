@@ -7,7 +7,7 @@ void LobbyServerController::wantNicknameVerification(const std::string& nickname
   SenderLoginCommand cmd;
   cmd.command = "login";
 
-  cmd.data_obj = SenderLoginCommand::data();
+  cmd.data_obj = SenderLoginCommand::data{};
   cmd.data_obj->nickname = nickname;
 
   json j = cmd;
@@ -23,7 +23,7 @@ void LobbyServerController::wantNavigateToPage(const int& page) {
 
   SenderGetLobbyInfoCommand cmd;
   cmd.command = "getinfolobby";
-  cmd.data_obj = SenderGetLobbyInfoCommand::data();
+  cmd.data_obj = SenderGetLobbyInfoCommand::data{};
   cmd.data_obj->page = std::to_string(page);
 
   send_json_packet(socket->socketDescriptor(), json(cmd));
@@ -36,22 +36,11 @@ void LobbyServerController::wantCreateGame(const std::string& gameName, const in
 
   SenderCreateLobbyCommand cmd;
   cmd.command = "create_lobby";
-  cmd.data_obj = SenderCreateLobbyCommand::data();
+  cmd.data_obj = SenderCreateLobbyCommand::data{};
   cmd.data_obj->game_name = gameName;
 
   send_json_packet(socket->socketDescriptor(), json(cmd));
   connectRequestTimer([=]() { send_json_packet(socket->socketDescriptor(), json(cmd)); });
-}
-
-void LobbyServerController::wantJoinGame(const std::string& gameId) {
-  qDebug() << "LobbyController: Requesting to join game with ID:" << QString::fromStdString(gameId);
-  // TODO: implement
-}
-
-void LobbyServerController::wantObserveGame(const std::string& gameId) {
-  qDebug() << "LobbyController: Requesting to observe game with ID:"
-           << QString::fromStdString(gameId);
-  // TODO: implement
 }
 
 void LobbyServerController::wantDisconnect() {

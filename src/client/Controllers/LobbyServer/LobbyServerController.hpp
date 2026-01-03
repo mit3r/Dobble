@@ -6,6 +6,7 @@
 #include <protocol/LobbyCommandFactory.hpp>
 #include <protocol/lobby/lobbyroom/SocketCommands.hpp>
 #include <protocol/utils/SendAndReceiveUtils.hpp>
+#include "Controllers/ControllersUtils.hpp"
 
 #include "client/type/dobble.hpp"
 
@@ -20,14 +21,15 @@ class LobbyServerController : public QObject {
   explicit LobbyServerController(QObject* parent = nullptr);
 
   // Visitor operators for handling commands from variant
-  template <typename T> void operator()(const T& cmd);
+  template <typename T = LobbyClientCommand> void operator()(const T& cmd);
 
   void operator()(const std::monostate&);
   void operator()(const ResponseLoginCommand& cmd);
-  void operator()(const ResponsePingCommand& cmd);
   void operator()(const ResponseGetLobbyInfoCommand& cmd);
   void operator()(const ResponseCreateLobbyCommand& cmd);
   void operator()(const ResponseRegisterGameServerCommand& cmd);
+
+  inline void operator()(const ResponsePingCommand&) {};
   inline void operator()(const SenderLoginCommand&) {};
   inline void operator()(const SenderPingCommand&) {};
   inline void operator()(const SenderGetLobbyInfoCommand&) {};
@@ -44,15 +46,12 @@ signals: // Signals: controller -> ui
   void hasCommunicationStateChanged(const CommunicationStatus& status);
 
   // Login signals
-  void hasLoginSucceeded();
+  void hasLoginSucceeded(const std::string& clientId);
   void hasLoginFailed(const std::string& error);
   void hasAlreadyLoggedIn();
 
   // Browser signals
   void hasCreatedGame(const std::string& playerName);
-  void hasJoinedGame(const std::string& gameId);
-  void hasObservedGame(const std::string& gameId);
-
   void hasReceivedPage(const QVariantList& games, const int& nextPage);
 
 public slots: // Slots: ui -> controller
@@ -62,8 +61,6 @@ public slots: // Slots: ui -> controller
   void wantNicknameVerification(const std::string& nickname);
   void wantNavigateToPage(const int& page);
   void wantCreateGame(const std::string& gameName, const int& maxPlayers);
-  void wantJoinGame(const std::string& gameId);
-  void wantObserveGame(const std::string& gameId);
   void wantDisconnect();
 
 private slots: // Slots for ui events: ui -> server
@@ -77,8 +74,8 @@ private:
   LobbyCommandFactory commandFactory;
   QByteArray receiveBuffer; // Buffer for incoming data
 
-  QTimer* requestTimer = new QTimer(this);
   int requestCounter = 0;
+  QTimer* requestTimer = new QTimer(this);
   void connectRequestTimer(std::function<void()> slot);
   void disconnectRequestTimer(bool failed);
 };

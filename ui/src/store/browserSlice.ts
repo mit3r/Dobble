@@ -1,7 +1,6 @@
 import {
   CommunicationStatus,
   ConnectionStatus,
-  GameStatus,
   type ConnectionError,
   type ShortGameInfo,
 } from "@/types/dobble";
@@ -38,14 +37,7 @@ export const initialBrowserState: BrowserSliceState = {
 
   lobbyCommunication: CommunicationStatus.None,
 
-  // games: null,
-  games: new Array<ShortGameInfo>(5).fill({
-    gameId: "abc123",
-    gameName: "Fun Game",
-    maxPlayers: 8,
-    players: 5,
-    status: GameStatus.Waiting,
-  }),
+  games: null,
   nextPageNumber: null,
   currentPageNumber: null,
 };
@@ -67,6 +59,6 @@ export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> =
 
   connectToLobbyServer() {
     const { lobbyIpAddress, lobbyPort } = get().browser;
-    window.bridges?.browser.callConnectToLobbyServer(lobbyIpAddress, lobbyPort);
+    window.bridges?.browser.callConnectToLobby(lobbyIpAddress, lobbyPort);
   },
 });

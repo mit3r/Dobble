@@ -45,11 +45,17 @@ class MainWindow : public QMainWindow {
 
       void connectLoginPageFlow();
       void connectBrowserPageFlow();
-      void connectLobbyPageFlow();
-      void connectGamePageFlow();
-      void connectEndPageFlow();
+      void connectGameFlow();
 
     private:
+      // Global state
+      std::optional<std::string> clientId = std::nullopt;
       std::optional<std::string> nickname = std::nullopt;
+
+      // Browser page state
       std::optional<int> page = 1;
+
+      // Game state
+      std::optional<Role> role = std::nullopt;
+      std::optional<std::string> gameId = std::nullopt;
 };

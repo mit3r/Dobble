@@ -1,16 +1,26 @@
 import type { QtSignal } from "@/bridge/channel";
 import { qwebchannelInitializer } from "@/bridge/initialize";
-import type { GameInfo } from "@/types/dobble";
+import type {
+  CommunicationStatus,
+  ConnectionError,
+  ConnectionStatus,
+  GameInfo,
+  Role,
+} from "@/types/dobble";
 import { mainStore } from ".";
 
-
 export interface GameBridge {
+  onServerConnectionStateChanged: QtSignal<(status: ConnectionStatus) => void>;
+  onServerConnectionErrorOccured: QtSignal<(error: ConnectionError) => void>;
+  onServerCommunicationStateChanged: QtSignal<(status: CommunicationStatus) => void>;
+
   onGameInfoChanged: QtSignal<(gameInfo: GameInfo) => void>;
   onMatchResult: QtSignal<(isMatch: boolean) => void>;
   onGameQuit: QtSignal<() => void>;
 
   // slots
-  callMatchCards: (pick1: number, pick2: number) => void;
+  callJoinGame(ip: string, port: number, gameId: string, role: Role): void;
+  callMatchCards: (turnId: string, symbolId: number) => void;
   callQuitGame: () => void;
 }
 

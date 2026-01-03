@@ -1,17 +1,21 @@
 import { GameStatusSpan } from "@/Components/Statuses";
 import { mainStore } from "@/store";
-import type { ShortGameInfo } from "@/types/dobble";
+import { Role, type ShortGameInfo } from "@/types/dobble";
 import { useStore } from "zustand";
 
 export default function LobbyCard({ game }: { game: ShortGameInfo }) {
   const isBlocked = useStore(mainStore, (state) => state.browser.isBlocked());
 
   const handlePlay = () => {
-    window.bridges?.browser.callJoinGame(game.gameId);
+    window.bridges?.main.callMsg(
+      `IP: ${game.ip}, Port: ${game.port}, GameID: ${game.gameId}, Role: Player`
+    );
+
+    window.bridges?.game.callJoinGame(game.ip, game.port, game.gameId, Role.Player);
   };
 
   const handleSpectate = () => {
-    window.bridges?.browser.callObserveGame(game.gameId);
+    window.bridges?.game.callJoinGame(game.ip, game.port, game.gameId, Role.Observer);
   };
 
   return (

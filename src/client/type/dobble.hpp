@@ -50,24 +50,34 @@ enum class GameStatus {
 struct CShortGameInfo {
   QString gameId;
   QString gameName;
+  QString ip;
+  int port;
   int players;
   int maxPlayers;
   GameStatus status;
 
   bool operator==(const CShortGameInfo& other) const {
     return gameId == other.gameId && gameName == other.gameName && players == other.players &&
-           maxPlayers == other.maxPlayers && status == other.status;
+           maxPlayers == other.maxPlayers && status == other.status && ip == other.ip &&
+           port == other.port;
   }
 
   QVariantMap toVariantMap() const {
     QVariantMap map;
     map["gameId"] = gameId;
     map["gameName"] = gameName;
+    map["ip"] = ip;
+    map["port"] = port;
     map["players"] = players;
     map["maxPlayers"] = maxPlayers;
     map["status"] = static_cast<int>(status);
     return map;
   }
+};
+
+enum class Role {
+  Player,
+  Observer,
 };
 
 struct CPlayerGameInfo {
@@ -96,7 +106,8 @@ struct CPlayerGameInfo {
 
 struct CGameInfo {
   QString gameId;
-  QString gameName;
+  QString turnId;
+  QString winnerNickname;
   QList<CPlayerGameInfo> players;
   GameStatus status;
 
@@ -106,7 +117,8 @@ struct CGameInfo {
   QVariantMap toVariantMap() const {
     QVariantMap map;
     map["gameId"] = gameId;
-    map["gameName"] = gameName;
+    map["turnId"] = turnId;
+    map["winnerNickname"] = winnerNickname;
 
     QVariantList playersList;
     for (const auto& player : players) {

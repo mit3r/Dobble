@@ -1,6 +1,13 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QTimer>
+#include <protocol/GameCommandFactory.hpp>
+#include <protocol/lobby/room/SocketCommands.hpp>
+#include <protocol/utils/SendAndReceiveUtils.hpp>
+#include "Controllers/ControllersUtils.hpp"
+
+#include "client/type/dobble.hpp"
 
 #pragma once
 
@@ -9,54 +16,76 @@
  */
 class GameServerController : public QObject {
   Q_OBJECT
-  public:
+public:
   explicit GameServerController(QObject* parent = nullptr);
 
-  signals:  // Signals emmitted to game server
+  // Visitor operators for handling commands from variant
+  template <typename T = GameClientCommand> void operator()(const T& cmd);
+  void operator()(const std::monostate&);
+  inline void operator()(const RoomServerReceivedMessage&) {}
+  inline void operator()(const RoomClientReceivedMessage&) {}
 
-  // Request to start the game
-  void setReady(bool isReady);
+  void operator()(const ResponseGameClientPingCommand& cmd);
+  void operator()(const ResponseJoinGameCommand& cmd);
+  void operator()(const ResponseLeaveRoomCommand& cmd);
+  void operator()(const ResponseSendGameInfoCommand& cmd);
+  void operator()(const ResponseMatchSymbolCommand& cmd);
+  void operator()(const ResponseStartGameCommand& cmd);
 
-  // Request to play a card
-  void matchCard(int pick1, int pick2);
+  inline void operator()(const SenderGameClientPingCommand&) {};
+  inline void operator()(const SenderJoinGameCommand&) {};
+  inline void operator()(const SenderLeaveRoomCommand&) {};
+  inline void operator()(const SenderSendGameInfoCommand&) {};
+  inline void operator()(const SenderMatchSymbolCommand&) {};
+  inline void operator()(const SenderStartGameCommand&) {};
 
-  // Request to leave the game
-  void leaveGame();
+signals: // Signals: controller -> ui
 
-  public slots:  // Slots called when game server responds
+  // Connection signals
+  void hasConnectionStateChanged(const ConnectionStatus& status);
+  void hasConnectionErrorOccured(const ConnectionError& error);
 
-  // Handle update about player's readiness
-  void onPlayerReadyUpdated(int playerId, bool isReady);
+  // Communication signals
+  void hasCommunicationStateChanged(const CommunicationStatus& status);
 
-  // Handle game started notification
-  void onGameStarted();
+  // Game signals
+  void hasConnectGameSucceed();
+  void hasConnectGameFailed(const QString& error);
 
-  // Handle card match result
-  void onCardMatched(int playerId, bool isCorrect);
+  void hasGameStartedSucceed();
+  void hasGameStartedFailed(const QString& error);
 
-  // Handle score update
-  void onScoreUpdated(int playerId, int newScore);
+  void hasMatchResult(const bool& correct);
 
-  // Handle new top card notification
-  void onNewTopCard(const QString& cardData);
+  void hasGameInfoUpdated(const QVariantMap& gameInfo);
+  void hasLeftGame();
 
-  // Handle player's hand update
-  void onHandUpdated(int playerId, int cardId);
+public slots: // Slots: ui -> controller
+  void wantConnectToGame(const std::string& ip, const int& port, const std::string& gameId,
+                         const std::string& client_id, const std::string& nickname,
+                         const Role& role);
+  void wantStartGame();
 
-  // Handle lasts cards counter
-  void onLastCardsUpdated(int count);
+  void wantMatchCard(const std::string& gameId, const std::string& turnId, const int& symbolId);
+  void wantLeaveGame();
 
-  // Handle game ended notification
-  void onGameEnded(
-      const QList<QString>& playerNames,
-      const QList<int>& playerScores);
+private slots:
+  void whenReadReady();
+  void whenSocketStateChanged(QTcpSocket::SocketState socketState);
+  void whenSocketError(QTcpSocket::SocketError socketError);
 
-  // Handle disconnection from the server
-  void onDisconnected();
-
-  // Handle errors
-  void onError(QAbstractSocket::SocketError socketError);
-
-  private:
+private:
   QTcpSocket* socket_;
+  GameCommandFactory commandFactory;
+  QByteArray receiveBuffer;
+
+  int requestCounter = 0;
+  QTimer* requestTimer = new QTimer(this);
+  void connectRequestTimer(std::function<void()> slot);
+  void disconnectRequestTimer(bool failed);
+
+  QTimer* pingTimer = new QTimer(this);
+
+  void joinGame(const std::string& gameId, const std::string& client_id,
+                const std::string& nickname, const Role& role);
 };
