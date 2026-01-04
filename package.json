@@ -1,7 +1,0 @@
-{
-  "name": "root-blocker",
-  "private": true,
-  "scripts": {
-    "preinstall": "echo 'BŁĄD: Zakaz instalacji tutaj! Użyj cd ui && npm i' && exit 1"
-  }
-}
