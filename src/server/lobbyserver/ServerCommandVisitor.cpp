@@ -121,7 +121,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
         gs.nicknames = {};
         gs.ip = actual_games[i]->ip;
         gs.port = actual_games[i]->port;
-        gs.status = actual_games[i]->registered ? "ACTIVE" : "INACTIVE";
+        gs.status = actual_games[i] ->status;
         std::cout << "[GAME] ID: " << gs.game_id
                   << ", Name: " << gs.game_name
                   << ", Players: " << gs.players << "/" << gs.max_players
@@ -291,7 +291,7 @@ void ServerCommandVisitor::operator()(const SenderGameServerStatusCommand &cmd)
         if (game) {
             game->players = std::stoi(cmd.data_obj->player_count);
             game->max_players = std::stoi(cmd.data_obj->max_players);
-            // Update status if needed - you can add a status field to GameServer struct
+            game->status = cmd.data_obj->status;
             
             std::cout << "[UDS] Updated game server " << game_id 
                       << " - Players: " << game->players 

@@ -24,7 +24,7 @@ struct GameServer {
   int server_socket;
   int socket;
   std::string server_id;
-  
+  std::string status;
   bool registered;
   int port;
   int process_pid;

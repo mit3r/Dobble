@@ -327,10 +327,13 @@ void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
     json j = response;
     send_json_packet(client_sock, j);
     send_status_update_to_lobby();
-
-
-    //disconnect client
     close(client_sock);
+
+    if (g_game_server.getPlayerCount() == 0 && g_game_server.isGameOver()) {
+        exit(0);// xdd
+
+    }
+
 
 };
 void ServerCommandVisitor::operator()(const ResponseLeaveRoomCommand &){};
