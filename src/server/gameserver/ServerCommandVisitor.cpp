@@ -201,7 +201,7 @@ void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){
         response.data_obj->actual_turn.topCardId = -1;
     }
     
-    response.data_obj->actual_turn.cardsLeft = 57 - turn.turn_id;
+    response.data_obj->actual_turn.cardsLeft = 57 - turn.turn_id - g_game_server.getPlayerCount() - 1;
     
     response.data_obj->actual_turn.clients_data = g_game_server.getPlayersGameInfo();
     
