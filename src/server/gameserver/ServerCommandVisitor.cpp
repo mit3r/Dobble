@@ -61,12 +61,20 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         sendErrorResponse("join_game", "400", "Invalid request");
         return;
     }
+    if (g_game_server.isGameOver()) {
+        std::cout << "[ERROR] Game is already over" << std::endl;
+        sendErrorResponse("join_game", "400", "Game is already over");
+        return;
+    }
 
     std::string client_id = cmd.client_id.value();
     std::string nickname = cmd.client_nickname;
     
     std::cout << "[INFO] Client '" << client_id_opt.value() << "' (ID: " << client_id << ") joining with nickname: '" << nickname << "'" << std::endl;
     
+
+
+
     if (g_game_server.hasPlayer(client_id)) {
         std::cout << "[INFO] Player " << client_id << " already joined" << std::endl;
         ResponseJoinGameCommand response;
@@ -216,6 +224,12 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
     
     if (!g_game_logic || !cmd.client_id.has_value() || !cmd.data_obj) {
         sendErrorResponse("match_symbol", "400", "Invalid request");
+        return;
+    }
+    
+    if (g_game_server.isGameOver()) {
+        std::cout << "[ERROR] Game is already over, cannot match symbols" << std::endl;
+        sendErrorResponse("match_symbol", "400", "Game is already over");
         return;
     }
     

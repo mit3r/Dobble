@@ -1,4 +1,5 @@
 #include "GameStateManager.hpp"
+#include <protocol/GameEnums.hpp>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
@@ -11,9 +12,9 @@ void GameStateManager::setGameName(const std::string& name) {
 }
 */
 
-const std::string& GameStateManager::getGameName() const {
-    return game_info_.game_name;
-}
+// const std::string& GameStateManager::getGameName() const {
+//     return game_info_.game_name;
+// }
 
 void GameStateManager::setMaxPlayers(int max) {
     game_info_.max_players = max;
@@ -29,6 +30,10 @@ void GameStateManager::setGameStatus(const std::string& status) {
 
 const std::string& GameStateManager::getGameStatus() const {
     return game_info_.status;
+}
+
+bool GameStateManager::isGameOver() const {
+    return game_info_.status == GameEnums::toString(GameEnums::GameStatus::GAME_OVER);
 }
 
 GameInfo& GameStateManager::getGameInfo() {

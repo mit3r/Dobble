@@ -70,6 +70,7 @@ public:
     
     void setGameStatus(const std::string& status);
     const std::string& getGameStatus() const;
+    bool isGameOver() const;
     
     GameServerState::GameInfo& getGameInfo();
     const GameServerState::GameInfo& getGameInfo() const;
