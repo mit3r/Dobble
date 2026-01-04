@@ -1,6 +1,6 @@
 import { GameStatusSpan } from "@/Components/Statuses";
 import { mainStore } from "@/store";
-import { Role, type ShortGameInfo } from "@/types/dobble";
+import { GameStatus, Role, type ShortGameInfo } from "@/types/dobble";
 import { useStore } from "zustand";
 
 export default function LobbyCard({ game }: { game: ShortGameInfo }) {
@@ -19,32 +19,37 @@ export default function LobbyCard({ game }: { game: ShortGameInfo }) {
   };
 
   return (
-    <div className="grid grid-cols-1 grid-rows-3 border-2 p-2">
-      <h2>{game.gameName}</h2>
+    <div className="grid grid-cols-2 grid-rows-3 border-2 p-2 gap-2">
+      <h2 className="col-span-2 font-bold">{game.gameName}</h2>
 
-      <span>
+      <span className="col-span-1">
         Players: {game.players}/{game.maxPlayers}
       </span>
 
-      <div className="flex gap-2 justify-start text-center items-baseline">
-        <button
-          className="basis-0 p-1 flex-1 border-2 disabled:opacity-50"
-          onClick={handlePlay}
-          disabled={isBlocked}
-        >
-          Play
-        </button>
-        <button
-          className="basis-0 p-1 flex-1 border-2 disabled:opacity-50"
-          onClick={handleSpectate}
-          disabled={isBlocked}
-        >
-          Spectate
-        </button>
+      <span className="col-span-1 text-right ">
+        <GameStatusSpan status={game.status} />
+      </span>
 
-        <span className="text-right flex-2">
-          <GameStatusSpan status={game.status} />
-        </span>
+      <div className="flex gap-2 col-span-2">
+        {game.status === GameStatus.Waiting && (
+          <button
+            className="flex-1 p-1  border-2 disabled:opacity-50"
+            onClick={handlePlay}
+            disabled={isBlocked}
+          >
+            Play
+          </button>
+        )}
+
+        {game.status !== GameStatus.Finished && (
+          <button
+            className="flex-1 p-1  border-2 disabled:opacity-50"
+            onClick={handleSpectate}
+            disabled={isBlocked}
+          >
+            Spectate
+          </button>
+        )}
       </div>
     </div>
   );

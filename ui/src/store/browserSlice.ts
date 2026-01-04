@@ -1,6 +1,7 @@
 import {
   CommunicationStatus,
   ConnectionStatus,
+  View,
   type ConnectionError,
   type ShortGameInfo,
 } from "@/types/dobble";
@@ -8,8 +9,10 @@ import type { StateCreator } from "zustand";
 import { type MainStore } from ".";
 
 export type BrowserSliceState = {
-  lobbyIpAddress: string;
-  lobbyPort: number;
+  lobbyAddress: {
+    ip: string;
+    port: number;
+  } | null;
 
   lobbyConnection: ConnectionStatus;
   lobbyError: ConnectionError | null;
@@ -24,13 +27,14 @@ export type BrowserSliceState = {
 export type BrowserSlice = BrowserSliceState & {
   isBlocked(): boolean;
 
+  clearNickname(): void;
+  clearLobbyAddress(): void;
   setLobbyAddress(ip: string, port: number): void;
   connectToLobbyServer(): void;
 };
 
 export const initialBrowserState: BrowserSliceState = {
-  lobbyIpAddress: "localhost",
-  lobbyPort: 1500,
+  lobbyAddress: null,
 
   lobbyConnection: ConnectionStatus.Connecting,
   lobbyError: null,
@@ -42,7 +46,7 @@ export const initialBrowserState: BrowserSliceState = {
   currentPageNumber: null,
 };
 
-export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> = (_, get) => ({
+export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> = (set, get) => ({
   ...initialBrowserState,
 
   isBlocked() {
@@ -52,13 +56,25 @@ export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> =
     );
   },
 
+  clearNickname() {
+    set((state) => ({ main: { ...state.main, nickname: null, nicknameError: null }}))
+  },
+
+  clearLobbyAddress() {
+    set((state) => ({ browser: { ...state.browser, lobbyAddress: null } }));
+    get().browser.clearNickname();
+    get().main.setView(View.Login);
+  },
+
   setLobbyAddress(ip: string, port: number) {
-    this.lobbyIpAddress = ip;
-    this.lobbyPort = port;
+    set((state) => ({
+      browser: { ...state.browser, lobbyAddress: { ip, port } },
+    }));
   },
 
   connectToLobbyServer() {
-    const { lobbyIpAddress, lobbyPort } = get().browser;
-    window.bridges?.browser.callConnectToLobby(lobbyIpAddress, lobbyPort);
+    const address = get().browser.lobbyAddress;
+    if (address === null) return;
+    window.bridges?.browser.callConnectToLobby(address.ip, address.port);
   },
 });

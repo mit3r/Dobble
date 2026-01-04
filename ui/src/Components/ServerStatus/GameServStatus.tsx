@@ -11,8 +11,8 @@ export default function GameServStatus() {
   if (connectionError === null) return null;
 
   return (
-    <div className="w-full flex justify-center">
-      <span className="w-fit">Game server: </span>
+    <div className="w-full flex">
+      <div className="shrink-0 p-2">Game server: </div>
       <ServerStatus connectionStatus={connectionStatus} connectionError={connectionError} />
     </div>
   );

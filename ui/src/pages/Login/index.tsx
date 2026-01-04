@@ -1,51 +1,23 @@
 import LobbyServStatus from "@/Components/ServerStatus/LobbyServStatus";
 import { mainStore } from "@/store";
-import { useCallback, useState } from "react";
 import { useStore } from "zustand";
+import NicknameComponent from "./Components/NicknameComponent";
+import AddressComponent from "./Components/AddressComponent";
 
 export default function LoginPage() {
-  const [value, setValue] = useState<string>("");
-
-  const isBlocked = useStore(mainStore, (state) => state.browser.isBlocked());
-
-  const error = useStore(mainStore, (state) => state.main.nicknameError);
-
-  const handleSubmit = useCallback(() => {
-    window.bridges?.browser.callVerifyNickname(value);
-  }, [value]);
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
-    [setValue]
-  );
+  const lobbyAddress = useStore(mainStore, (s) => s.browser.lobbyAddress);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <LobbyServStatus />
+    <div className="h-full flex flex-col items-center">
+      {lobbyAddress && <LobbyServStatus />}
 
-      <h1 className="text-4xl font-bold mb-4">Welcome to Dobble!</h1>
-
-      <>
-        <p>Please enter your nickname to start playing.</p>
-
-        <input
-          type="text"
-          placeholder="Enter your nickname"
-          value={value}
-          onChange={handleChange}
-          className="p-2 border-2 rounded"
-        />
-
-        <button
-          className="mt-4 p-2 px-8 border-2 disabled:opacity-50"
-          onClick={handleSubmit}
-          disabled={isBlocked}
-        >
-          Login
-        </button>
-
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-      </>
+      <div className="flex flex-col flex-1 gap-8 p-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Dobble</h1>
+          <p className="text-2xl">Welcome to Dobble game!</p>
+        </div>
+        {lobbyAddress ? <NicknameComponent /> : <AddressComponent />}
+      </div>
     </div>
   );
 }

@@ -21,10 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
   connectGameFlow();
 
   // Application start flow
-  connect(ui->mainBridge, &MainBridge::uiIsReady, this, [this]() {
-    qDebug() << "UI is ready.";
-    lobbyServerController->wantConnectToServer("127.0.0.1", 1500);
-  });
+  connect(ui->mainBridge, &MainBridge::uiIsReady, this, [this]() { qDebug() << "UI is ready."; });
 }
 
 MainWindow::~MainWindow() {

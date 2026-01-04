@@ -7,10 +7,12 @@ export default function ServerStatus({
   connectionStatus,
   connectionError,
   retryCallback,
+  editCallback,
 }: {
   connectionStatus: ConnectionStatus;
   connectionError: ConnectionError | null;
   retryCallback?: () => void;
+  editCallback?: () => void;
 }) {
   window.bridges?.main.callMsg(
     "LobbyServerConnectionStatus - connectionStatus: " +
@@ -34,8 +36,13 @@ export default function ServerStatus({
       <div className="text-red-500 flex gap-4 items-baseline w-full justify-center">
         <span>{connectionErrorElement}</span>
         {retryCallback && (
-          <button className="p-2 border-red-500 px-4" onClick={retryCallback}>
+          <button className="p-2 border-2 border-red-500 px-4" onClick={retryCallback}>
             Retry
+          </button>
+      )}
+        {editCallback && (
+          <button className="p-2 border-2 border-blue-500 px-4" onClick={editCallback}>
+            Edit
           </button>
         )}
       </div>
