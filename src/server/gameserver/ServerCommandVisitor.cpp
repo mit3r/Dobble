@@ -343,13 +343,6 @@ void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
     send_status_update_to_lobby();
     close(client_sock);
 
-    if (g_game_server.getPlayerCount() == 0 && g_game_server.isGameOver()) {
-
-        exit(0);// xdd
-
-    }
-
-
 };
 void ServerCommandVisitor::operator()(const ResponseLeaveRoomCommand &){};
 
