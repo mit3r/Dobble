@@ -97,7 +97,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         response.game_id = g_game_server.getGameId();
         response.data_obj = ResponseJoinGameCommand::data{};
         response.data_obj->status = "GAME_FULL";
-        response.data_obj->role = "OBSERVER";
+        response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::OBSERVER);
         
         json j = response;
         send_json_packet(client_sock, j);
@@ -115,7 +115,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         sendErrorResponse("join_game", "400", "Game is already playing");
         return;
     }
-        g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
+    g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
 
     
     ResponseJoinGameCommand response;
@@ -124,7 +124,11 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
 
     response.data_obj = ResponseJoinGameCommand::data{};
     response.data_obj->status = "JOINED";
-    response.data_obj->role = "PLAYER";
+    if (cmd.data_obj->role == GameEnums::toString(GameEnums::PlayerRole::OBSERVER) ) {
+        response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::OBSERVER);
+    } else {
+        response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::PLAYER);
+    }
     
     
     json j = response;
