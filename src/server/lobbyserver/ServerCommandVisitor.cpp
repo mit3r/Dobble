@@ -176,7 +176,7 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
     {
         game->process_pid = pid;  
         game->port = dynamic_port; 
-
+        game->status = GameEnums::toString(GameEnums::GameStatus::INIT);
         std::cout << "[INFO] Uruchomiono game server z PID: " << pid
                   << ", ID: " << game->server_id
                   << ", Port: " << dynamic_port

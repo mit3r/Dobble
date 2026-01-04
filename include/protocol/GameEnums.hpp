@@ -23,8 +23,8 @@ enum class MatchResult {
 
 inline std::string toString(GameStatus status) {
     switch (status) {
-        case GameStatus::INIT: return "init";
-        case GameStatus::WAITING: return "waiting";
+        case GameStatus::INIT: return "INIT";
+        case GameStatus::WAITING: return "WAITING";
         case GameStatus::GAME_ACTIVE: return "GAME_ACTIVE";
         case GameStatus::GAME_OVER: return "GAME_OVER";
         default: return "unknown";

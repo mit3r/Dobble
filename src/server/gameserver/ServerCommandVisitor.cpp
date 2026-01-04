@@ -103,10 +103,22 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         send_json_packet(client_sock, j);
         return;
     }
+
+
     
     g_game_server.addPlayer(client_id, nickname, client_sock);
     std::cout << "[INFO] Player " << client_id << " (" << nickname << ") joined. "
               << "Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
+    
+    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE)) {
+        std::cout << "[ERROR] Game is already playing, cannot join" << std::endl;
+        sendErrorResponse("join_game", "400", "Game is already playing");
+        return;
+    }
+
+    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::INIT)) {
+        g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
+    }
     
     ResponseJoinGameCommand response;
     response.command = "join_game";

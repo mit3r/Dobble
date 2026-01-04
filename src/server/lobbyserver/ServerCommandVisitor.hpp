@@ -9,7 +9,7 @@
 #include "LobbyServerState.hpp"
 #include "server/libraries.hpp"
 #include "server/network.hpp"
-
+#include <protocol/GameEnums.hpp>
 #pragma once
 
 struct ServerCommandVisitor {
