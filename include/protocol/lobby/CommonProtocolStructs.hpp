@@ -21,7 +21,7 @@ struct TurnStruct {
   std::list<PlayerGameInfo> clients_data;
   std::vector<int> images_on_table;
   std::vector<int> past_turns;
-  std::string winner_id;
+  std::string winner_nickname;
   std::vector<int> actual_imgs;
   int topCardId;
   int cardsLeft;      // 0 - 57
@@ -54,7 +54,7 @@ struct ErrorStruct {
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerGameInfo, nickname, cardId, score, points, mistakes)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TurnStruct, turn_id, active, clients_data, images_on_table,
-                                   past_turns, winner_id, actual_imgs, topCardId, cardsLeft, status)
+                                   past_turns, winner_nickname, actual_imgs, topCardId, cardsLeft, status)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GameStruct, game_id, game_name, players, max_players, nicknames,
                                    status, ip, port)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShortGameInfo, game_id, name)

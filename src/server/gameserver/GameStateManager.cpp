@@ -134,7 +134,9 @@ void GameStateManager::updatePlayerPing(const std::string& client_id) {
 PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) {
     auto it = players_.find(client_id);
     if (it == players_.end()) {
-        throw std::runtime_error("Player not found: " + client_id);
+        std::cerr << "[ERROR] Player not found: " << client_id << std::endl;
+        static PlayerInfo empty_player;
+        return empty_player;
     }
     return it->second;
 }
@@ -142,7 +144,9 @@ PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) {
 const PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) const {
     auto it = players_.find(client_id);
     if (it == players_.end()) {
-        throw std::runtime_error("Player not found: " + client_id);
+        std::cerr << "[ERROR] Player not found: " << client_id << std::endl;
+        static const PlayerInfo empty_player;
+        return empty_player;
     }
     return it->second;
 }

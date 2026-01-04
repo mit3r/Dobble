@@ -190,7 +190,7 @@ void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){
     
     response.data_obj->actual_turn.turn_id = std::to_string(turn.turn_id);
     response.data_obj->actual_turn.active = turn.is_active;
-    response.data_obj->actual_turn.winner_id = turn.winner_id;
+    response.data_obj->actual_turn.winner_nickname = turn.winner_nickname;
     response.data_obj->actual_turn.status = g_game_server.getGameStatus();
     
     response.data_obj->actual_turn.images_on_table = turn.images_on_table;
@@ -226,7 +226,8 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
     std::cout << "[INFO] Client " << client_id << " claims symbol " << symbol_id 
               << " for turn " << turn_id << std::endl;
 
-    auto result = g_game_logic->ProcessMatch(client_id, turn_id, symbol_id);
+    auto result = g_game_logic->ProcessMatch(client_id, turn_id, symbol_id,
+                                            g_game_server.getPlayer(client_id).nickname);
     
     ResponseMatchSymbolCommand response;
     response.command = "match_symbol";

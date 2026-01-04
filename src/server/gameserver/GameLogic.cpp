@@ -53,7 +53,7 @@ void GameLogic::InitializeGame() {
     turn.is_active = true;
     turn.images_on_table.clear();
     turn.images_on_table.push_back(deck_indices_[0]);
-    turn.winner_id = "";
+    turn.winner_nickname = "";
     turn.past_turns.clear();
     
     auto player_ids = state_manager_.getAllPlayerIds();
@@ -77,7 +77,7 @@ void GameLogic::InitializeGame() {
               << ", players have cards from index 1 to " << (next_card_index - 1) << std::endl;
 }
 
-GameLogic::MatchResultInfo GameLogic::ProcessMatch(const std::string& client_id, int turn_id, int symbol_id) {
+GameLogic::MatchResultInfo GameLogic::ProcessMatch(const std::string& client_id, int turn_id, int symbol_id,std::string&nickname) {
     std::lock_guard<std::mutex> lock(mtx_);
     MatchResultInfo result;
     result.success = false;
@@ -118,7 +118,7 @@ GameLogic::MatchResultInfo GameLogic::ProcessMatch(const std::string& client_id,
         std::cout << "[GameLogic] Client " << client_id << " found correct symbol: " << symbol_id << std::endl;
         
         turn.is_active = false;
-        turn.winner_id = client_id;
+        turn.winner_nickname = nickname;
         
         state_manager_.updatePlayerScore(client_id, 10, 0);
         
@@ -166,7 +166,7 @@ void GameLogic::NextRound() {
     
     turn.turn_id++;
     turn.is_active = true;
-    turn.winner_id = "";
+    // turn.winner_nickname = "";
     
     std::cout << "[GameLogic] Next card: " << deck_indices_[current_deck_index_] << std::endl;
 }

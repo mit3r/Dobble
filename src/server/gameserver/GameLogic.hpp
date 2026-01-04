@@ -90,7 +90,7 @@ public:
         GameEnums::MatchResult result;
         int points_awarded;
     };
-    MatchResultInfo ProcessMatch(const std::string& client_id, int turn_id, int symbol_id);
+    MatchResultInfo ProcessMatch(const std::string& client_id, int turn_id, int symbol_id,std::string& nickname);
     
     void NextRound();
     bool IsGameOver() const;

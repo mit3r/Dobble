@@ -47,9 +47,9 @@ struct TurnInfo {
     std::vector<int> images_on_table;
     std::map<std::string, int> scoreboard;  
     std::vector<int> past_turns;
-    std::string winner_id;
+    std::string winner_nickname;
     
-    TurnInfo() : turn_id(0), is_active(false), winner_id("") {}
+    TurnInfo() : turn_id(0), is_active(false), winner_nickname("") {}
 };
 
 } // namespace GameServerState
