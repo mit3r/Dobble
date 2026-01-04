@@ -86,9 +86,35 @@ static void handle_inactive_players(const std::chrono::seconds& timeout) {
   for (const auto& client_id : inactive_players) {
     disconnect_inactive_player(client_id);
   }
+}
+
+static void handle_empty_server_shutdown(bool& empty_server_detected,
+                                         std::chrono::steady_clock::time_point& empty_server_timestamp) {
+  int player_count = g_game_server.getPlayerCount();
   
-  if (g_game_server.getPlayerCount() == 0 && !inactive_players.empty()) {
-    shutdown_server("Server shutting down - all players disconnected");
+  if (player_count > 0) {
+    if (empty_server_detected) {
+      empty_server_detected = false;
+      std::cout << "[MONITOR] Players joined, empty server shutdown cancelled" << std::endl;
+    }
+    return;
+  }
+  
+  if (!empty_server_detected) {
+    empty_server_detected = true;
+    empty_server_timestamp = std::chrono::steady_clock::now();
+    std::cout << "[MONITOR] Server has 0 players. Will shut down in 60 seconds if no one joins..." << std::endl;
+    return;
+  }
+  
+  auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+    std::chrono::steady_clock::now() - empty_server_timestamp
+  );
+  
+  if (elapsed.count() >= 60) {
+    shutdown_server("Server shutting down - no players for 60 seconds");
+  } else if (elapsed.count() % 10 == 0) {
+    std::cout << "[MONITOR] Empty server countdown: " << (60 - elapsed.count()) << " seconds remaining..." << std::endl;
   }
 }
 
@@ -96,11 +122,14 @@ void inactivity_monitor_thread() {
   const std::chrono::seconds timeout(60);
   auto game_over_timestamp = std::chrono::steady_clock::time_point();
   bool game_over_detected = false;
+  auto empty_server_timestamp = std::chrono::steady_clock::time_point();
+  bool empty_server_detected = false;
   
   while (g_server_running) {
     std::this_thread::sleep_for(std::chrono::seconds(10));
     
     handle_game_over_countdown(game_over_detected, game_over_timestamp);
     handle_inactive_players(timeout);
+    handle_empty_server_shutdown(empty_server_detected, empty_server_timestamp);
   }
 }

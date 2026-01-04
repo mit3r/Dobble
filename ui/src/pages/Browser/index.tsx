@@ -1,7 +1,8 @@
 import GameServStatus from "@/Components/ServerStatus/GameServStatus";
 import LobbyServStatus from "@/Components/ServerStatus/LobbyServStatus";
 import { mainStore } from "@/store";
-import { useEffect, useMemo, useState } from "react";
+import { CommunicationStatus, ConnectionStatus } from "@/types/dobble";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "zustand";
 import CreateGameButton from "./Components/CreateGameButton";
 import LobbyCard from "./Components/LobbyCard";
@@ -10,6 +11,13 @@ export default function BrowserPage() {
   const games = useStore(mainStore, (state) => state.browser.games);
   const pageNumber = useStore(mainStore, (state) => state.browser.currentPageNumber);
   const nickname = useStore(mainStore, (state) => state.main.nickname);
+  
+  const lobbyCommunication = useStore(mainStore, (state) => state.browser.lobbyCommunication);
+  const lobbyConnection = useStore(mainStore, (state) => state.browser.lobbyConnection);
+  
+  const isBlocked = lobbyCommunication === CommunicationStatus.Failed || 
+                    lobbyCommunication === CommunicationStatus.Retrying ||
+                    lobbyConnection !== ConnectionStatus.Connected;
 
   const nextPage = useStore(mainStore, (state) => state.browser.nextPageNumber);
   const prevPage = useMemo(() => {
@@ -17,14 +25,16 @@ export default function BrowserPage() {
     return pageNumber > 1 ? pageNumber - 1 : null;
   }, [pageNumber]);
 
+  const pageNumberRef = useRef(pageNumber);
+  pageNumberRef.current = pageNumber;
 
   useEffect(() => {
     const it = setInterval(() => {
-      window.bridges?.browser.callNavigateToPage(pageNumber ?? 1);
+      window.bridges?.browser.callNavigateToPage(pageNumberRef.current ?? 1);
     }, 1_000);
 
     return () => clearInterval(it);
-  }, [pageNumber]);
+  }, []); // Empty dependency array - interval is created only once
 
   return (
     <div className="flex flex-col gap-6 h-full p-2">
@@ -56,7 +66,7 @@ export default function BrowserPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {games.map((game) => (
-              <LobbyCard key={game.gameId} game={game} />
+              <LobbyCard key={game.gameId} game={game} isBlocked={isBlocked} />
             ))}
           </div>
         )}

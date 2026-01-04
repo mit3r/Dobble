@@ -93,39 +93,47 @@ const TurnInfo& GameStateManager::getCurrentTurn() const {
 }
 
 void GameStateManager::addPlayer(const std::string& client_id, const std::string& nickname, int socket_fd) {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     players_[client_id] = PlayerInfo(client_id, nickname, socket_fd);
     game_info_.player_nicknames.push_back(nickname);
     game_info_.players_count = static_cast<int>(players_.size());
 }
 
 void GameStateManager::removePlayer(const std::string& client_id) {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     players_.erase(client_id);
     game_info_.players_count = static_cast<int>(players_.size());
 }
 
 bool GameStateManager::hasPlayer(const std::string& client_id) const {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     return players_.find(client_id) != players_.end();
 }
 
 void GameStateManager::addObserver(const std::string& client_id, const std::string& nickname, int socket_fd) {
+    std::lock_guard<std::mutex> lock(observers_mutex_);
     observers_[client_id] = ObserverInfo(client_id, nickname, socket_fd);
 }
 
 void GameStateManager::removeObserver(const std::string& client_id) {
+    std::lock_guard<std::mutex> lock(observers_mutex_);
     observers_.erase(client_id);
 }
 
 bool GameStateManager::hasObserver(const std::string& client_id) const {
+    std::lock_guard<std::mutex> lock(observers_mutex_);
     return observers_.find(client_id) != observers_.end();
 }
 
 void GameStateManager::updateObserverPing(const std::string& client_id) {
+    std::lock_guard<std::mutex> lock(observers_mutex_);
     if (observers_.find(client_id) != observers_.end()) {
         observers_[client_id].last_ping_timestamp = std::chrono::steady_clock::now();
     }
 }
 
 std::vector<std::string> GameStateManager::getAllObserverIds() const {
+    std::lock_guard<std::mutex> lock(observers_mutex_);
     std::vector<std::string> ids;
     ids.reserve(observers_.size());
     for (const auto& [client_id, _] : observers_) {
@@ -135,10 +143,12 @@ std::vector<std::string> GameStateManager::getAllObserverIds() const {
 }
 
 int GameStateManager::getObserverCount() const {
+    std::lock_guard<std::mutex> lock(observers_mutex_);
     return static_cast<int>(observers_.size());
 }
 
 void GameStateManager::setPlayerImages(const std::string& client_id, const std::vector<int>& images) {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     if (players_.find(client_id) != players_.end()) {
         players_[client_id].images = images;
         current_turn_.clients_data[client_id] = images;
@@ -146,6 +156,7 @@ void GameStateManager::setPlayerImages(const std::string& client_id, const std::
 }
 
 void GameStateManager::updatePlayerScore(const std::string& client_id, int points, int mistakes) {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     if (players_.find(client_id) != players_.end()) {
         players_[client_id].points += points;
         players_[client_id].mistakes += mistakes;
@@ -162,12 +173,14 @@ void GameStateManager::setPlayerRank(const std::string& client_id, int rank) {
 */
 
 void GameStateManager::updatePlayerPing(const std::string& client_id) {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     if (players_.find(client_id) != players_.end()) {
         players_[client_id].last_ping_timestamp = std::chrono::steady_clock::now();
     }
 }
 
 PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     auto it = players_.find(client_id);
     if (it == players_.end()) {
         std::cerr << "[ERROR] Player not found: " << client_id << std::endl;
@@ -178,6 +191,7 @@ PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) {
 }
 
 const PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) const {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     auto it = players_.find(client_id);
     if (it == players_.end()) {
         std::cerr << "[ERROR] Player not found: " << client_id << std::endl;
@@ -188,6 +202,7 @@ const PlayerInfo& GameStateManager::getPlayer(const std::string& client_id) cons
 }
 
 std::vector<std::string> GameStateManager::getAllPlayerIds() const {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     std::vector<std::string> ids;
     ids.reserve(players_.size());
     for (const auto& [client_id, _] : players_) {
@@ -197,10 +212,12 @@ std::vector<std::string> GameStateManager::getAllPlayerIds() const {
 }
 
 int GameStateManager::getPlayerCount() const {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     return static_cast<int>(players_.size());
 }
 
 std::list<PlayerGameInfo> GameStateManager::getPlayersGameInfo() const {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     std::list<PlayerGameInfo> players_info;
     
     for (const auto& [client_id, player] : players_) {
@@ -227,6 +244,7 @@ std::list<PlayerGameInfo> GameStateManager::getPlayersGameInfo() const {
 }
 
 std::vector<std::string> GameStateManager::getInactivePlayers(std::chrono::seconds timeout) const {
+    std::lock_guard<std::mutex> lock(players_mutex_);
     std::vector<std::string> inactive_players;
     auto now = std::chrono::steady_clock::now();
     

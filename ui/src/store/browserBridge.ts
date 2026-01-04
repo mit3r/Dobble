@@ -59,14 +59,23 @@ qwebchannelInitializer.onReady("browser", (bridge) => {
   bridge.onPageChanged.connect(
     (gamesList: ShortGameInfo[], currentPageNumber: number, nextPageNumber: number) => {
       const next = nextPageNumber > 0 ? nextPageNumber : null;
-      mainStore.setState((state) => ({
-        browser: {
-          ...state.browser,
-          nextPageNumber: next,
-          games: gamesList,
-          currentPageNumber: currentPageNumber,
-        },
-      }));
+      const currentState = mainStore.getState().browser;
+      
+      // Avoid unnecessary re-renders by comparing data
+      const gamesChanged = JSON.stringify(currentState.games) !== JSON.stringify(gamesList);
+      const pageChanged = currentState.currentPageNumber !== currentPageNumber;
+      const nextChanged = currentState.nextPageNumber !== next;
+      
+      if (gamesChanged || pageChanged || nextChanged) {
+        mainStore.setState((state) => ({
+          browser: {
+            ...state.browser,
+            nextPageNumber: next,
+            games: gamesList,
+            currentPageNumber: currentPageNumber,
+          },
+        }));
+      }
     }
   );
 });

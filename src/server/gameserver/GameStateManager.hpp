@@ -8,6 +8,7 @@
 #include <map>
 #include <list>
 #include <chrono>
+#include <mutex>
 
 namespace GameServerState {
 
@@ -73,6 +74,9 @@ private:
     GameServerState::TurnInfo current_turn_;
     std::map<std::string, GameServerState::PlayerInfo> players_;
     std::map<std::string, GameServerState::ObserverInfo> observers_;
+    
+    mutable std::mutex players_mutex_;
+    mutable std::mutex observers_mutex_;
     
 public:
     GameStateManager() = default;

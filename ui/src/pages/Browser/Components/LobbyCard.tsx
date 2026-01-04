@@ -1,11 +1,12 @@
 import { GameStatusSpan } from "@/Components/Statuses";
-import { mainStore } from "@/store";
 import { GameStatus, Role, type ShortGameInfo } from "@/types/dobble";
-import { useStore } from "zustand";
 
-export default function LobbyCard({ game }: { game: ShortGameInfo }) {
-  const isBlocked = useStore(mainStore, (state) => state.browser.isBlocked());
+interface LobbyCardProps {
+  game: ShortGameInfo;
+  isBlocked: boolean;
+}
 
+export default function LobbyCard({ game, isBlocked }: LobbyCardProps) {
   const handlePlay = () => {
     window.bridges?.main.callMsg(
       `IP: ${game.ip}, Port: ${game.port}, GameID: ${game.gameId}, Role: Player`

@@ -50,8 +50,10 @@ export const createBrowserSlice: StateCreator<MainStore, [], [], BrowserSlice> =
   ...initialBrowserState,
 
   isBlocked() {
+    // Block only when communication failed or retrying, not during normal waiting
     return (
-      this.lobbyCommunication !== CommunicationStatus.Good ||
+      (this.lobbyCommunication === CommunicationStatus.Failed ||
+       this.lobbyCommunication === CommunicationStatus.Retrying) ||
       this.lobbyConnection !== ConnectionStatus.Connected
     );
   },
