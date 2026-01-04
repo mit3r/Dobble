@@ -4,6 +4,7 @@ import TopCardComponent from "./TopCardComponent";
 import YourCardComponent from "./YourCardComponent";
 import { mainStore } from "@/store";
 import { useEffect } from "react";
+import YourStats from "./YourStats";
 
 export default function Gameplay({
   gameInfo,
@@ -26,7 +27,10 @@ export default function Gameplay({
           <TopCardComponent disabled={you === null} cardId={gameInfo.topCardId} />
           {you !== null && <YourCardComponent yourInfo={you} />}
         </div>
-        <OtherPlayers playersInfo={otherPlayers} observer={you === null} />
+        <div className="flex flex-col gap-2">
+          {you !== null && <YourStats you={you} />}
+          <OtherPlayers playersInfo={otherPlayers} observer={you === null} />
+        </div>
       </div>
     </div>
   );

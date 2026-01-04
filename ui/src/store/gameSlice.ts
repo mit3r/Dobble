@@ -1,4 +1,4 @@
-import { ConnectionError, ConnectionStatus, type GameInfo } from "@/types/dobble";
+import { ConnectionError, ConnectionStatus, GameStatus, type GameInfo } from "@/types/dobble";
 import type { StateCreator } from "zustand";
 import { type MainStore } from ".";
 
@@ -25,7 +25,24 @@ export const initialGameState: GameSliceState = {
   gameServerConnectionError: null,
   gameServerCommunicationStatus: ConnectionStatus.Disconnected,
 
-  gameInfo: null,
+  // gameInfo: null,
+  gameInfo: {
+    gameId: "cos",
+    lastsCards: 20,
+    topCardId: 1,
+    turnId: "123",
+    players: [
+      {
+        nickname: "Player1",
+        cardId: 2,
+        matches: 0,
+        mistakes: 0,
+        points: 0,
+      },
+    ],
+    status: GameStatus.Finished,
+    winnerNickname: "Play123",
+  },
 
   topPick: undefined,
   handPick: undefined,
