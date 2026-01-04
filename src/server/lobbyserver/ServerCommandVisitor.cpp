@@ -119,7 +119,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
         gs.max_players = std::to_string(actual_games[i]->max_players);
         gs.players = std::to_string(actual_games[i]->players);
         gs.nicknames = {};
-        gs.ip = actual_games[i]->ip;
+        gs.ip = g_lobby_server.getPublicIP();
         gs.port = actual_games[i]->port;
         gs.status = actual_games[i] ->status;
         std::cout << "[GAME] ID: " << gs.game_id
@@ -190,7 +190,7 @@ void ServerCommandVisitor::operator()(const SenderCreateLobbyCommand &cmd)
 
         ResponseCreateLobbyCommand::data d;
         d.message = "OK";
-        d.ip = "0.0.0.0";
+        d.ip = g_lobby_server.getPublicIP();
         d.port = std::to_string(dynamic_port);
         response.data_obj = d;
 

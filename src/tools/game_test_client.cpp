@@ -201,13 +201,16 @@ void print_help() {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " <server_ip> <server_port> [client_id]" << std::endl;
-        return 1;
+    std::string server_ip = "127.0.0.1";
+    int server_port = 5001;
+    
+    if (argc >= 2) {
+        server_ip = argv[1];
     }
     
-    std::string server_ip = argv[1];
-    int server_port = std::stoi(argv[2]);
+    if (argc >= 3) {
+        server_port = std::stoi(argv[2]);
+    }
     
     if (argc >= 4) {
         g_client_id = argv[3];
@@ -218,6 +221,8 @@ int main(int argc, char* argv[]) {
     std::cout << "[INFO] Game Test Client starting..." << std::endl;
     std::cout << "[INFO] Server: " << server_ip << ":" << server_port << std::endl;
     std::cout << "[INFO] Client ID: " << g_client_id << std::endl;
+    std::cout << "[USAGE] " << argv[0] << " [server_ip] [server_port] [client_id]" << std::endl;
+    std::cout << "[USAGE] Defaults: 127.0.0.1:5001" << std::endl;
     
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {

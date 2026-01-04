@@ -39,7 +39,7 @@ int main(int argc, const char* const argv[]) {
             << ", Port: " << port
             << ", Lobby UDS: " << lobby_uds_path << std::endl;
 
-  BsdServer bsd_server(port, "127.0.0.1");
+  BsdServer bsd_server(port, "0.0.0.0");
   UdsClient uds_client(lobby_uds_path);
   g_uds_client = &uds_client;
 

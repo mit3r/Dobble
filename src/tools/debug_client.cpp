@@ -215,9 +215,22 @@ std::optional<json> get_manual_command() {
     }
 }
 
-int main() {
-    const char* SERVER_IP = "127.0.0.1";
-    const int SERVER_PORT = 1500;
+int main(int argc, char* argv[]) {
+    std::string SERVER_IP = "127.0.0.1";
+    int SERVER_PORT = 5000;
+    
+    if (argc >= 2) {
+        SERVER_IP = argv[1];
+    }
+    
+    if (argc >= 3) {
+        SERVER_PORT = std::stoi(argv[2]);
+    }
+    
+    std::cout << "[INFO] Debug Client starting..." << std::endl;
+    std::cout << "[INFO] Server: " << SERVER_IP << ":" << SERVER_PORT << std::endl;
+    std::cout << "[USAGE] " << argv[0] << " [server_ip] [server_port]" << std::endl;
+    std::cout << "[USAGE] Defaults: 127.0.0.1:5000" << std::endl;
     
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
@@ -229,7 +242,7 @@ int main() {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(SERVER_PORT);
 
-    if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, SERVER_IP.c_str(), &serv_addr.sin_addr) <= 0) {
         std::cerr << "Nieprawidłowy adres" << std::endl;
         close(sock);
         return 1;

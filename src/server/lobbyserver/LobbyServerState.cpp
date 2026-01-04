@@ -9,3 +9,11 @@ LobbyServerState::LobbyServerState() : ServerStateManager() {}
 std::string LobbyServerState::getUDSPath() const {
     return uds_path;
 }
+
+void LobbyServerState::setPublicIP(const std::string& ip) {
+    public_ip = ip;
+}
+
+std::string LobbyServerState::getPublicIP() const {
+    return public_ip;
+}
