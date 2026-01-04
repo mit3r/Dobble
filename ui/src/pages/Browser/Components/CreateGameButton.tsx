@@ -17,44 +17,47 @@ export default function CreateGameButton() {
     // setMaxPlayers(2);
   };
 
+  const handleCancel = () => {
+    setActive(false);
+    setInput("");
+  };
+
   const handleRoomName = (e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value);
   // const handleMaxPlayers = (e: React.ChangeEvent<HTMLInputElement>) =>
   //   setMaxPlayers(Number(e.target.value));
 
   return (
-    <div className="flex items-center gap-2">
-      {active && (
-        <>
-          <input
-            className="p-2 border-2"
-            placeholder="Room name"
-            type="text"
-            value={roomName}
-            onChange={handleRoomName}
-          />
-
-          {/* <input
-            className="p-2 border-2 w-14 text-right"
-            type="number"
-            value={maxPlayers}
-            onChange={handleMaxPlayers}
-            min={2}
-          /> */}
-        </>
-      )}
-
-      <AnimatePresence initial={false}>
-        <motion.button
-          initial={{ width: "0px" }}
-          animate={{ width: "auto" }}
-          exit={{ width: "0px" }}
-          layout
-          className="p-2 px-8 justify-self-start border-2 active:bg-black active:text-white transition-colors bg-white"
-          onClick={handleClick}
-        >
-          {active ? "Create" : "Create new game"}
-        </motion.button>
+    <div className="flex items-center gap-3">
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex gap-2"
+          >
+            <input
+              className="input-field"
+              placeholder="Room name..."
+              type="text"
+              value={roomName}
+              onChange={handleRoomName}
+              autoFocus
+            />
+            <button onClick={handleCancel} className="btn-danger py-2 px-4">
+              X
+            </button>
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      <motion.button
+        layout
+        className="btn-success"
+        onClick={handleClick}
+      >
+        {active ? "Create" : "New Game"}
+      </motion.button>
     </div>
   );
 }

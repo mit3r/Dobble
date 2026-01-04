@@ -11,22 +11,27 @@ export default function LobbyPage() {
   const requiredPlayers = useMemo(() => (gameInfo?.players.length ?? 0) >= 2, [gameInfo]);
 
   return (
-    <div className="h-full flex flex-col justify-end gap-4">
+    <div className="h-full flex flex-col gap-4">
       <LobbyBar />
 
-      {gameInfo === null ? <LoadingLobby /> : <PlayersList players={gameInfo.players} />}
+      <div className="flex-1 overflow-hidden">
+        {gameInfo === null ? <LoadingLobby /> : <PlayersList players={gameInfo.players} />}
+      </div>
 
-      <div className="w-full flex justify-between">
+      <div className="flex justify-between gap-4">
         <button
           disabled={!requiredPlayers}
-          className="p-2 px-4 border-2 disabled:opacity-50"
+          className="btn-success flex-1"
           onClick={() => window.bridges?.game.callStartGame()}
         >
-          Start game
+          Start Game {!requiredPlayers && "(Need 2+ players)"}
         </button>
 
-        <button className="p-2 px-4 border-2" onClick={() => window.bridges?.game.callQuitGame()}>
-          Quit
+        <button 
+          className="btn-danger"
+          onClick={() => window.bridges?.game.callQuitGame()}
+        >
+          Leave
         </button>
       </div>
     </div>

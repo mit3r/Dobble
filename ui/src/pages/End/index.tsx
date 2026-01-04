@@ -15,11 +15,11 @@ export default function EndPage() {
   );
 
   return (
-    <div className="h-full flex flex-col justify-end gap-4">
+    <div className="h-full flex flex-col gap-4">
       <LobbyBar />
 
       {sortedPlayers ? (
-        <div className="grid grid-cols-[auto_1fr] gap-4 w-full flex-1">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 overflow-hidden">
           <SplashScreen sortedPlayers={sortedPlayers} />
           <Scoreboard sortedPlayers={sortedPlayers} />
         </div>
@@ -27,7 +27,7 @@ export default function EndPage() {
         <LoadingScoreboard />
       )}
 
-      <QuitFooter label="Leave game!" onQuit={() => window.bridges?.game.callQuitGame()} />
+      <QuitFooter label="Leave Game" onQuit={() => window.bridges?.game.callQuitGame()} />
     </div>
   );
 }

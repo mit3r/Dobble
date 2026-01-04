@@ -11,8 +11,10 @@ export default function LobbyServStatus() {
   if (connectionStatus === ConnectionStatus.Connected) return null;
 
   return (
-    <div className="w-full flex gap-2">
-      <div className="shrink-0 p-2">Lobby server: </div>
+    <div className="w-full flex flex-col gap-2">
+      <div className="flex items-center gap-2 text-sm text-dobble-text-muted">
+        <span>Lobby Server Status</span>
+      </div>
       <ServerStatus
         connectionStatus={connectionStatus}
         connectionError={connectionError}

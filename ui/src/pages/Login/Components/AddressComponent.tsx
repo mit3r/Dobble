@@ -23,37 +23,46 @@ export default function AddressComponent() {
   };
 
   return (
-    <div className="p-4 px-8 border-2 rounded-xl grid-cols-2 gap-2 grid">
-      <p className="col-span-2">Enter lobby server you want to connect with:</p>
+    <div className="flex flex-col gap-6">
+      <p className="text-center text-dobble-text-muted">
+        Enter lobby server you want to connect with:
+      </p>
 
-      <label htmlFor="ip">IP Address:</label>
-      <input
-        className="border-2 p-1"
-        type="text"
-        id="ip"
-        value={ip}
-        onChange={(e) => setIp(e.target.value)}
-      />
+      <div className="grid grid-cols-[auto_1fr] gap-4 items-center">
+        <label htmlFor="ip" className="text-sm font-bold text-dobble-text-muted">
+          IP Address
+        </label>
+        <input
+          className="input-field"
+          type="text"
+          id="ip"
+          value={ip}
+          onChange={(e) => setIp(e.target.value)}
+          placeholder="127.0.0.1"
+        />
 
-      <label htmlFor="port">Port:</label>
-      <input
-        className="border-2 p-1"
-        type="text"
-        id="port"
-        value={port}
-        onChange={(e) => setPort(e.target.value)}
-      />
-
-      <div className="h-min col-span-2">{error && <p className="text-red-500">{error}</p>}</div>
-
-      <div className="col-span-2 flex">
-        <button
-          className="p-2 px-4 border-2 active:bg-black active:text-white"
-          onClick={handleSubmit}
-        >
-          Connect
-        </button>
+        <label htmlFor="port" className="text-sm font-bold text-dobble-text-muted">
+          Port
+        </label>
+        <input
+          className="input-field"
+          type="text"
+          id="port"
+          value={port}
+          onChange={(e) => setPort(e.target.value)}
+          placeholder="1500"
+        />
       </div>
+
+      {error && (
+        <div className="text-center p-3 rounded-xl bg-dobble-danger/20 text-dobble-danger">
+          {error}
+        </div>
+      )}
+
+      <button className="btn-primary w-full" onClick={handleSubmit}>
+        Connect to Server
+      </button>
     </div>
   );
 }

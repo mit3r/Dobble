@@ -5,63 +5,63 @@ import type { JSX } from "react";
 export function GameStatusSpan({ status }: { status: GameStatus }): JSX.Element {
   switch (status) {
     case GameStatus.Waiting:
-      return <span>Waiting</span>;
+      return <span className="text-dobble-accent">Waiting</span>;
     case GameStatus.InGame:
-      return <span>In Progress</span>;
+      return <span className="text-dobble-success">In Progress</span>;
     case GameStatus.Finished:
-      return <span>Finished</span>;
+      return <span className="text-dobble-text-muted">Finished</span>;
     default:
-      return <span>Unknown status</span>;
+      return <span className="text-dobble-text-muted">Unknown</span>;
   }
 }
 
 export function ConnectionStatusSpan({ status }: { status: ConnectionStatus }): JSX.Element {
   switch (status) {
     case ConnectionStatus.Connected:
-      return <span>Connected</span>;
+      return <span className="text-dobble-success">Connected</span>;
     case ConnectionStatus.Connecting:
-      return <Dots text="Connecting" />;
+      return <span className="text-dobble-accent"><Dots text="Connecting" /></span>;
     case ConnectionStatus.Disconnected:
-      return <span>Disconnected</span>;
+      return <span className="text-dobble-danger">Disconnected</span>;
     case ConnectionStatus.HostLookup:
-      return <Dots text="Looking up host" />;
+      return <span className="text-dobble-accent"><Dots text="Looking up host" /></span>;
     case ConnectionStatus.Retrying:
-      return <Dots text="Reconnecting" />;
+      return <span className="text-dobble-accent"><Dots text="Reconnecting" /></span>;
     default:
-      return <span>Unknown Status</span>;
+      return <span className="text-dobble-text-muted">Unknown</span>;
   }
 }
 
 export function ConnectionErrorSpan({ error }: { error: ConnectionError }): JSX.Element {
   switch (error) {
     case ConnectionError.None:
-      return <span>No Error</span>;
+      return <span className="text-dobble-success">No Error</span>;
     case ConnectionError.NetworkError:
-      return <span>Network Error</span>;
+      return <span className="text-dobble-danger">Network Error</span>;
     case ConnectionError.Timeout:
-      return <span>Connection Timeout</span>;
+      return <span className="text-dobble-danger">Connection Timeout</span>;
     case ConnectionError.ConnectionRefused:
-      return <span>Connection Refused</span>;
+      return <span className="text-dobble-danger">Connection Refused</span>;
     case ConnectionError.HostNotFound:
-      return <span>Host Not Found</span>;
+      return <span className="text-dobble-danger">Host Not Found</span>;
     default:
-      return <span>Unknown Error</span>;
+      return <span className="text-dobble-danger">Unknown Error</span>;
   }
 }
 
 export function CommunicationStatusSpan({ status }: { status: CommunicationStatus }): JSX.Element {
   switch (status) {
     case CommunicationStatus.None:
-      return <span>No Communication</span>;
+      return <span className="text-dobble-text-muted">No Communication</span>;
     case CommunicationStatus.Good:
-      return <span>Good</span>;
+      return <span className="text-dobble-success">Good</span>;
     case CommunicationStatus.Waiting:
-      return <Dots text="Waiting" />;
+      return <span className="text-dobble-accent"><Dots text="Waiting" /></span>;
     case CommunicationStatus.Retrying:
-      return <Dots text="Retrying" />;
+      return <span className="text-dobble-accent"><Dots text="Retrying" /></span>;
     case CommunicationStatus.Failed:
-      return <span>Failed</span>;
+      return <span className="text-dobble-danger">Failed</span>;
     default:
-      return <span>Unknown</span>;
+      return <span className="text-dobble-text-muted">Unknown</span>;
   }
 }

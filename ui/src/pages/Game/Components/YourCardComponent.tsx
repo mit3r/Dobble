@@ -9,14 +9,16 @@ export default function YourCardComponent(props: { yourInfo: PlayerGameInfo }) {
   const pickHandCard = useStore(mainStore, (state) => state.game.pickHandCard);
 
   return (
-    <div className="flex-1 flex flex-col  items-center gap-2 justify-center ">
+    <div className="flex-1 flex flex-col items-center gap-4 justify-center">
       <CardComponent
         cardId={props.yourInfo.cardId}
         pickedIconId={handPick}
         onIconClick={pickHandCard}
       />
 
-      <h2 className="text-center text-2xl font-bold">Your card</h2>
+      <h2 className="text-center text-xl font-bold text-dobble-primary">
+        Your card
+      </h2>
     </div>
   );
 }

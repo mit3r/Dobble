@@ -27,26 +27,34 @@ export default function BrowserPage() {
   }, [pageNumber]);
 
   return (
-    <div className="flex flex-col items-center gap-8 h-full  p-2">
-      <LobbyServStatus />
-      <GameServStatus />
-
-      <div className="flex justify-between w-full items-center">
-        <CreateGameButton />
-
-        <h1 className="text-center text-4xl font-bold">Dobble</h1>
-        <h2 className="text-right ">
-          Hi, <span className="font-bold">{nickname ?? "Test object #1"}</span>
-        </h2>
+    <div className="flex flex-col gap-6 h-full p-2">
+      {/* Status Bar */}
+      <div className="flex gap-4 justify-end">
+        <LobbyServStatus />
+        <GameServStatus />
       </div>
 
-      <div className="flex-1 w-full">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <CreateGameButton />
+        <h1 className="page-title text-3xl">Dobble</h1>
+        <div className="text-right">
+          <span className="text-dobble-text-muted">Playing as</span>
+          <h2 className="font-bold text-xl text-dobble-primary">{nickname ?? "Guest"}</h2>
+        </div>
+      </div>
+
+      {/* Games Grid */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
         {games === null ? (
           <LoadingGames />
         ) : games.length === 0 ? (
-          <div className="p-20">No games available</div>
+          <div className="panel text-center py-16">
+            <p className="text-dobble-text-muted">No games available</p>
+            <p className="text-sm text-dobble-text-muted mt-2">Create a new game to get started!</p>
+          </div>
         ) : (
-          <div className="w-full grid grid-cols-4 grid-rows-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {games.map((game) => (
               <LobbyCard key={game.gameId} game={game} />
             ))}
@@ -54,24 +62,29 @@ export default function BrowserPage() {
         )}
       </div>
 
-      <div className="flex gap-4 w-full justify-center items-center relative">
+      {/* Pagination */}
+      <div className="flex gap-4 justify-center items-center">
         <button
           onClick={() => window.bridges?.browser.callNavigateToPage(prevPage ?? 1)}
           disabled={prevPage === null}
-          className="p-2 border-2 disabled:opacity-50 disabled:cursor-not-allowed w-36"
+          className="btn-secondary"
         >
-          Prev
+          ← Previous
         </button>
+
+        {pageNumber && (
+          <span className="px-4 py-2 text-dobble-text-muted">
+            Page <span className="font-bold text-dobble-text">{pageNumber}</span>
+          </span>
+        )}
 
         <button
           onClick={() => window.bridges?.browser.callNavigateToPage(nextPage ?? 1)}
           disabled={nextPage === null}
-          className="p-2 border-2 disabled:opacity-50 disabled:cursor-not-allowed w-36"
+          className="btn-secondary"
         >
-          Next
+          Next →
         </button>
-
-        {pageNumber && <span className="absolute right-0 p-2 px-4">Page {pageNumber}</span>}
       </div>
     </div>
   );
@@ -88,5 +101,11 @@ function LoadingGames() {
     return () => clearInterval(interval);
   }, []);
 
-  return <div className="p-20">Loading games{dots}</div>;
+  return (
+    <div className="panel text-center py-16">
+      <div className="animate-pulse">
+        <p className="text-xl text-dobble-text-muted">Loading games{dots}</p>
+      </div>
+    </div>
+  );
 }

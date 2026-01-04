@@ -33,15 +33,15 @@ export default function ServerStatus({
 
   if (connectionErrorElement)
     return (
-      <div className="text-red-500 flex gap-4 items-baseline w-full justify-center">
+      <div className="flex gap-4 items-center justify-center w-full p-3 rounded-xl bg-dobble-danger/10">
         <span>{connectionErrorElement}</span>
         {retryCallback && (
-          <button className="p-2 border-2 border-red-500 px-4" onClick={retryCallback}>
+          <button className="btn-primary py-2 px-4 text-sm" onClick={retryCallback}>
             Retry
           </button>
-      )}
+        )}
         {editCallback && (
-          <button className="p-2 border-2 border-blue-500 px-4" onClick={editCallback}>
+          <button className="btn-secondary py-2 px-4 text-sm" onClick={editCallback}>
             Edit
           </button>
         )}
@@ -50,11 +50,11 @@ export default function ServerStatus({
 
   if (connectionStatusElement)
     return (
-      <div className="text-blue-500 flex justify-center w-full">
+      <div className="flex gap-4 items-center justify-center w-full p-3 rounded-xl bg-dobble-primary/10">
         {connectionStatusElement}
         {connectionStatus === ConnectionStatus.Disconnected && retryCallback && (
-          <button className="p-2 border-blue-500 px-4 ml-4" onClick={retryCallback}>
-            Reconnect
+          <button className="btn-secondary py-2 px-4 text-sm" onClick={retryCallback}>
+            🔄 Reconnect
           </button>
         )}
       </div>

@@ -11,31 +11,58 @@ export default function Scoreboard({ sortedPlayers }: { sortedPlayers: PlayerGam
     [sortedPlayers, nickname]
   );
 
-  return (
-    <div className="flex flex-col flex-1 min-h-0 gap-2">
-      <div className="p-2 text-xl border-b-2">Scoreboard</div>
-      <table className="text-right text-xl max-w-full overflow-y-scroll">
-        <tr>
-          <th>Rank</th>
-          <th>Nickname</th>
-          <th>Points</th>
-          <th>Matches</th>
-          <th>Mistakes</th>
-        </tr>
+  const getRankEmoji = (index: number) => {
+    switch (index) {
+      case 0: return "#1";
+      case 1: return "#2";
+      case 2: return "#3";
+      default: return `#${index + 1}`;
+    }
+  };
 
-        {sortedPlayers.map((player, index) => (
-          <tr key={player.nickname}>
-            <td>{index + 1}</td>
-            <td>
-              {player.nickname}
-              <span className="text-gray-500">{index === playerIndex ? " (You)" : ""}</span>
-            </td>
-            <td>{player.points}</td>
-            <td>{player.matches}</td>
-            <td>{player.mistakes}</td>
-          </tr>
-        ))}
-      </table>
+  return (
+    <div className="panel flex flex-col flex-1 min-h-0 overflow-hidden">
+      <h2 className="text-xl font-bold mb-4 text-dobble-text flex items-center gap-2">
+        Scoreboard
+      </h2>
+      
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <table className="w-full text-left">
+          <thead className="sticky top-0 bg-dobble-card">
+            <tr className="text-dobble-text-muted text-sm border-b border-dobble-card-border">
+              <th className="p-3">Rank</th>
+              <th className="p-3">Player</th>
+              <th className="p-3 text-right">Points</th>
+              <th className="p-3 text-right">Matches</th>
+              <th className="p-3 text-right">Mistakes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedPlayers.map((player, index) => (
+              <tr 
+                key={player.nickname}
+                className={`
+                  border-b border-dobble-card-border/50 transition-colors
+                  ${index === playerIndex ? 'bg-dobble-primary/20' : 'hover:bg-dobble-card-hover'}
+                `}
+              >
+                <td className="p-3 text-xl">{getRankEmoji(index)}</td>
+                <td className="p-3">
+                  <span className={`font-bold ${index === playerIndex ? 'text-dobble-primary' : 'text-dobble-text'}`}>
+                    {player.nickname}
+                  </span>
+                  {index === playerIndex && (
+                    <span className="ml-2 text-xs text-dobble-primary">(You)</span>
+                  )}
+                </td>
+                <td className="p-3 text-right font-bold text-dobble-success">{player.points}</td>
+                <td className="p-3 text-right">{player.matches}</td>
+                <td className="p-3 text-right text-dobble-danger">{player.mistakes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

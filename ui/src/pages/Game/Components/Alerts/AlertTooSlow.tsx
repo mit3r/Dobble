@@ -7,7 +7,7 @@ export default function AlertTooSlow() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ duration: 0.3 }}
-      className="text-yellow-500 font-bold text-2xl"
+      className="text-dobble-accent font-bold text-2xl"
     >
       Too Slow!
     </motion.span>

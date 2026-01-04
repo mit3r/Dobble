@@ -7,7 +7,7 @@ export default function AlertGoodMatch() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ duration: 0.3 }}
-      className="text-green-500 font-bold text-2xl"
+      className="text-dobble-success font-bold text-2xl"
     >
       Good Match!
     </motion.span>

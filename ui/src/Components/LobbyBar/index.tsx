@@ -7,14 +7,22 @@ export default function LobbyBar() {
   const gameInfo = useStore(mainStore, (state) => state.game.gameInfo);
 
   return (
-    <div className="flex items-center justify-center relative h-fit py-4 w-full border-y-2">
-      <h2 className="flex-1 basis-0 text-xl text-left ">
-        Room {!gameInfo ? <Loading /> : gameInfo.gameId}
-      </h2>
-      <h1 className="flex-1 basis-0 text-4xl font-bold text-center">Dobble</h1>
-      <h2 className="flex-1 basis-0 text-xl text-right">
-        {!gameInfo ? <Loading /> : <GameStatusSpan status={gameInfo.status} />}
-      </h2>
+    <div className="flex items-center justify-between p-4 rounded-xl bg-dobble-card/50 backdrop-blur-sm">
+      <div className="flex-1 text-left">
+        <span className="text-sm text-dobble-text-muted">Room</span>
+        <h2 className="text-xl font-bold text-dobble-text">
+          {!gameInfo ? <Loading /> : gameInfo.gameId}
+        </h2>
+      </div>
+      
+      <h1 className="flex-1 page-title text-3xl">Dobble</h1>
+      
+      <div className="flex-1 text-right">
+        <span className="text-sm text-dobble-text-muted">Status</span>
+        <h2 className="text-xl font-bold">
+          {!gameInfo ? <Loading /> : <GameStatusSpan status={gameInfo.status} />}
+        </h2>
+      </div>
     </div>
   );
 }

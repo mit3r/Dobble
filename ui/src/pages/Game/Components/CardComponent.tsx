@@ -18,8 +18,9 @@ export default function CardComponent(props: {
   return (
     <div
       className={clsx(
-        "aspect-square  flex-1 relative rounded-full border-4 overflow-clip bg-white",
-        props.disabled ? "pointer-events-none" : "pointer-events-auto"
+        "game-card aspect-square flex-1 relative overflow-clip",
+        props.disabled ? "pointer-events-none opacity-90" : "pointer-events-auto cursor-pointer",
+        !props.disabled && "hover:shadow-lg hover:shadow-dobble-primary/30 transition-shadow"
       )}
     >
       <IconComponent

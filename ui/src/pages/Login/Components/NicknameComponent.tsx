@@ -17,27 +17,50 @@ export default function NicknameComponent() {
     [setValue]
   );
 
-  return (
-    <div className="p-4 px-8 border-2 rounded-xl flex flex-col gap-4 items-center">
-      <p className="w-fit">Please enter your nickname to start playing.</p>
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && !isBlocked && value.trim()) {
+        handleSubmit();
+      }
+    },
+    [handleSubmit, isBlocked, value]
+  );
 
-      <input
-        className="p-2 border-2 rounded"
-        type="text"
-        placeholder="Enter your nickname"
-        value={value}
-        onChange={handleChange}
-      />
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="text-center text-dobble-text-muted">
+        Please enter your nickname to start playing.
+      </p>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="nickname" className="text-sm font-bold text-dobble-text-muted">
+          Nickname
+        </label>
+        <input
+          id="nickname"
+          className="input-field w-full"
+          type="text"
+          placeholder="Enter your nickname..."
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          autoFocus
+        />
+      </div>
 
       <button
-        className="p-2 px-8 border-2 disabled:opacity-50"
+        className="btn-primary w-full"
         onClick={handleSubmit}
-        disabled={isBlocked}
+        disabled={isBlocked || !value.trim()}
       >
-        Login
+        Start Playing
       </button>
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {error && (
+        <div className="text-center p-3 rounded-xl bg-dobble-danger/20 text-dobble-danger">
+          {error}
+        </div>
+      )}
     </div>
   );
 }

@@ -7,7 +7,7 @@ export default function AlertMistake() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ duration: 0.3 }}
-      className="text-red-500 font-bold text-2xl"
+      className="text-dobble-danger font-bold text-2xl"
     >
       Mistake!
     </motion.span>

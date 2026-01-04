@@ -20,7 +20,7 @@ export default function GamePage() {
   }, [gameInfo, nickname]);
 
   return (
-    <div className="w-full h-full flex  flex-col gap-2 ">
+    <div className="w-full h-full flex flex-col gap-4">
       <LobbyBar />
 
       {!gameInfo || !otherPlayers ? (

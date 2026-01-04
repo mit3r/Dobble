@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget* parent)
   // Initialize window
   ui = new UIWidget(this);
   setCentralWidget(ui);
-  resize(1024, 768);
+  resize(1224, 768);
 
   // Initialize controllers
   lobbyServerController = new LobbyServerController(this);

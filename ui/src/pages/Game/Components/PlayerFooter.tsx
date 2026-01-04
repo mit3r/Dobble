@@ -18,8 +18,8 @@ export default function PlayerFooter() {
   }, [matchResult]);
 
   return (
-    <div className="w-full grid grid-cols-[1fr_auto] gap-4 border-t-2 p-4">
-      <div className="flex justify-center items-center">
+    <div className="w-full flex justify-between items-center gap-4 p-4 rounded-xl bg-dobble-card/50">
+      <div className="flex-1 flex justify-center items-center">
         <AnimatePresence>
           {matchResult === MatchResult.Correct && <AlertGoodMatch />}
           {matchResult === MatchResult.Incorrect && <AlertMistake />}
@@ -27,7 +27,10 @@ export default function PlayerFooter() {
         </AnimatePresence>
       </div>
 
-      <button className="p-2 px-4 border-2" onClick={() => window.bridges?.game.callQuitGame()}>
+      <button 
+        className="btn-danger" 
+        onClick={() => window.bridges?.game.callQuitGame()}
+      >
         Quit Game
       </button>
     </div>
