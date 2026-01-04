@@ -28,7 +28,7 @@ class BaseServer {
 
   void setClientHandler(std::function<void(int)> handler);
   virtual int run() = 0;  // Pure virtual - must be implemented by derived classes
-  virtual void shutdown();
+  void shutdown();
 };
 
 class BsdServer : public BaseServer {

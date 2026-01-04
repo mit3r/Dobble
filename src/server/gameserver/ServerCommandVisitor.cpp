@@ -61,12 +61,20 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         sendErrorResponse("join_game", "400", "Invalid request");
         return;
     }
+    if (g_game_server.isGameOver()) {
+        std::cout << "[ERROR] Game is already over" << std::endl;
+        sendErrorResponse("join_game", "400", "Game is already over");
+        return;
+    }
 
     std::string client_id = cmd.client_id.value();
     std::string nickname = cmd.client_nickname;
     
     std::cout << "[INFO] Client '" << client_id_opt.value() << "' (ID: " << client_id << ") joining with nickname: '" << nickname << "'" << std::endl;
     
+
+
+
     if (g_game_server.hasPlayer(client_id)) {
         std::cout << "[INFO] Player " << client_id << " already joined" << std::endl;
         ResponseJoinGameCommand response;
@@ -190,7 +198,7 @@ void ServerCommandVisitor::operator()(const SenderSendGameInfoCommand &cmd){
     
     response.data_obj->actual_turn.turn_id = std::to_string(turn.turn_id);
     response.data_obj->actual_turn.active = turn.is_active;
-    response.data_obj->actual_turn.winner_id = turn.winner_id;
+    response.data_obj->actual_turn.winner_nickname = turn.winner_nickname;
     response.data_obj->actual_turn.status = g_game_server.getGameStatus();
     
     response.data_obj->actual_turn.images_on_table = turn.images_on_table;
@@ -219,6 +227,12 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
         return;
     }
     
+    if (g_game_server.isGameOver()) {
+        std::cout << "[ERROR] Game is already over, cannot match symbols" << std::endl;
+        sendErrorResponse("match_symbol", "400", "Game is already over");
+        return;
+    }
+    
     std::string client_id = cmd.client_id.value();
     int turn_id = cmd.data_obj->turn_id;
     int symbol_id = cmd.data_obj->symbol_id;
@@ -226,7 +240,8 @@ void ServerCommandVisitor::operator()(const SenderMatchSymbolCommand &cmd) {
     std::cout << "[INFO] Client " << client_id << " claims symbol " << symbol_id 
               << " for turn " << turn_id << std::endl;
 
-    auto result = g_game_logic->ProcessMatch(client_id, turn_id, symbol_id);
+    auto result = g_game_logic->ProcessMatch(client_id, turn_id, symbol_id,
+                                            g_game_server.getPlayer(client_id).nickname);
     
     ResponseMatchSymbolCommand response;
     response.command = "match_symbol";

@@ -39,7 +39,7 @@ void GameServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
   CGameInfo gameInfo;
 
   gameInfo.gameId = QString::fromStdString(game.game_id);
-  gameInfo.winnerNickname = QString::fromStdString(game.actual_turn.winner_id);
+  gameInfo.winnerNickname = QString::fromStdString(game.actual_turn.winner_nickname);
   gameInfo.topCardId = game.actual_turn.topCardId;
   gameInfo.lastsCards = game.actual_turn.cardsLeft;
   gameInfo.turnId = QString::fromStdString(game.actual_turn.turn_id);

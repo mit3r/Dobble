@@ -14,8 +14,6 @@
 #include "protocol/lobby/room/SocketCommands.hpp"
 #include "protocol/utils/SendAndReceiveUtils.hpp"
 
-#pragma once
-
 std::mutex g_cout_mutex;
 bool g_running = true;
 std::string g_client_id = "";

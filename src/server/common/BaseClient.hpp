@@ -32,7 +32,7 @@ private:
     std::string socket_path;
 
 public:
-    UdsClient(const std::string& path);
+    explicit UdsClient(const std::string& path);
     void connect() override;
 };
 
@@ -42,7 +42,7 @@ private:
     int port;
 
 public:
-    TcpClient(const std::string& ip, int p);
+    explicit TcpClient(const std::string& ip, int p);
     void connect() override;
 };
 
