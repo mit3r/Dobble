@@ -30,7 +30,7 @@ export default function BrowserPage() {
       <LobbyServStatus />
       <GameServStatus />
 
-      <div className="grid grid-cols-3 w-full items-center">
+      <div className="flex justify-between w-full items-center">
         <CreateGameButton />
 
         <h1 className="text-center text-4xl font-bold">Dobble</h1>
