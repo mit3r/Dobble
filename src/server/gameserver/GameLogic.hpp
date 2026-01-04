@@ -9,7 +9,7 @@
 #include <string>
 #include <mutex>
 
-constexpr int MAX_ROUNDS = 5; // 56 should be
+constexpr int MAX_ROUNDS = 56; // 56 should be
 
 const int cards[57][8] = {
     {0, 1, 2, 3, 4, 5, 6, 7 }, 
