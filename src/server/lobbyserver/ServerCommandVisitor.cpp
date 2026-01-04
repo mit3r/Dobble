@@ -111,7 +111,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
     std::vector<std::shared_ptr<GameServer>> actual_games = g_uds_server->getAllGameServers();
     
 
-    for (size_t i = static_cast<size_t>((page_num - 1) * 10); i < static_cast<size_t>(page_num * 10) && i < actual_games.size(); ++i)
+    for (size_t i = static_cast<size_t>((page_num - 1) * 12); i < static_cast<size_t>(page_num * 12) && i < actual_games.size(); ++i)
     {
         GameStruct gs;
         gs.game_id = actual_games[i]->server_id;
@@ -131,7 +131,7 @@ void ServerCommandVisitor::operator()(const SenderGetLobbyInfoCommand &cmd)
                   << std::endl;
         d.actual_games.emplace_back(std::move(gs));
     }
-    d.next_page = (actual_games.size() > static_cast<size_t>(page_num * 10)) ? std::optional<std::string>(std::to_string(page_num + 1)) : std::nullopt;
+    d.next_page = (actual_games.size() > static_cast<size_t>(page_num * 12)) ? std::optional<std::string>(std::to_string(page_num + 1)) : std::nullopt;
 
     response.data_obj = d;
 
