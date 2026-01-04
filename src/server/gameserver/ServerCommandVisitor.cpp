@@ -126,7 +126,7 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
 
     response.data_obj = ResponseJoinGameCommand::data{};
     response.data_obj->status = "JOINED";
-    response.data_obj->role = cmd.data_obj->role;
+    response.data_obj->role = "PLAYER";
     
     
     json j = response;

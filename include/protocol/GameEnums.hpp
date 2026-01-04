@@ -21,6 +21,11 @@ enum class MatchResult {
     INVALID_REQUEST
 };
 
+enum class PlayerRole {
+    PLAYER,
+    OBSERVER
+};
+
 inline std::string toString(GameStatus status) {
     switch (status) {
         case GameStatus::INIT: return "INIT";
@@ -43,6 +48,14 @@ inline std::string toString(MatchResult result) {
     }
 }
 
+inline std::string toString(PlayerRole role) {
+    switch (role) {
+        case PlayerRole::PLAYER: return "PLAYER";
+        case PlayerRole::OBSERVER: return "OBSERVER";
+        default: return "UNKNOWN";
+    }
+}
+
 inline GameStatus toGameStatus(const std::string& str) {
     if (str == "init") return GameStatus::INIT;
     if (str == "waiting") return GameStatus::WAITING;
@@ -59,6 +72,12 @@ inline MatchResult toMatchResult(const std::string& str) {
     if (str == "NO_PLAYER_CARD") return MatchResult::NO_PLAYER_CARD;
     if (str == "INVALID_REQUEST") return MatchResult::INVALID_REQUEST;
     return MatchResult::INVALID_REQUEST;
+}
+
+inline PlayerRole toPlayerRole(const std::string& str) {
+    if (str == "PLAYER") return PlayerRole::PLAYER;
+    if (str == "OBSERVER") return PlayerRole::OBSERVER;
+    return PlayerRole::OBSERVER;
 }
 
 } // namespace GameEnums
