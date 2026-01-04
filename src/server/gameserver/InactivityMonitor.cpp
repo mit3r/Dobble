@@ -45,6 +45,13 @@ static void handle_game_over_countdown(bool& game_over_detected,
     return;
   }
   
+  if (!game_over_detected) {
+    game_over_detected = true;
+    game_over_timestamp = std::chrono::steady_clock::now();
+    std::cout << "[MONITOR] Game is GAME_OVER. Server will shut down in 60 seconds..." << std::endl;
+    return;
+  }
+  
   auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
     std::chrono::steady_clock::now() - game_over_timestamp
   );
