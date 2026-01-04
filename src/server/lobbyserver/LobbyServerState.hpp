@@ -13,5 +13,5 @@ class LobbyServerState : public ServerStateManager {
   public:
   LobbyServerState();
   // void setUDSPath(const std::string& path);
-  // std::string getUDSPath() const;
+  std::string getUDSPath() const;
 };
