@@ -335,16 +335,17 @@ void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand& cmd) {
 
   std::string client_id = cmd.client_id.value_or("");
 
-  if (!g_game_server.hasPlayer(client_id)) {
-    sendErrorResponse("leave_room", "400", "Client not in game");
-    return;
-  }
+  
 
   if (g_game_server.hasObserver(client_id)) {
     g_game_server.removeObserver(client_id);
     std::cout << "[INFO] Observer " << client_id
               << " left. Remaining observers: " << g_game_server.getObserverCount() << std::endl;
   } else {
+    if (!g_game_server.hasPlayer(client_id)) {
+    sendErrorResponse("leave_room", "400", "Client not in game");
+    return;
+  }
     std::string leaving_player = cmd.client_id.value();
 
     g_game_server.removePlayer(leaving_player);
