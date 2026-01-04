@@ -69,14 +69,11 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
 
     std::string client_id = cmd.client_id.value();
     std::string nickname = cmd.client_nickname;
+    bool is_observer = (cmd.data_obj->role == GameEnums::toString(GameEnums::PlayerRole::OBSERVER));
     
-    std::cout << "[INFO] Client '" << client_id_opt.value() << "' (ID: " << client_id << ") joining with nickname: '" << nickname << "'" << std::endl;
-    
-
-
-
-    if (g_game_server.hasPlayer(client_id)) {
-        std::cout << "[INFO] Player " << client_id << " already joined" << std::endl;
+    std::cout << "[INFO] Client '" << client_id_opt.value() << "' (ID: " << client_id << ") joining with nickname: '" << nickname << "' as " << (is_observer ? "OBSERVER" : "PLAYER") << std::endl;
+    if (g_game_server.hasPlayer(client_id) || g_game_server.hasObserver(client_id)) {
+        std::cout << "[INFO] Client " << client_id << " already joined" << std::endl;
         ResponseJoinGameCommand response;
         response.command = "join_game";
         response.game_id = g_game_server.getGameId();
@@ -89,7 +86,26 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         send_json_packet(client_sock, j);
         return;
     }
-    
+
+    // Handle observer joining
+    if (is_observer) {
+        g_game_server.addObserver(client_id, nickname, client_sock);
+        std::cout << "[INFO] Observer " << client_id << " (" << nickname << ") joined. "
+                  << "Observers: " << g_game_server.getObserverCount() << std::endl;
+        
+        ResponseJoinGameCommand response;
+        response.command = "join_game";
+        response.game_id = g_game_server.getGameId();
+        response.data_obj = ResponseJoinGameCommand::data{};
+        response.data_obj->status = "JOINED";
+        response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::OBSERVER);
+        
+        json j = response;
+        send_json_packet(client_sock, j);
+        return;
+    }
+
+    // Handle player joining - check if game is full
     if (g_game_server.isGameFull()) {
         std::cout << "[INFO] Game is full" << std::endl;
         ResponseJoinGameCommand response;
@@ -104,38 +120,31 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         return;
     }
 
+    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE)) {
+        std::cout << "[ERROR] Game is already playing, cannot join as player" << std::endl;
+        sendErrorResponse("join_game", "400", "Game is already playing");
+        return;
+    }
 
-    
     g_game_server.addPlayer(client_id, nickname, client_sock);
     std::cout << "[INFO] Player " << client_id << " (" << nickname << ") joined. "
               << "Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
     
-    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE)) {
-        std::cout << "[ERROR] Game is already playing, cannot join" << std::endl;
-        sendErrorResponse("join_game", "400", "Game is already playing");
-        return;
-    }
     g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
 
-    
     ResponseJoinGameCommand response;
     response.command = "join_game";
     response.game_id = g_game_server.getGameId();
-
     response.data_obj = ResponseJoinGameCommand::data{};
     response.data_obj->status = "JOINED";
-    if (cmd.data_obj->role == GameEnums::toString(GameEnums::PlayerRole::OBSERVER) ) {
-        response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::OBSERVER);
-    } else {
-        response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::PLAYER);
-    }
-    
+    response.data_obj->role = GameEnums::toString(GameEnums::PlayerRole::PLAYER);
     
     json j = response;
     send_json_packet(client_sock, j);
+
     if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::INIT)) {
         g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
-         }
+    }
     std::cout << "[INFO] Player joined. Status: " << g_game_server.getGameStatus() 
                     << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
 
@@ -301,7 +310,10 @@ void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){
     if (g_game_server.hasPlayer(client_id)) {
         g_game_server.updatePlayerPing(client_id);
         std::cout << "[PING] Updated ping timestamp for player: " << client_id << std::endl;
-    } else { //xdxd
+    } else if (g_game_server.hasObserver(client_id)) {
+        g_game_server.updateObserverPing(client_id);
+        std::cout << "[PING] Updated ping timestamp for observer: " << client_id << std::endl;
+    } else {
         auto client = g_game_server.findClientBySocket(client_sock);
         if (client) {
             g_game_server.updatePlayerPing(client->client_id);
@@ -322,7 +334,18 @@ void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){
 void ServerCommandVisitor::operator()(const ResponseJoinGameCommand &){};
 void ServerCommandVisitor::operator()(const SenderLeaveRoomCommand &cmd){
     std::cout << "[CMD] Client requests to leave room" << std::endl;
-    if (!g_game_server.hasPlayer(cmd.client_id.value_or(""))) {
+    
+    std::string client_id = cmd.client_id.value_or("");
+    
+    // Check if leaving as observer
+    if (g_game_server.hasObserver(client_id)) {
+        g_game_server.removeObserver(client_id);
+        std::cout << "[INFO] Observer " << client_id << " left. Remaining observers: " 
+                  << g_game_server.getObserverCount() << std::endl;
+        return;
+    }
+    
+    if (!g_game_server.hasPlayer(client_id)) {
         sendErrorResponse("leave_room", "400", "Client not in game");
         return;
     }

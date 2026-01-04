@@ -107,6 +107,37 @@ bool GameStateManager::hasPlayer(const std::string& client_id) const {
     return players_.find(client_id) != players_.end();
 }
 
+void GameStateManager::addObserver(const std::string& client_id, const std::string& nickname, int socket_fd) {
+    observers_[client_id] = ObserverInfo(client_id, nickname, socket_fd);
+}
+
+void GameStateManager::removeObserver(const std::string& client_id) {
+    observers_.erase(client_id);
+}
+
+bool GameStateManager::hasObserver(const std::string& client_id) const {
+    return observers_.find(client_id) != observers_.end();
+}
+
+void GameStateManager::updateObserverPing(const std::string& client_id) {
+    if (observers_.find(client_id) != observers_.end()) {
+        observers_[client_id].last_ping_timestamp = std::chrono::steady_clock::now();
+    }
+}
+
+std::vector<std::string> GameStateManager::getAllObserverIds() const {
+    std::vector<std::string> ids;
+    ids.reserve(observers_.size());
+    for (const auto& [client_id, _] : observers_) {
+        ids.push_back(client_id);
+    }
+    return ids;
+}
+
+int GameStateManager::getObserverCount() const {
+    return static_cast<int>(observers_.size());
+}
+
 void GameStateManager::setPlayerImages(const std::string& client_id, const std::vector<int>& images) {
     if (players_.find(client_id) != players_.end()) {
         players_[client_id].images = images;

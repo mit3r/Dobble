@@ -52,13 +52,27 @@ struct TurnInfo {
     TurnInfo() : turn_id(0), is_active(false), winner_nickname("") {}
 };
 
+struct ObserverInfo {
+    std::string client_id;
+    std::string nickname;
+    int socket_fd;
+    std::chrono::steady_clock::time_point last_ping_timestamp;
+
+    ObserverInfo() : client_id("-1"), nickname(""), socket_fd(-1), 
+                     last_ping_timestamp(std::chrono::steady_clock::now()) {}
+    explicit ObserverInfo(std::string id, std::string nick = "", int sock = -1) 
+        : client_id(id), nickname(nick), socket_fd(sock), 
+          last_ping_timestamp(std::chrono::steady_clock::now()) {}
+};
+
 } // namespace GameServerState
 
 class GameStateManager : public ServerStateManager {
 private:
     GameServerState::GameInfo game_info_;
     GameServerState::TurnInfo current_turn_;
-    std::map<std::string, GameServerState::PlayerInfo> players_;  
+    std::map<std::string, GameServerState::PlayerInfo> players_;
+    std::map<std::string, GameServerState::ObserverInfo> observers_;
     
 public:
     GameStateManager() = default;
@@ -91,6 +105,13 @@ public:
     void addPlayer(const std::string& client_id, const std::string& nickname, int socket_fd);
     void removePlayer(const std::string& client_id);
     bool hasPlayer(const std::string& client_id) const;
+
+    void addObserver(const std::string& client_id, const std::string& nickname, int socket_fd);
+    void removeObserver(const std::string& client_id);
+    bool hasObserver(const std::string& client_id) const;
+    void updateObserverPing(const std::string& client_id);
+    std::vector<std::string> getAllObserverIds() const;
+    int getObserverCount() const;
 
     void setPlayerImages(const std::string& client_id, const std::vector<int>& images);
     void updatePlayerScore(const std::string& client_id, int points, int mistakes);
