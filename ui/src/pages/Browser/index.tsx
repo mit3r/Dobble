@@ -17,13 +17,14 @@ export default function BrowserPage() {
     return pageNumber > 1 ? pageNumber - 1 : null;
   }, [pageNumber]);
 
+
   useEffect(() => {
     const it = setInterval(() => {
       window.bridges?.browser.callNavigateToPage(pageNumber ?? 1);
     }, 1_000);
 
     return () => clearInterval(it);
-  }, []);
+  }, [pageNumber]);
 
   return (
     <div className="flex flex-col items-center gap-8 h-full  p-2">

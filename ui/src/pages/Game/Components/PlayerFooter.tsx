@@ -7,7 +7,7 @@ import { useStore } from "zustand";
 import { mainStore } from "@/store";
 import { MatchResult } from "@/types/dobble";
 
-export default function GamePlayFooter() {
+export default function PlayerFooter() {
   const matchResult = useStore(mainStore, (s) => s.game.matchResult);
 
   const clearMatchResult = useStore(mainStore, (s) => s.game.clearMatchResult);

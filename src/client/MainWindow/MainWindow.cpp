@@ -99,10 +99,8 @@ void MainWindow::connectBrowserPageFlow() {
   });
 
   //  Page data received handling
-  connect(lobbyServerController, &LobbyServerController::hasReceivedPage,
-          [this](const QVariantList& games, const int& nextPage) {
-            emit ui->browserBridge->onPageChanged(games, this->page.value_or(1), nextPage);
-          });
+  connect(lobbyServerController, &LobbyServerController::hasReceivedPage, ui->browserBridge,
+          &BrowserBridge::onPageChanged);
 }
 
 void MainWindow::connectGameServerFlow() {

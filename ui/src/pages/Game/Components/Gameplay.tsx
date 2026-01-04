@@ -5,7 +5,8 @@ import YourCardComponent from "./YourCardComponent";
 import { mainStore } from "@/store";
 import { useEffect } from "react";
 import YourStats from "./YourStats";
-import GamePlayFooter from "./GamePlayFooter";
+import PlayerFooter from "./PlayerFooter";
+import ObserverFooter from "./ObserverFooter";
 
 export default function Gameplay({
   gameInfo,
@@ -34,7 +35,7 @@ export default function Gameplay({
         </div>
       </div>
 
-      <GamePlayFooter />
+      {you !== null ? <PlayerFooter /> : <ObserverFooter />}
     </div>
   );
 }

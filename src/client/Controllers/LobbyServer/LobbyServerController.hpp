@@ -52,7 +52,7 @@ signals: // Signals: controller -> ui
 
   // Browser signals
   void hasCreatedGame(const std::string& playerName);
-  void hasReceivedPage(const QVariantList& games, const int& nextPage);
+  void hasReceivedPage(const QVariantList& games, const int& currPage, const int& nextPage);
 
 public slots: // Slots: ui -> controller
 

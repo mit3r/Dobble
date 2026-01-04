@@ -18,7 +18,7 @@ void GameServerController::joinGame() {
 
   cmd.data_obj = SenderJoinGameCommand::data{};
   cmd.data_obj->game_id = this->gameId.value();
-  cmd.data_obj->role = (this->role.value() == Role::Player) ? "player" : "observer";
+  cmd.data_obj->role = (this->role.value() == Role::Player) ? "PLAYER" : "OBSERVER";
 
   send_json_packet(socket_->socketDescriptor(), json(cmd));
   connectRequestTimer([=]() { send_json_packet(socket_->socketDescriptor(), json(cmd)); });
