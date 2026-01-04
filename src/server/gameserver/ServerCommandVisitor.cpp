@@ -115,10 +115,8 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
         sendErrorResponse("join_game", "400", "Game is already playing");
         return;
     }
-
-    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::INIT)) {
         g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
-    }
+
     
     ResponseJoinGameCommand response;
     response.command = "join_game";
