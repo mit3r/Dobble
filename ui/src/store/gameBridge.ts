@@ -32,8 +32,7 @@ qwebchannelInitializer.onReady("game", (bridge) => {
   });
 
   bridge.onMatchResult.connect((result: MatchResult) => {
-    mainStore.setState((s) => ({ game: { ...s.game, matchResult: result } }));
-    mainStore.getState().game.clearPicks();
+    mainStore.getState().game.setMatchResult(result);
   });
 
   bridge.onGameQuit.connect(() => {

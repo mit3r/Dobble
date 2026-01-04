@@ -20,6 +20,7 @@ export type GameSlice = GameSliceState & {
   pickHandCard: (cardId: number) => void;
   clearPicks: () => void;
   matchCards: () => void;
+  setMatchResult: (result: MatchResult) => void;
   clearMatchResult: () => void;
 };
 
@@ -84,7 +85,13 @@ export const createGameSlice: StateCreator<MainStore, [], [], GameSlice> = (set,
     //   `Matching cards: topCard=${get().game.gameInfo?.topCardId}, handCard=${player?.cardId}`
     // );
     // window.bridges?.main.callMsg(`Picks: topPick=${topPick}, handPick=${handPick}`);
+
+    if (handPick !== topPick) return window.bridges?.game.callMatch(turnId, -1); // to powinienn robić server, ale czas nagli!
     window.bridges?.game.callMatch(turnId, handPick);
+  },
+  setMatchResult: (result: MatchResult) => {
+    set((state) => ({ ...state, game: { ...state.game, matchResult: result } }));
+    get().game.clearPicks();
   },
   clearMatchResult: () => {
     set((state) => ({ ...state, game: { ...state.game, matchResult: null } }));
