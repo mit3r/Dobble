@@ -70,6 +70,7 @@ void GameLogic::InitializeGame() {
     
     current_deck_index_ = next_card_index - 1;
     
+     
     state_manager_.setGameStatus(GameEnums::toString(GameEnums::GameStatus::GAME_ACTIVE));
     
     std::cout << "[GameLogic] Game initialized. Top card: " << deck_indices_[0] 

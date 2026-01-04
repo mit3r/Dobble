@@ -111,10 +111,8 @@ void ServerCommandVisitor::operator()(const SenderJoinGameCommand &cmd){
     
     json j = response;
     send_json_packet(client_sock, j);
-    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::INIT) 
-       && g_game_server.getPlayerCount() >= 2) {
+    if (g_game_server.getGameStatus() == GameEnums::toString(GameEnums::GameStatus::INIT)) {
         g_game_server.setGameStatus(GameEnums::toString(GameEnums::GameStatus::WAITING));
-
          }
     std::cout << "[INFO] Player joined. Status: " << g_game_server.getGameStatus() 
                     << ", Players: " << g_game_server.getPlayerCount() << "/" << g_game_server.getMaxPlayers() << std::endl;
@@ -132,7 +130,7 @@ void ServerCommandVisitor::operator()(const SenderStartGameCommand&){
     response.data_obj = ResponseStartGameCommand::data{};
     
     std::string current_status = g_game_server.getGameStatus();
-    if (current_status != GameEnums::toString(GameEnums::GameStatus::WAITING)) {
+    if (current_status != GameEnums::toString(GameEnums::GameStatus::WAITING) ) {
         response.data_obj->success = false;
         response.data_obj->message = "Game already started or finished";
         response.data_obj->status = current_status;
@@ -274,6 +272,12 @@ void ServerCommandVisitor::operator()(const SenderGameClientPingCommand &cmd){
     if (g_game_server.hasPlayer(client_id)) {
         g_game_server.updatePlayerPing(client_id);
         std::cout << "[PING] Updated ping timestamp for player: " << client_id << std::endl;
+    } else { //xdxd
+        auto client = g_game_server.findClientBySocket(client_sock);
+        if (client) {
+            g_game_server.updatePlayerPing(client->client_id);
+            std::cout << "[PING] Updated ping timestamp for player: " << client->client_id << std::endl;
+        }
     }
     
     ResponseGameClientPingCommand response;
