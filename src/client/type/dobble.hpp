@@ -80,6 +80,12 @@ enum class Role {
   Observer,
 };
 
+enum class MatchResult {
+  Correct,
+  Incorrect,
+  TooLate,
+};
+
 struct CPlayerGameInfo {
 
   QString nickname;

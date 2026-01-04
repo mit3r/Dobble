@@ -17,9 +17,9 @@ int main(int argc, char* argv[]) {
   QWebEngineUrlScheme::registerScheme(scheme);
 
   // Disable GPU acceleration to avoid WSL/Linux rendering issues
-  // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --disable-software-rasterizer --no-sandbox
-  // --disable-dev-shm-usage");
-  qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-dev-shm-usage");
+  qputenv("QTWEBENGINE_CHROMIUM_FLAGS",
+          "--disable-gpu --disable-software-rasterizer --no-sandbox --disable-dev-shm-usage");
+  // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-dev-shm-usage");
   // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox");
 
   // Enable debug logging for QWebEngine

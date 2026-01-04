@@ -24,14 +24,15 @@ export default function GamePage() {
       <LobbyBar />
 
       {!gameInfo || !otherPlayers ? (
-        <div className="flex-1 flex items-center justify-center">
-          <Loading />
-        </div>
+        <>
+          <div className="flex-1 flex items-center justify-center">
+            <Loading />
+          </div>
+          <QuitFooter onQuit={() => window.bridges?.game.callQuitGame()} />
+        </>
       ) : (
         <Gameplay gameInfo={gameInfo} you={you} otherPlayers={otherPlayers} />
       )}
-
-      <QuitFooter onQuit={() => window.bridges?.game.callQuitGame()} />
     </div>
   );
 }

@@ -35,7 +35,7 @@ signals:
   void onServerCommunicationStateChanged(const CommunicationStatus& status);
 
   void onGameInfoChanged(const QVariantMap& gameInfo);
-  void onMatchResult(const bool& isMatch);
+  void onMatchResult(const MatchResult& result);
   void onGameQuit();
 
   // Bridge <- UI (js methods), "call"

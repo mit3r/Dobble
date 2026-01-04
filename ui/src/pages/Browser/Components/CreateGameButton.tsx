@@ -3,23 +3,23 @@ import { useState } from "react";
 
 export default function CreateGameButton() {
   const [roomName, setInput] = useState("");
-  const [maxPlayers, setMaxPlayers] = useState(2);
+  // const [maxPlayers, setMaxPlayers] = useState(2);
   const [active, setActive] = useState(false);
 
   const handleClick = () => {
     if (!active) return setActive(true);
     if (roomName.trim().length === 0) return;
-    if (maxPlayers < 2) return;
+    // if (maxPlayers < 2) return;
 
-    window.bridges?.browser.callCreateGame(roomName, maxPlayers);
+    window.bridges?.browser.callCreateGame(roomName, 4);
     setActive(false);
     setInput("");
-    setMaxPlayers(2);
+    // setMaxPlayers(2);
   };
 
   const handleRoomName = (e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value);
-  const handleMaxPlayers = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setMaxPlayers(Number(e.target.value));
+  // const handleMaxPlayers = (e: React.ChangeEvent<HTMLInputElement>) =>
+  //   setMaxPlayers(Number(e.target.value));
 
   return (
     <div className="flex items-center gap-2">
@@ -33,13 +33,13 @@ export default function CreateGameButton() {
             onChange={handleRoomName}
           />
 
-          <input
+          {/* <input
             className="p-2 border-2 w-14 text-right"
             type="number"
             value={maxPlayers}
             onChange={handleMaxPlayers}
             min={2}
-          />
+          /> */}
         </>
       )}
 

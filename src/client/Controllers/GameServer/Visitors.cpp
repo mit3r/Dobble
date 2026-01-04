@@ -77,14 +77,13 @@ void GameServerController::operator()(const ResponseMatchSymbolCommand& cmd) {
     return;
   }
 
-  auto& data = cmd.data_obj.value();
-  if (data.success) {
-    qDebug() << "Match correct! Points awarded:" << data.points_awarded
-             << "New score:" << data.new_score;
-    emit hasMatchResult(true);
-  } else {
-    qDebug() << "Match incorrect.";
-    emit hasMatchResult(false);
+  auto& status = cmd.data_obj->message;
+  if (status == "CORRECT") {
+    emit hasMatchResult(MatchResult::Correct);
+  } else if (status == "INCORRECT") {
+    emit hasMatchResult(MatchResult::Incorrect);
+  } else if (status == "TOO_LATE") {
+    emit hasMatchResult(MatchResult::TooLate);
   }
 }
 void GameServerController::operator()(const ResponseStartGameCommand& cmd) {

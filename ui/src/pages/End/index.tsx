@@ -10,7 +10,7 @@ import SplashScreen from "./Components/SplashScreen";
 export default function EndPage() {
   const players = useStore(mainStore, (state) => state.game.gameInfo?.players);
   const sortedPlayers = useMemo(
-    () => players?.sort((a, b) => a.points - b.points) || null,
+    () => (players ? [...players].sort((a, b) => b.points - a.points) : null),
     [players]
   );
 

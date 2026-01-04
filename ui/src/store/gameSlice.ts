@@ -1,4 +1,4 @@
-import { ConnectionError, ConnectionStatus, GameStatus, type GameInfo } from "@/types/dobble";
+import { ConnectionError, ConnectionStatus, MatchResult, type GameInfo } from "@/types/dobble";
 import type { StateCreator } from "zustand";
 import { type MainStore } from ".";
 
@@ -11,6 +11,8 @@ export type GameSliceState = {
 
   topPick: number | undefined;
   handPick: number | undefined;
+
+  matchResult: MatchResult | null;
 };
 
 export type GameSlice = GameSliceState & {
@@ -18,6 +20,7 @@ export type GameSlice = GameSliceState & {
   pickHandCard: (cardId: number) => void;
   clearPicks: () => void;
   matchCards: () => void;
+  clearMatchResult: () => void;
 };
 
 export const initialGameState: GameSliceState = {
@@ -25,27 +28,29 @@ export const initialGameState: GameSliceState = {
   gameServerConnectionError: null,
   gameServerCommunicationStatus: ConnectionStatus.Disconnected,
 
-  // gameInfo: null,
-  gameInfo: {
-    gameId: "cos",
-    lastsCards: 20,
-    topCardId: 1,
-    turnId: "123",
-    players: [
-      {
-        nickname: "Player1",
-        cardId: 2,
-        matches: 0,
-        mistakes: 0,
-        points: 0,
-      },
-    ],
-    status: GameStatus.Finished,
-    winnerNickname: "Play123",
-  },
+  gameInfo: null,
+  // gameInfo: {
+  //   gameId: "cos",
+  //   lastsCards: 20,
+  //   topCardId: 1,
+  //   turnId: "123",
+  //   players: [
+  //     {
+  //       nickname: "Player1",
+  //       cardId: 2,
+  //       matches: 0,
+  //       mistakes: 0,
+  //       points: 0,
+  //     },
+  //   ],
+  //   status: GameStatus.Finished,
+  //   winnerNickname: "Play123",
+  // },
 
   topPick: undefined,
   handPick: undefined,
+
+  matchResult: null,
 };
 
 export const createGameSlice: StateCreator<MainStore, [], [], GameSlice> = (set, get) => ({
@@ -80,5 +85,8 @@ export const createGameSlice: StateCreator<MainStore, [], [], GameSlice> = (set,
     // );
     // window.bridges?.main.callMsg(`Picks: topPick=${topPick}, handPick=${handPick}`);
     window.bridges?.game.callMatch(turnId, handPick);
+  },
+  clearMatchResult: () => {
+    set((state) => ({ ...state, game: { ...state.game, matchResult: null } }));
   },
 });

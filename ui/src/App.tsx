@@ -7,13 +7,10 @@ import LobbyPage from "./pages/Lobby";
 import LoginPage from "./pages/Login";
 import { mainStore } from "./store";
 import { View } from "./types/dobble";
+// import DevTools from "./Components/DevTools";
 
 function App() {
   const view = useStore(mainStore, (state) => state.main.view);
-  const setView = useStore(mainStore, (state) => state.main.setView);
-
-  const alertMessage = useStore(mainStore, (state) => state.main.alert);
-  const clearAlert = useStore(mainStore, (state) => state.main.clearAlert);
 
   const Page = useMemo(() => {
     switch (view) {
@@ -35,35 +32,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen select-none min-w-lg">
-      <div className="h-14 flex p-1 gap-2 border-2 min-h-14 ">
-        <h2>DevTools</h2>
-
-        <button className="p-1 border-2" onClick={() => setView(View.Login)}>
-          Go to Start
-        </button>
-        <button className="p-1 border-2" onClick={() => setView(View.Browser)}>
-          Go to Browser
-        </button>
-        <button className="p-1 border-2" onClick={() => setView(View.Room)}>
-          Go to Lobby
-        </button>
-        <button className="p-1 border-2" onClick={() => setView(View.Game)}>
-          Go to Game
-        </button>
-        <button className="p-1 border-2" onClick={() => setView(View.End)}>
-          Go to End
-        </button>
-      </div>
-
-      {alertMessage && (
-        <div className="bg-yellow-300 text-black p-2 flex justify-between items-center gap-2">
-          <span>{alertMessage}</span>
-          <button className=" text-black underline px-2 py-1 rounded ml-4" onClick={clearAlert}>
-            Close
-          </button>
-        </div>
-      )}
-
+      {/* <DevTools /> */}
       <div className="flex-1 overflow-hidden p-4">{Page}</div>
     </div>
   );

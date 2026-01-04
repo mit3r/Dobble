@@ -36,6 +36,12 @@ export enum Role {
   Observer,
 }
 
+export enum MatchResult {
+  Correct,
+  Incorrect,
+  TooLate,
+}
+
 export enum GameStatus {
   Waiting,
   InGame,

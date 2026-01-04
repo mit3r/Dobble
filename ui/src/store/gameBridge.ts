@@ -5,6 +5,7 @@ import type {
   ConnectionError,
   ConnectionStatus,
   GameInfo,
+  MatchResult,
   Role,
 } from "@/types/dobble";
 import { mainStore } from ".";
@@ -15,7 +16,7 @@ export interface GameBridge {
   onServerCommunicationStateChanged: QtSignal<(status: CommunicationStatus) => void>;
 
   onGameInfoChanged: QtSignal<(gameInfo: GameInfo) => void>;
-  onMatchResult: QtSignal<(isMatch: boolean) => void>;
+  onMatchResult: QtSignal<(result: MatchResult) => void>;
   onGameQuit: QtSignal<() => void>;
 
   // slots
@@ -30,7 +31,8 @@ qwebchannelInitializer.onReady("game", (bridge) => {
     mainStore.setState((state) => ({ game: { ...state.game, gameInfo } }));
   });
 
-  bridge.onMatchResult.connect((_isMatch: boolean) => {
+  bridge.onMatchResult.connect((result: MatchResult) => {
+    mainStore.setState((s) => ({ game: { ...s.game, matchResult: result } }));
     mainStore.getState().game.clearPicks();
   });
 

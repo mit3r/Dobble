@@ -57,7 +57,7 @@ signals: // Signals: controller -> ui
 
   void hasGameEnded();
 
-  void hasMatchResult(const bool& correct);
+  void hasMatchResult(const MatchResult& result);
 
   void hasGameInfoUpdated(const QVariantMap& gameInfo);
 
