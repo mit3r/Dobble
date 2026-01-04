@@ -18,7 +18,7 @@ export interface MainSlice {
 }
 
 export const createMainSlice: StateCreator<MainStore, [], [], MainSlice> = (set) => ({
-  nickname: null,
+  nickname: "Player1",
   nicknameError: null,
   globalErrorMessage: null,
 

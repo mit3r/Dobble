@@ -124,7 +124,7 @@ void MainWindow::connectGameServerFlow() {
       });
 
   // Handle connection result
-  connect(gameServerController, &GameServerController::hasConnectGameSucceed,
+  connect(gameServerController, &GameServerController::hasConnectGame,
           [this]() { emit ui->mainBridge->onNavigated(View::Room); });
 
   connect(gameServerController, &GameServerController::hasConnectGameFailed,
@@ -158,7 +158,7 @@ void MainWindow::connectGameServerFlow() {
 
 void MainWindow::connectGameFlow() {
   // Joining game flow
-  connect(gameServerController, &GameServerController::hasConnectGameSucceed,
+  connect(gameServerController, &GameServerController::hasConnectGame,
           [this]() { emit ui->mainBridge->onNavigated(View::Room); });
 
   connect(gameServerController, &GameServerController::hasConnectGameFailed,
@@ -171,12 +171,12 @@ void MainWindow::connectGameFlow() {
   connect(ui->gameBridge, &GameBridge::requestStartGame, gameServerController,
           &GameServerController::wantStartGame);
 
-  connect(gameServerController, &GameServerController::hasGameStartedSucceed,
+  connect(gameServerController, &GameServerController::hasGameStarted,
           [this]() { emit ui->mainBridge->onNavigated(View::Game); });
 
   connect(gameServerController, &GameServerController::hasGameStartedFailed,
           [this](const QString& error) {
-            emit ui->mainBridge->onNavigated(View::End);
+            emit ui->mainBridge->onNavigated(View::Browser);
             emit ui->mainBridge->onGlobalErrorOccured(error);
           });
 
@@ -190,6 +190,10 @@ void MainWindow::connectGameFlow() {
   // Game info updates
   connect(gameServerController, &GameServerController::hasGameInfoUpdated, ui->gameBridge,
           &GameBridge::onGameInfoChanged);
+
+  // Game end flow
+  connect(gameServerController, &GameServerController::hasGameEnded,
+          [this]() { emit ui->mainBridge->onNavigated(View::End); });
 
   // Quit game flow
   connect(ui->gameBridge, &GameBridge::requestQuitGame, gameServerController,

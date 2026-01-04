@@ -42,7 +42,7 @@ export default function IconComponent(props: {
         className={twMerge(
           clsx(
             " w-full h-full object-contain hover:scale-110 active:scale-95 transition-all",
-            props.picked && "drop-shadow-[0_0_10px_red]"
+            props.picked && "opacity-50"
           )
         )}
         src={src}

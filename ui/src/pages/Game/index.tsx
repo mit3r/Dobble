@@ -31,7 +31,7 @@ export default function GamePage() {
         <Gameplay gameInfo={gameInfo} you={you} otherPlayers={otherPlayers} />
       )}
 
-      <QuitFooter onQuit={() => {}} />
+      <QuitFooter onQuit={() => window.bridges?.game.callQuitGame()} />
     </div>
   );
 }

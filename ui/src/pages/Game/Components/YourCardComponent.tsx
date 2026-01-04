@@ -12,7 +12,7 @@ export default function YourCardComponent(props: { yourInfo: PlayerGameInfo }) {
     <div className="flex-1 flex flex-col  items-center gap-2 justify-center ">
       <CardComponent
         cardId={props.yourInfo.cardId}
-        pickedIconPosition={handPick}
+        pickedIconId={handPick}
         onIconClick={pickHandCard}
       />
 

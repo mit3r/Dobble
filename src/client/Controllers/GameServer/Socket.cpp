@@ -45,7 +45,7 @@ void GameServerController::whenReadReady() {
     return;
   }
 
-  qDebug() << "GameServerController: Received packet: " << QString::fromStdString(packet.dump());
+  // qDebug() << "GameServerController: Received packet: " << QString::fromStdString(packet.dump());
 
   disconnectRequestTimer(false); // Successfully received a packet
   std::visit(*this, this->commandFactory.get(packet["command"], packet));

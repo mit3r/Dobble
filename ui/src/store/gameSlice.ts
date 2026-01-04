@@ -36,9 +36,11 @@ export const createGameSlice: StateCreator<MainStore, [], [], GameSlice> = (set,
 
   pickTopCard: (cardId: number) => {
     set((state) => ({ ...state, game: { ...state.game, topPick: cardId } }));
+    get().game.matchCards();
   },
   pickHandCard: (cardId: number) => {
     set((state) => ({ ...state, game: { ...state.game, handPick: cardId } }));
+    get().game.matchCards();
   },
   clearPicks: () => {
     set((state) => ({
@@ -47,14 +49,19 @@ export const createGameSlice: StateCreator<MainStore, [], [], GameSlice> = (set,
     }));
   },
   matchCards: () => {
-    const handPick = get().game.handPick;
-    const topPick = get().game.topPick;
     const turnId = get().game.gameInfo?.turnId;
-
-    if (handPick === undefined || topPick === undefined) return;
-    if (handPick !== topPick) return;
     if (turnId === undefined) return;
 
-    window.bridges?.game.callMatchCards(turnId, handPick);
+    const handPick = get().game.handPick;
+    const topPick = get().game.topPick;
+    if (handPick === undefined || topPick === undefined) return;
+
+    // const player = get().game.gameInfo?.players.find((p) => p.nickname === get().main.nickname);
+
+    // window.bridges?.main.callMsg(
+    //   `Matching cards: topCard=${get().game.gameInfo?.topCardId}, handCard=${player?.cardId}`
+    // );
+    // window.bridges?.main.callMsg(`Picks: topPick=${topPick}, handPick=${handPick}`);
+    window.bridges?.game.callMatch(turnId, handPick);
   },
 });

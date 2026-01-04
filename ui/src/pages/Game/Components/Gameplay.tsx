@@ -1,9 +1,9 @@
-import { mainStore } from "@/store";
 import type { GameInfo, PlayerGameInfo } from "@/types/dobble";
-import { useEffect } from "react";
 import OtherPlayers from "./OtherPlayers";
 import TopCardComponent from "./TopCardComponent";
 import YourCardComponent from "./YourCardComponent";
+import { mainStore } from "@/store";
+import { useEffect } from "react";
 
 export default function Gameplay({
   gameInfo,
@@ -15,8 +15,8 @@ export default function Gameplay({
   otherPlayers: PlayerGameInfo[];
 }) {
   useEffect(() => {
-    return () => mainStore.getState().game.clearPicks();
-  }, [otherPlayers]);
+    mainStore.getState().game.clearPicks();
+  }, [gameInfo.turnId]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4 flex-1">

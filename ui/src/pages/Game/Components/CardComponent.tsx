@@ -6,14 +6,14 @@ import clsx from "clsx";
 export default function CardComponent(props: {
   className?: string;
   cardId: number;
-  pickedIconPosition?: number;
+  pickedIconId?: number;
   onIconClick?: (iconPosition: number) => void;
   disabled?: boolean;
 }) {
   const symbols = useMemo(() => getCardSymbols(props.cardId), [props.cardId]);
 
   if (!symbols || symbols.length < 2) return null;
-  const [first, ...icons] = symbols;
+  const [firstIconId, ...lastIconsIds] = symbols;
 
   return (
     <div
@@ -23,25 +23,25 @@ export default function CardComponent(props: {
       )}
     >
       <IconComponent
-        picked={props.pickedIconPosition === 0}
-        onClick={() => !props.disabled && props.onIconClick?.(0)}
+        picked={props.pickedIconId === firstIconId}
+        onClick={() => !props.disabled && props.onIconClick?.(firstIconId)}
         cardId={props.cardId}
-        iconId={first}
+        iconId={firstIconId}
         minSize={15}
         maxSize={33}
         left={50}
         top={50}
       />
-      {icons.map((iconId, i) => {
+      {lastIconsIds.map((iconId, i) => {
         const index = i + 1;
-        const angle = (index / icons.length + props.cardId + props.cardId) * 2 * Math.PI;
+        const angle = (index / lastIconsIds.length + props.cardId + props.cardId) * 2 * Math.PI;
         const radius = 33; // 33% from center
         const left = 50 + radius * Math.cos(angle);
         const top = 50 + radius * Math.sin(angle);
         return (
           <IconComponent
-            picked={props.pickedIconPosition === index}
-            onClick={() => !props.disabled && props.onIconClick?.(index)}
+            picked={props.pickedIconId === iconId}
+            onClick={() => !props.disabled && props.onIconClick?.(iconId)}
             key={index}
             cardId={props.cardId}
             iconId={iconId}

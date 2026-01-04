@@ -49,11 +49,13 @@ signals: // Signals: controller -> ui
   void hasCommunicationStateChanged(const CommunicationStatus& status);
 
   // Game signals
-  void hasConnectGameSucceed();
+  void hasConnectGame();
   void hasConnectGameFailed(const QString& error);
 
-  void hasGameStartedSucceed();
+  void hasGameStarted();
   void hasGameStartedFailed(const QString& error);
+
+  void hasGameEnded();
 
   void hasMatchResult(const bool& correct);
 

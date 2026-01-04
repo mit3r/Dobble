@@ -21,7 +21,7 @@ export interface GameBridge {
   // slots
   callJoinGame(ip: string, port: number, gameId: string, role: Role): void;
   callStartGame: () => void;
-  callMatchCards: (turnId: string, symbolId: number) => void;
+  callMatch: (turnId: string, symbolId: number) => void;
   callQuitGame: () => void;
 }
 
@@ -31,7 +31,7 @@ qwebchannelInitializer.onReady("game", (bridge) => {
   });
 
   bridge.onMatchResult.connect((_isMatch: boolean) => {
-    // no-op for now
+    mainStore.getState().game.clearPicks();
   });
 
   bridge.onGameQuit.connect(() => {

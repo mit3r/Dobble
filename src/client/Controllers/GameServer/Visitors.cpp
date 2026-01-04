@@ -21,7 +21,7 @@ void GameServerController::operator()(const ResponseJoinGameCommand& cmd) {
   }
 
   if (cmd.data_obj.has_value())
-    emit hasConnectGameSucceed();
+    emit hasConnectGame();
 }
 
 void GameServerController::operator()(const ResponseLeaveRoomCommand&) {
@@ -46,7 +46,7 @@ void GameServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
 
   if (game.actual_turn.status == "GAME_ACTIVE") {
     gameInfo.status = GameStatus::InGame;
-  } else if (game.actual_turn.status == "GAME_FINISHED") {
+  } else if (game.actual_turn.status == "GAME_OVER") {
     gameInfo.status = GameStatus::Finished;
   } else {
     gameInfo.status = GameStatus::Waiting;
@@ -65,7 +65,9 @@ void GameServerController::operator()(const ResponseSendGameInfoCommand& cmd) {
 
   emit hasGameInfoUpdated(gameInfo.toVariantMap());
   if (gameInfo.status == GameStatus::InGame)
-    emit hasGameStartedSucceed();
+    emit hasGameStarted();
+  if (gameInfo.status == GameStatus::Finished)
+    emit hasGameEnded();
 }
 void GameServerController::operator()(const ResponseMatchSymbolCommand& cmd) {
   qDebug() << "GameServerController: got ResponseMatchSymbolCommand";
@@ -89,7 +91,7 @@ void GameServerController::operator()(const ResponseStartGameCommand& cmd) {
   qDebug() << "GameServerController: got ResponseStartGameCommand";
 
   if (!cmd.error.has_value()) {
-    emit hasGameStartedSucceed();
+    emit hasGameStarted();
   } else {
     emit hasGameStartedFailed(QString::fromStdString(cmd.error->message));
   }

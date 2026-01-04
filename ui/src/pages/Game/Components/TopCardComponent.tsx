@@ -11,7 +11,7 @@ export default function TopCardComponent(props: { cardId: number; disabled?: boo
     <div className="flex-1 h-full flex flex-col items-center justify-center gap-2 ">
       <CardComponent
         cardId={props.cardId}
-        pickedIconPosition={topPick}
+        pickedIconId={topPick}
         onIconClick={pickTopCard}
         disabled={props.disabled}
       />

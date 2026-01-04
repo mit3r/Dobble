@@ -21,13 +21,14 @@ void GameServerController::wantConnectToGame(const std::string& ip, const int& p
 void GameServerController::wantMatchCard(const std::string& turnId, const int& symbolId) {
   qDebug() << "GameServerController: Requesting to match cards.";
 
-  if (!this->gameId.has_value()) {
-    qDebug() << "GameServerController: Missing game ID for matching.";
+  if (!this->clientId.has_value()) {
+    qDebug() << "GameServerController: Missing client ID for matching.";
     return;
   }
 
   SenderMatchSymbolCommand cmd;
   cmd.command = "match_symbol";
+  cmd.client_id = this->clientId.value();
 
   cmd.data_obj = SenderMatchSymbolCommand::data{};
   cmd.data_obj->turn_id = stoi(turnId);
@@ -39,8 +40,8 @@ void GameServerController::wantMatchCard(const std::string& turnId, const int& s
 void GameServerController::wantLeaveGame() {
   qDebug() << "GameServerController: Requesting to leave the game.";
 
-  if (!this->gameId.has_value()) {
-    qDebug() << "GameServerController: Missing game ID for leaving.";
+  if (!this->clientId.has_value()) {
+    qDebug() << "GameServerController: Missing client ID for leaving.";
     return;
   }
 
@@ -54,8 +55,8 @@ void GameServerController::wantLeaveGame() {
 
 void GameServerController::wantStartGame() {
   qDebug() << "GameServerController: Requesting to start the game.";
-  if (!this->gameId.has_value()) {
-    qDebug() << "GameServerController: Missing game ID for starting.";
+  if (!this->clientId.has_value()) {
+    qDebug() << "GameServerController: Missing client ID for starting.";
     return;
   }
 
